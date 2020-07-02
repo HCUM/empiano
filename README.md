@@ -8,12 +8,12 @@ In short: the system is trained to recognize a performed finger gesture and adds
 
 ##  Requirements
 
-- **Electrodes** and an **Amplifier** to capture the muscle activity. We used the LiveAmp EEG recorder from "Brain Products" (https://www.brainproducts.com/productdetails.php?id=63), to which eight plus one ground and one reference active surface electrodes were connected. An additional Windows pc was needed, because the amplifier program didn't work for MacOS.
+- **Electrodes** and an **Amplifier** to capture the muscle activity. We used the LiveAmp EEG recorder from "Brain Products" (https://www.brainproducts.com/productdetails.php?id=63), to which eight plus one ground and one reference active surface electrodes were connected. An additional Windows PC was needed, because the amplifier program didn't work for MacOS.
 - **Lab Streaming Layer (LSL) framework** (https://github.com/sccn/labstreaminglayer)
 - Currently **MacBook**, because we make use of the inbuilt MIDI cable (IAC driver); used as the controlling PC
 - **Music software**, which is able to receive and play back MIDI. We used the free trial version of Ableton Live 10 (https://www.ableton.com/de/trial/)
 - **Electric-Piano**; We used a MIDI-to-USB cable to play the sound through Ableton
-- We additionally used **speakers**, for the purpose of providing a better sound
+- We additionally used **Speakers**, for the purpose of providing a better sound
 
 ## Installation
 
@@ -24,7 +24,7 @@ The source code itself can be found in the folder "src".
 
 ### Electrode Setup
 The electrodes were placed in two rings around the upper right forearm. Each of the rings counted five electrodes and had to include either ground or reference electrode.
-![system sketch](./figures_electrode_ring.jpg)
+![system sketch](./figures_electrode_ring.JPG)
 
 ### Hardware Setup
 ![system sketch](./fullSetup.png)
