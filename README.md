@@ -30,6 +30,15 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
 ![system sketch](./fullSetup.png)
 
 ## Steps to Running the System
+1. Attach the electrodes to the piano player
+2. Run the program that comes with the electrodes
+3. Impedance check of the electrodes
+4. Start LSL stream
+5. Start this python program
+6. Connect this program to the LSL stream in the local network
+7. Open Ableton or another similar music program
+8. Perform Calibration
+9. Ready to go!
 
 ## Citing Hit the Thumb Jack!
 
