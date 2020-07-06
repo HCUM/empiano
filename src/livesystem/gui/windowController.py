@@ -1,6 +1,6 @@
-import livesystem.receiveWindow as window
+import livesystem.gui.window as window
 
-class ReceiverController:
+class windowController:
 
     def __init__(self, liveSysManager):
         self.liveSysManager = liveSysManager
@@ -23,7 +23,7 @@ class ReceiverController:
 
     def connectToLSLStream(self, connectionType, connectionVal):
         self.app.showFrame(window.CaliPage)
-        self.liveSysManager.connectToLSLStream()
+        self.liveSysManager.connectToLSLStream(connectionType, connectionVal)
 
     def showOfflineCaliWindow(self):
         self.app.showFrame(window.OfflineCaliPage)

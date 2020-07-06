@@ -3,13 +3,13 @@ from storage import constants
 
 class App:
     def __init__(self, controller):
-        self.receiverController = controller
+        self.controller = controller
         self.window = Tk()
         self.container = Frame(self.window)
         self.container.grid(row=0, column=0, sticky="nsew")
         self.frames= {}
         for f in (StartPage, CaliPage, LSLPage, SysPage, OfflineCaliPage, NowSysPage, CaliAnimation):
-            frame = f(self.container, self.receiverController)
+            frame = f(self.container, self.controller)
             self.frames[f] = frame
             frame.grid(row=0, column=0, sticky="nsew")
         self.caliButton: Button
@@ -21,17 +21,16 @@ class App:
         self.modon = False
 
     def keydown(self, event):
-        #print("event.keycode: ", event.keycode)
         if event.keycode == 3211296:
             if self.modon:
-                self.receiverController.endMod()
+                self.controller.endMod()
                 self.modon = False
             else:
-                self.receiverController.startMod()
+                self.controller.startMod()
                 self.modon = True
         elif event.keycode == 720994:
             print("turned on wizard of oz")
-            self.receiverController.startWizardOfOzSound()
+            self.controller.startWizardOfOzSound()
 
 
     def showWindow(self):
@@ -76,11 +75,9 @@ class CaliPage(Frame):
 
     def handleModulation(self):
         if self.modBut.cget('text') == "Start Modulation":
-            #print("in if in HANDLE MODULATION")
             self.modBut.configure(text="Stop Modulation")
             self.controller.startMod()
         else:
-            #print("in else in HANDLE MODULATION")
             self.modBut.configure(text="Start Modulation")
             self.controller.endMod()
 
@@ -131,7 +128,7 @@ class CaliAnimation(Frame):
 
     def pause(self):
         self.timerLabel.configure(text=str(self.pauseTime))
-        self.nextTaskLabel.configure(text="next: " +constants.calibrationOrder[self.currentCalibrationTaskIndex])
+        self.nextTaskLabel.configure(text="next: "+constants.calibrationOrder[self.currentCalibrationTaskIndex])
         if self.pauseTime == 0:
             self.pauseTime = constants.secondsOfCaliPause
             self.nextTaskLabel.configure(text="")

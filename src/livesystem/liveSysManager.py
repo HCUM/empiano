@@ -1,6 +1,5 @@
 import csv
 import sys
-import time
 import copy
 import pylsl
 import logging
@@ -10,7 +9,7 @@ import livesystem.sender as sender
 import livesystem.testSysManager as testsys
 import livesystem.midiManager as midimanager
 import livesystem.calibrationManager as calibration
-import livesystem.ReceiverController as reccontroller
+import livesystem.gui.windowController as reccontroller
 from workers import recordingsManager
 
 class LiveSysManager:
@@ -28,7 +27,7 @@ class LiveSysManager:
         self.testSysThread: threading.Thread
 
         self.midiManager        = midimanager.MidiManager(self)
-        self.receiverController = reccontroller.ReceiverController(self)
+        self.windowController = reccontroller.windowController(self)
         self.calibrationManager = calibration.calibrationManager(self)
         self.testSysManager: testsys.TestSysManager
 
@@ -50,8 +49,7 @@ class LiveSysManager:
 
     #run gui for the live-system
     def startWindow(self):
-        self.receiverController.launchWindow()
-        #self.logger.info("Live-Sys-Manager: Window was launched")
+        self.windowController.launchWindow()
 
 
     # getter
@@ -59,21 +57,18 @@ class LiveSysManager:
         self.caliSem.acquire()
         res = copy.deepcopy(self.calibrationOn)
         self.caliSem.release()
-        #self.logger.info("Live-Sys-Manager: Get Calibration: %s", res)
         return res
 
     def getTestSystemOn(self):
         self.testSysSem.acquire()
         res = copy.deepcopy(self.testSystemOn)
         self.testSysSem.release()
-        #self.logger.info("Live-Sys-Manager: Get Test System: %s", res)
         return res
 
     def getCurrentPrediction(self):
         self.predictionSem.acquire()
         res = copy.deepcopy(self.augmentCurrently)
         self.predictionSem.release()
-        #self.logger.info("Live-Sys-Manager: Get current prediction: %s", res)
         return res
 
 
@@ -82,13 +77,13 @@ class LiveSysManager:
         self.caliSem.acquire()
         self.calibrationOn = bool
         self.caliSem.release()
-        #self.logger.info("Live-Sys-Manager: Set calibration to: %s", self.calibrationOn)
+
 
     def setTestSystemOn(self, bool):
         self.testSysSem.acquire()
         self.testSystemOn = bool
         self.testSysSem.release()
-        #self.logger.info("Live-Sys-Manager: Set testSystem to: %s", self.testSystemOn)
+
 
     def setWizardOfOzSound(self):
         self.wizardOfOzSound = not self.wizardOfOzSound
@@ -102,10 +97,10 @@ class LiveSysManager:
 
 
     def setCurrentPrediction(self, augmentationOn):
-        if augmentationOn and not self.midiEffectThread.isAlive() and not self.wizardOfOzSound:# and self.shouldAugment(True):
+        if augmentationOn and not self.midiEffectThread.isAlive() and not self.wizardOfOzSound:
             print("augmentation started")
             self.startMidiEffect()
-        elif not augmentationOn and self.midiEffectThread.isAlive() and not self.wizardOfOzSound:# and self.shouldAugment(False):
+        elif not augmentationOn and self.midiEffectThread.isAlive() and not self.wizardOfOzSound:
             print("augmentation ended")
             self.endMidiEffect()
 
@@ -126,22 +121,12 @@ class LiveSysManager:
 
 
     def startMidiManager(self):
-        #self.logger.info("Live-Sys-Manager: Starting the Midi-Manager")
         self.midiThread = threading.Thread(target=self.midiManager.receiveMidiData)
         self.midiThread.start()
-        #threading.Thread(target=self.testMidiEffect).start()
-        #TODO remove the following!!!
 
 
-    def testMidiEffect(self):
-        while(True):
-            self.setCurrentPrediction(False)
-            time.sleep(5)
-            self.setCurrentPrediction(True)
-            time.sleep(5)
-
-    def connectToLSLStream(self):
-        streams = pylsl.resolve_stream("type", "EEG")
+    def connectToLSLStream(self, connectionType="type", connectionVal="EEG"):
+        streams = pylsl.resolve_stream(connectionType, connectionVal)
         # create a new inlet to read from the stream
         self.streamInlet = pylsl.StreamInlet(streams[0])
 
@@ -162,11 +147,6 @@ class LiveSysManager:
         self.setCalibrationOn(False)
         self.caliThread.join()
         print("cali thread joined")
-        #array = [number for number in self.calibrationManager.streamData.all() if number in data.all()]
-        #if len(array)==0:
-        #    print("data is the same")
-        #else:
-        #    print("something bad happend to the data")
         self.calibrationManager.startTraining()
 
         print("calibration ended")
@@ -199,10 +179,8 @@ class LiveSysManager:
     def endMod(self):
         self.modsTimestamp.append((self.modOnTimestamp, pylsl.local_clock()))
         print("mods: ", self.modsTimestamp)
-        if (self.testSystemOn and self.wizardOfOzSound):# or self.calibrationOn:
+        if (self.testSystemOn and self.wizardOfOzSound):
             self.endMidiEffect()
-        #self.logger.info("Calibration-Manager: Length Cali-Data: %s", len(self.caliData[0]))
-        #self.logger.info("Calibration-Manager: ModsTimestamps changed: %s", self.modsTimestamp)
 
 
     def endCalibration(self):
@@ -242,17 +220,17 @@ class LiveSysManager:
         self.setTestSystemOn(True)
         senderThread = threading.Thread(target=sender.main)
         senderThread.start()
-        #self.logger.info("Live-Sys-Manager: started the sender thread for TEST ROUND")
+
         if not self.calibrationManager.svm:
             self.logger.error("Live-Sys-Manager: YOU CANNOT START the system WITHOUT calibration!")
             return
+
         self.connectToLSLStream()
         self.testSysManager = testsys.TestSysManager(self, self.calibrationManager.svm)
-        #self.logger.info("Live-Sys-Manager: test-sys-manager initialized for TEST ROUND")
         self.testSysThread = threading.Thread(target=self.testSysManager.startSystem,
                                               args=(self.streamInlet,))
         self.testSysThread.start()
-        #self.logger.info("Live-Sys-Manager: test-sys-manager thread started for TEST ROUND")
+
 
     def stopSystem(self, livesysturn):
         print("stopping the system: timestamp: ", pylsl.local_clock())
@@ -261,6 +239,7 @@ class LiveSysManager:
         self.testSysThread.join()
         self.programPaused = True
         threading.Thread(target=self.keepPullingSamplesFromInlet).start()
+
 
     def quit(self):
         self.programPaused = False
