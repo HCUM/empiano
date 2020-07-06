@@ -4,9 +4,11 @@ from storage import Constants
 class App:
     def __init__(self, controller):
         self.controller = controller
+
         self.window = Tk()
         self.container = Frame(self.window)
         self.container.grid(row=0, column=0, sticky="nsew")
+        #frames
         self.frames= {}
         for f in (StartPage, CaliPage, LSLPage, SysPage, OfflineCaliPage, NowSysPage, CaliAnimation):
             frame = f(self.container, self.controller)
@@ -21,15 +23,18 @@ class App:
         self.window.bind("<KeyPress>", self.keydown)
         self.modon = False
 
+
     def keydown(self, event):
-        if event.keycode == 3211296:
+        #space pressed -> to track the beginning and end of modulation
+        if event.keysym == 'space':
             if self.modon:
                 self.controller.endMod()
                 self.modon = False
             else:
                 self.controller.startMod()
                 self.modon = True
-        elif event.keycode == 720994:
+        #
+        elif event.keysym == 'w':
             print("turned on wizard of oz")
             self.controller.startWizardOfOzSound()
 
@@ -98,28 +103,28 @@ class CaliAnimation(Frame):
 
         self.currentCalibrationTaskIndex = 0
 
-        self.pauseTime = constants.secondsOfCaliPause
-        self.taskTime  = constants.secondsOfCaliTasks
+        self.pauseTime = Constants.secondsOfCaliPause
+        self.taskTime  = Constants.secondsOfCaliTasks
 
 
     def handleCalibration(self):
-        currentTask = constants.calibrationOrder[self.currentCalibrationTaskIndex]
+        currentTask = Constants.calibrationOrder[self.currentCalibrationTaskIndex]
 
         self.currentTaskLabel.configure(text=currentTask)
         self.timerLabel.configure(text=str(self.taskTime))
 
-        if self.taskTime == constants.secondsOfCaliTasks:
+        if self.taskTime == Constants.secondsOfCaliTasks:
             if 'mod' in currentTask:
                 self.controller.startMod()
 
         elif self.taskTime == 0:
             if 'mod' in currentTask:
                 self.controller.endMod()
-            if self.currentCalibrationTaskIndex +1 == len(constants.calibrationOrder):
+            if self.currentCalibrationTaskIndex +1 == len(Constants.calibrationOrder):
                 self.controller.endCali()
                 return
             self.currentCalibrationTaskIndex += 1
-            self.taskTime = constants.secondsOfCaliTasks
+            self.taskTime = Constants.secondsOfCaliTasks
             self.currentTaskLabel.configure(text="")
             self.pause()
             return
@@ -129,9 +134,9 @@ class CaliAnimation(Frame):
 
     def pause(self):
         self.timerLabel.configure(text=str(self.pauseTime))
-        self.nextTaskLabel.configure(text="next: "+constants.calibrationOrder[self.currentCalibrationTaskIndex])
+        self.nextTaskLabel.configure(text="next: "+Constants.calibrationOrder[self.currentCalibrationTaskIndex])
         if self.pauseTime == 0:
-            self.pauseTime = constants.secondsOfCaliPause
+            self.pauseTime = Constants.secondsOfCaliPause
             self.nextTaskLabel.configure(text="")
             self.handleCalibration()
             return

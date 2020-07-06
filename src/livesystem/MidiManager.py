@@ -7,16 +7,8 @@ class MidiManager:
     def __init__(self, programMaster):
         self.logger = logging.getLogger()
         self.programMaster = programMaster
-        self.outport = mido.open_output('IAC-Treiber IAC-Bus 1')
+        self.outport = mido.open_output('IAC-Treiber IAC-Bus 1')  #input could be needed for the piano: port = 'USB MIDI Interface'
         self.pitchValues = [0, 250, 500, 1000, 500, 250,  0, -250, -500, -1000, -500, -250]
-
-
-    def receiveMidiData(self):
-        #with mido.open_input('USB MIDI Interface') as inport:#'USB MIDI Interface'
-        #    for msg in inport:
-        #        self.logger.info("MIDI-Manager: Received Message: %s", msg)
-        #        threading.Thread(target=self.sendMidiMsg, args=(copy.deepcopy(msg),)).start()
-        pass
 
 
     def sendEffect(self):

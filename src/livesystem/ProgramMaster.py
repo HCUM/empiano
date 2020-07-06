@@ -6,11 +6,11 @@ import logging
 import threading
 from collections import deque
 import livesystem.Sender as sender
-import livesystem.LiveSystemManager as testsys
+from workers import RecordingsManager
 import livesystem.MidiManager as midimanager
+import livesystem.LiveSystemManager as testsys
 import livesystem.CalibrationManager as calibration
 import livesystem.gui.WindowController as reccontroller
-from workers import RecordingsManager
 
 class ProgramMaster:
 
@@ -118,11 +118,6 @@ class ProgramMaster:
     def endMidiEffect(self):
         self.midiEffectOn = False
         self.midiEffectThread.join()
-
-
-    def startMidiManager(self):
-        self.midiThread = threading.Thread(target=self.midiManager.receiveMidiData)
-        self.midiThread.start()
 
 
     def connectToLSLStream(self, connectionType="type", connectionVal="EEG"):
@@ -247,7 +242,6 @@ class ProgramMaster:
 
 
 def main():
-    liveSysManager = ProgramMaster()
-    liveSysManager.startMidiManager()
-    liveSysManager.startWindow()
+    programMaster = ProgramMaster()
+    programMaster.startWindow()
 
