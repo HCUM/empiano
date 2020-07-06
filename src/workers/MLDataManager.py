@@ -1,8 +1,8 @@
 import copy
 import logging
 import numpy as np
-from storage import constants as constants
-from workers.featureCalc import calculateFeatureForWindow
+from storage import Constants as constants
+from workers.FeatureCalculator import calculateFeatureForWindow
 
 
 '''

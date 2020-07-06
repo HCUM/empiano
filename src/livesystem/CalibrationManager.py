@@ -5,17 +5,17 @@ import numpy as np
 from joblib import dump
 from sklearn import svm
 from plotter import dataPlotter
-import storage.constants as constants
-from workers import preprocessor, csvWriter
+import storage.Constants as constants
+from workers import Preprocessor, CSVWriter
 import workers.MLDataManager as mlDataManager
-import workers.recordingsManager as recordmanager
+import workers.RecordingsManager as recordmanager
 from sklearn.model_selection import cross_val_score, ShuffleSplit
 
 
 class calibrationManager:
-    def __init__(self, liveSysManager):
+    def __init__(self, programMaster):
         self.logger = logging.getLogger()
-        self.liveSysManager = liveSysManager
+        self.programMaster = programMaster
         self.resavedStreamData = [[] for i in range(constants.numberOfChannels)]
         self.streamData = []
         self.mods = []
@@ -26,10 +26,10 @@ class calibrationManager:
     def startCalibration(self, inlet):
         #self.logger.info("Calibration-Manager: Started")
         self.eegStreamTimeOffset = inlet.time_correction()
-        csvWriter.timestampToCsv(self.eegStreamTimeOffset)
+        CSVWriter.timestampToCsv(self.eegStreamTimeOffset)
         self.logger.info("Calibration-Manager: eeg time correction: %s", self.eegStreamTimeOffset)
-        #while len(self.streamData)<111940:
-        while self.liveSysManager.getCalibrationOn():
+
+        while self.programMaster.getCalibrationOn():
             self.saveSample(inlet.pull_sample())
 
     def saveSample(self, sample):
@@ -47,7 +47,7 @@ class calibrationManager:
     def prepareData(self):
         #dataPlotter.plotDataWithTimestamps(self.streamData, self.liveSysManager.modsTimestamp)
 
-        for (modon, modoff) in self.liveSysManager.modsTimestamp:
+        for (modon, modoff) in self.programMaster.modsTimestamp:
             matchesOn = [tmstmp for (smp, tmstmp) in self.streamData if tmstmp >= modon]
             #self.logger.info("Calibration-Manager: matches on: %s", matchesOn)
 
@@ -71,8 +71,8 @@ class calibrationManager:
 
 
     def startTraining(self):
-        csvWriter.dataPlusTimestampsToCsv(self.streamData, "calibration")
-        csvWriter.timestampMarkerToCsv(self.liveSysManager.modsTimestamp, "calibration")
+        CSVWriter.dataPlusTimestampsToCsv(self.streamData, "calibration")
+        CSVWriter.timestampMarkerToCsv(self.programMaster.modsTimestamp, "calibration")
 
         #print("in the start training method")
         self.prepareData()
@@ -85,7 +85,7 @@ class calibrationManager:
         #self.logger.info("Calibration-Manager: Starting the Training")
         #augData, nonAugData = mlDataManager.splitRecordedSample(self.resavedStreamData, self.mods, fromCali=True)
         #csvWriter.dataToCsv(augData, nonAugData)
-        preprocessedStreamData = preprocessor.performPreprocessing(self.resavedStreamData)
+        preprocessedStreamData = Preprocessor.performPreprocessing(self.resavedStreamData)
         #self.logger.info("Calibration-Manager: Data after preprocessing: %s", self.caliData)
         #TODO changed the line below to the line below that line -> fromCali = False, so nothing is being cutted off
         #augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedStreamData, self.mods, fromCali=True)
@@ -115,10 +115,10 @@ class calibrationManager:
                                               preload=True, verbose=True)
         rawRealData = rawData._data[constants.lowestValidChannel:constants.highestValidChannel + 1,
                       start:end]  # trim data to the start and end markers and to only the 8 channels that have been used
-        preprocessedData = preprocessor.performPreprocessing(rawRealData)
+        preprocessedData = Preprocessor.performPreprocessing(rawRealData)
         dataPlotter.plotCaliData(preprocessedData, mods)
 
-        self.liveSysManager.offlineSystemData = \
+        self.programMaster.offlineSystemData = \
             rawData._data[constants.lowestValidChannel:constants.highestValidChannel + 1, startNormal:endNormal]
 
         #import plotter.fftPlotter

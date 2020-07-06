@@ -1,7 +1,7 @@
 import time
 import numpy as np
+from workers import RecordingsManager
 from pylsl import StreamInfo, StreamOutlet, pylsl
-from workers import recordingsManager
 
 def createDataStream():
     #name: BioSemi; content-type: EEG; channels: 8; Hz: 500; value of data: float; unique id: id1
@@ -37,9 +37,9 @@ def sendTestData(outlet, data):
         time.sleep(0.1)
     print("finished sending data")
 
-def main():#outlet):
+def main():
     print("starting sender")
-    data, _ = recordingsManager.getDataAndMarkersCsv("2019-08-08_20.31.22_livesystemRound1DataTimestamps", "2019-08-08_20.31.25_livesystemRound1TimestampMarker")
+    data, _ = RecordingsManager.getDataAndMarkersCsv("2019-08-08_20.31.22_livesystemRound1DataTimestamps", "2019-08-08_20.31.25_livesystemRound1TimestampMarker")
     outlet = createDataStream()
     sendLiveData(outlet, data)
     print("stopping sender")

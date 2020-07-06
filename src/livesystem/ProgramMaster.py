@@ -5,14 +5,14 @@ import pylsl
 import logging
 import threading
 from collections import deque
-import livesystem.sender as sender
-import livesystem.testSysManager as testsys
-import livesystem.midiManager as midimanager
-import livesystem.calibrationManager as calibration
-import livesystem.gui.windowController as reccontroller
-from workers import recordingsManager
+import livesystem.Sender as sender
+import livesystem.LiveSystemManager as testsys
+import livesystem.MidiManager as midimanager
+import livesystem.CalibrationManager as calibration
+import livesystem.gui.WindowController as reccontroller
+from workers import RecordingsManager
 
-class LiveSysManager:
+class ProgramMaster:
 
     def __init__(self):
         self.logger = logging.getLogger()
@@ -29,7 +29,7 @@ class LiveSysManager:
         self.midiManager        = midimanager.MidiManager(self)
         self.windowController = reccontroller.windowController(self)
         self.calibrationManager = calibration.calibrationManager(self)
-        self.testSysManager: testsys.TestSysManager
+        self.testSysManager: testsys.LiveSystemManager
 
 
         self.predictionSem      = threading.Semaphore()
@@ -139,7 +139,7 @@ class LiveSysManager:
         senderThread.start()
         self.connectToLSLStream()
         self.startCalibration()
-        data, self.modsTimestamp = recordingsManager.getDataAndMarkersCsv("2019-08-08_20.31.22_livesystemRound1DataTimestamps",
+        data, self.modsTimestamp = RecordingsManager.getDataAndMarkersCsv("2019-08-08_20.31.22_livesystemRound1DataTimestamps",
                                                          "2019-08-08_20.31.25_livesystemRound1TimestampMarker")
 
         #senderThread.join()
@@ -208,7 +208,7 @@ class LiveSysManager:
             self.logger.error("Live-Sys-Manager: YOU CANNOT START the system WITHOUT calibration!")
             return
 
-        self.testSysManager = testsys.TestSysManager(self, self.calibrationManager.svm)
+        self.testSysManager = testsys.LiveSystemManager(self, self.calibrationManager.svm)
         self.programPaused  = False
         self.testSysThread  = threading.Thread(target=self.testSysManager.startSystem,
                                               args=(self.streamInlet,))
@@ -226,7 +226,7 @@ class LiveSysManager:
             return
 
         self.connectToLSLStream()
-        self.testSysManager = testsys.TestSysManager(self, self.calibrationManager.svm)
+        self.testSysManager = testsys.LiveSystemManager(self, self.calibrationManager.svm)
         self.testSysThread = threading.Thread(target=self.testSysManager.startSystem,
                                               args=(self.streamInlet,))
         self.testSysThread.start()
@@ -247,7 +247,7 @@ class LiveSysManager:
 
 
 def main():
-    liveSysManager = LiveSysManager()
+    liveSysManager = ProgramMaster()
     liveSysManager.startMidiManager()
     liveSysManager.startWindow()
 

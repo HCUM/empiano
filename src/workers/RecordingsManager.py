@@ -1,6 +1,6 @@
 import re
 import mne
-import storage.constants as constants
+import storage.Constants as constants
 import csv
 import numpy as np
 
@@ -97,7 +97,7 @@ def getDataAndMarkersCsv(dataPath, modsPath):
 
         for row in csvReader:
             row = [float(value) for value in row]
-            rawData.append((row[0:-1], row[-1]))#np.asarray(row))
+            rawData.append((row[0:-1], row[-1]))
 
     mods = []
     with open("./study/pilotStudy/"+modsPath+".csv") as csvMarkerFile:

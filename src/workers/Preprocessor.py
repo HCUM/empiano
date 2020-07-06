@@ -1,5 +1,5 @@
 from scipy.signal import butter, lfilter
-import storage.constants as constants
+import storage.Constants as constants
 
 
 def bandpassAllChannels(eegDf, lowcutParam=constants.lowerBoundCutOutFreq,

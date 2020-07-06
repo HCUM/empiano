@@ -1,15 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import datetime
-from storage import constants
-from workers import preprocessor
+from storage import Constants
+from workers import Preprocessor
 
 def plotDataWithTimestamps(data, mods):
     #print("in the plot timestamps method")
     colors = ["black", "purple", "blue", "green", "yellow", "orange", "red", "grey"]
     timestamps = [tmstmp for (smp, tmstmp) in data]
 
-    for i in range(constants.numberOfChannels):
+    for i in range(Constants.numberOfChannels):
         plt.plot(timestamps, [smp[i] for (smp, tmstmp) in data])
         for mod in mods:
             plt.axvline(x=mod[0], color="red", linewidth=0.1)
@@ -31,7 +31,7 @@ def plotData(eegData, mods):
         plt.show()
 
 def plotCaliData(data, mods):
-    preprocessedData = preprocessor.performPreprocessing(data)
+    preprocessedData = Preprocessor.performPreprocessing(data)
     x = 1
     for channel in preprocessedData:
         channelData = np.asarray(channel)
@@ -50,7 +50,7 @@ def plotCaliData(data, mods):
 class LivePlotter:
     def __init__(self):
         #self.fig, self.axs = plt.subplots(constants.numberOfChannels, sharex=True)
-        self.data = [[] for i in range(constants.numberOfChannels)]
+        self.data = [[] for i in range(Constants.numberOfChannels)]
 
     def addSample(self, sample):
         for channel, value in zip(self.data, sample):
@@ -58,7 +58,7 @@ class LivePlotter:
 
 
     def finishPlot(self):
-        preprocessedData = preprocessor.performPreprocessing(self.data)
+        preprocessedData = Preprocessor.performPreprocessing(self.data)
         x = 1
         for channel in preprocessedData:
             plt.plot(channel)

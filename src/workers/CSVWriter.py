@@ -1,5 +1,5 @@
 import datetime
-from storage import constants
+from storage import Constants
 
 def timestampToCsv(timestamp):
     csv = open("./csv/TimeCorrection.csv", "a")
@@ -16,7 +16,7 @@ def markerToCsv(marker):
 
 def timestampMarkerToCsv(timestampMarker, origin):
     now = datetime.datetime.now()
-    csv = open(constants.savePath + now.strftime("%Y-%m-%d_%H.%M.%S_") + origin+ "TimestampMarker.csv", "w")
+    csv = open(Constants.savePath + now.strftime("%Y-%m-%d_%H.%M.%S_") + origin + "TimestampMarker.csv", "w")
 
     for (modon, modoff) in timestampMarker:
         row = str(modon) + "," + str(modoff) + "\n"
@@ -24,7 +24,7 @@ def timestampMarkerToCsv(timestampMarker, origin):
 
 def dataPlusTimestampsToCsv(data, origin):
     now = datetime.datetime.now()
-    csv = open(constants.savePath+ now.strftime("%Y-%m-%d_%H.%M.%S_") + origin +"DataTimestamps.csv", "w")
+    csv = open(Constants.savePath + now.strftime("%Y-%m-%d_%H.%M.%S_") + origin + "DataTimestamps.csv", "w")
     columnTitleRow = "Channel1,Channel2,Channel3,Channel4,Channel5,Channel6,Channel7,Channel8,x,y,z,smth,Timestamp\n"
     csv.write(columnTitleRow)
     for (array, timestamp) in data:
@@ -47,7 +47,7 @@ def wholeDataToCsv(data):
 
 def featuresToCsv(name, features):
     now = datetime.datetime.now()
-    csv = open(constants.savePath+ now.strftime("%Y-%m-%d_%H.%M.%S_") +name+"Feature.csv", "w")
+    csv = open(Constants.savePath + now.strftime("%Y-%m-%d_%H.%M.%S_") + name + "Feature.csv", "w")
     columnTitleRow = "rms1, rms2, rms3, rms4, rms5, rms6, rms7, rms8, " \
                      "rms1/rms2, rms1/rms3, rms1/rms4, rms1/rms5, rms1/rms6, rms1/rms7, rms1/rms8," \
                      "rms2/rms3, rms2/rms4, rms2/rms5, rms2/rms6, rms2/rms7, rms2/rms8," \
@@ -67,7 +67,7 @@ def featuresToCsv(name, features):
 
 def featureClassesToCsv(name, featureClasses):
     now = datetime.datetime.now()
-    csv = open(constants.savePath + now.strftime("%Y-%m-%d_%H.%M.%S_") + name + "FeatureClasses.csv", "w")
+    csv = open(Constants.savePath + now.strftime("%Y-%m-%d_%H.%M.%S_") + name + "FeatureClasses.csv", "w")
     for feature in featureClasses:
         csv.write(feature+"\n")
 

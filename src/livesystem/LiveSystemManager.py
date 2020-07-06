@@ -4,17 +4,17 @@ import threading
 import numpy as np
 from collections import deque
 from plotter import dataPlotter
-import storage.constants as constants
-from workers import preprocessor, featureCalc, csvWriter
+import storage.Constants as constants
+from workers import Preprocessor, FeatureCalculator, CSVWriter
 
-class TestSysManager:
+class LiveSystemManager:
 
-    def __init__(self, liveSysManager, svm):
+    def __init__(self, programMaster, svm):
         self.logger = logging.getLogger()
         self.svm = svm
         self.samplesToNextPrediction = constants.samplesPerWindow
         self.bufferSize = constants.samplesPerWindow * 10
-        self.liveSysManager = liveSysManager
+        self.programMaster = programMaster
         self.predictionThread: threading.Thread
         self.ringBuffer = deque([[0.0 for j in range(constants.numberOfChannels)] for i in range(self.bufferSize)])
         #self.logger.info("Test-Sys-Manager: Initialized")
@@ -29,7 +29,7 @@ class TestSysManager:
     def startSystem(self, inlet):
         self.eegStreamTimeOffset = inlet.time_correction()
         #self.logger.info("Test-Sys-Manager: Started")
-        while(self.liveSysManager.getTestSystemOn()):
+        while(self.programMaster.getTestSystemOn()):
             self.saveSampleToRingbuffer(inlet.pull_sample())
             #self.logger.info("Test-Sys-Manager: current last element Ringbuffer: %s", self.ringBuffer[-1])
 
@@ -72,7 +72,7 @@ class TestSysManager:
         #self.logger.info("Test-Sys-Manager: Resaved data: %s", eegDf)
 
         #preprocess data
-        eegDf = preprocessor.performPreprocessing(eegDf)
+        eegDf = Preprocessor.performPreprocessing(eegDf)
         #self.logger.info("Test-Sys-Manager: Data after preprocessing: %s", eegDf)
 
         eegDf     = np.asarray(eegDf)
@@ -80,23 +80,23 @@ class TestSysManager:
         #self.logger.info("Test-Sys-Manager: "
         #                 "Data performing the feature calculation on: %s",
         #                 eegDf[:, (lastIndex-constants.samplesPerWindow):lastIndex])
-        feature = featureCalc.calculateFeatureForWindow(eegDf[:, (lastIndex-constants.samplesPerWindow):lastIndex])
+        feature = FeatureCalculator.calculateFeatureForWindow(eegDf[:, (lastIndex - constants.samplesPerWindow):lastIndex])
         #self.logger.info("Test-Sys-Manager: calculated feature: %s", feature)
 
         if len(self.lastFeature) != 0 and len(self.secondToLastFeature) != 0:
             featureVec = feature.tolist()
             featureVec.extend(copy.deepcopy(self.lastFeature))
             featureVec.extend(copy.deepcopy(self.secondToLastFeature))
-            #featureVec.reshape(1,-1)
             featureVec = [featureVec]
+
             #set the new prediction
             prediction = self.svm.predict(featureVec)
-            #self.logger.info("Test-Sys-Manager: Prediction: %s", prediction)
-            self.liveSysManager.setCurrentPrediction(prediction == "augmentation")
+            self.programMaster.setCurrentPrediction(prediction == "augmentation")
+
         self.secondToLastFeature = copy.deepcopy(self.lastFeature)
         self.lastFeature         = copy.deepcopy(feature)
 
     def stopSystem(self, livesysturn):
-        csvWriter.dataPlusTimestampsToCsv(self.streamData, "livesystemRound"+str(livesysturn))
-        csvWriter.timestampMarkerToCsv(self.liveSysManager.modsTimestamp, "livesystemRound"+str(livesysturn))
+        CSVWriter.dataPlusTimestampsToCsv(self.streamData, "livesystemRound" + str(livesysturn))
+        CSVWriter.timestampMarkerToCsv(self.programMaster.modsTimestamp, "livesystemRound" + str(livesysturn))
         #self.plotter.finishPlot()

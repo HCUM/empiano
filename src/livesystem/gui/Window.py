@@ -1,5 +1,5 @@
 from tkinter import *
-from storage import constants
+from storage import Constants
 
 class App:
     def __init__(self, controller):
@@ -12,6 +12,7 @@ class App:
             frame = f(self.container, self.controller)
             self.frames[f] = frame
             frame.grid(row=0, column=0, sticky="nsew")
+        #buttons
         self.caliButton: Button
         self.testSystemButton: Button
         self.settingsButton: Button
