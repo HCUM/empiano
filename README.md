@@ -4,7 +4,7 @@ This repository contains a system that, in combination with the correct hard- an
 
 In short: the system is trained to recognize a performed finger gesture and adds a pitch vibrato to the sound output.
 
-![system sketch](./pics/figures_electrode_ring.png)
+![system sketch](./pics/figures_teaser_new.png)
 
 ##  Requirements
 
