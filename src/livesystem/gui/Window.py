@@ -6,13 +6,18 @@ class App:
         self.controller = controller
 
         self.window = Tk()
+        self.window.title("EMPiano")
+        self.height = 220
+        self.width  = 322
+        self.window.geometry(str(self.width)+"x"+str(self.height))
+
         self.container = Frame(self.window)
         self.container.grid(row=0, column=0, sticky="nsew")
         #frames
         self.frames= {}
-        for f in (StartPage, CaliPage, LSLPage, SysPage, OfflineCaliPage, NowSysPage, CaliAnimation):
-            frame = f(self.container, self.controller)
-            self.frames[f] = frame
+        for page in (StartPage, CaliPage, LSLPage, SysPage, OfflineCaliPage, NowSysPage, CaliAnimationPage):
+            frame = page(self.container, self.controller, self.width, self.height)
+            self.frames[page] = frame
             frame.grid(row=0, column=0, sticky="nsew")
         #buttons
         self.caliButton: Button
@@ -46,25 +51,27 @@ class App:
     def showFrame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
-        if cont is CaliAnimation:
+        if cont is CaliAnimationPage:
             frame.pause()
 
 
 class StartPage(Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
-        self.connectButton = Button(self, text="LSL-Connect", command=controller.showConnectFrame, fg="green")
-        self.offlineCaliBut = Button(self, text="Offline Calibration", command=controller.showOfflineCaliWindow)
-        self.fakeLiveCaliBut = Button(self, text="fake live calibration", command=controller.startFakeCali)
+        self.empianoText = Label(self, text="EMPiano", fg='#009440', font="Helvetica 70 bold")
+        self.startButton = Button(self, text="Start", command=controller.showConnectFrame)
+        #self.offlineCaliBut = Button(self, text="Offline Calibration", command=controller.showOfflineCaliWindow)
+        #self.fakeLiveCaliBut = Button(self, text="fake live calibration", command=controller.startFakeCali)
 
-        self.connectButton.grid( row=1, column=0)
-        self.fakeLiveCaliBut.grid(row=2, column=0)
-        self.offlineCaliBut.grid(row=3, column=0)
+        self.empianoText.grid(row = 0, padx=10, pady=50)#, column= 0, columnspan=3)
+        self.startButton.grid(row=1)#, column=0)
+        #self.fakeLiveCaliBut.grid(row=1, column=1)
+        #self.offlineCaliBut.grid(row=1, column=2)
 
 
 
 class CaliPage(Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
         self.controller = controller
         text = Label(self, text="CALIBRATION TIME, COME ON!")
@@ -88,8 +95,8 @@ class CaliPage(Frame):
             self.controller.endMod()
 
 
-class CaliAnimation(Frame):
-    def __init__(self, parent, controller):
+class CaliAnimationPage(Frame):
+    def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
         self.controller = controller
 
@@ -146,7 +153,7 @@ class CaliAnimation(Frame):
 
 
 class NowSysPage(Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
 
         text   = Label(self, text="START LIVE_SYSTEM NOW!")
@@ -157,8 +164,10 @@ class NowSysPage(Frame):
         button.grid(row=2, column=1)
         quitBut.grid(row=3, column=1)
 
+
+
 class SysPage(Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
 
         self.controller = controller
@@ -171,10 +180,12 @@ class SysPage(Frame):
 
 
 class LSLPage(Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
-        text = Label(self, text="PLEASE CONNECT...")
-        text.grid(row=1, column=1, columnspan=2)
+        text = Label(self, text="Connect to LSL stream")
+        pady = (height - (3*25))/6  #3 rows, with height ~25 and each row has 2*pady -> 6
+        padx = 5 #just random to test
+        text.grid(row=0, column=0, columnspan=2, pady=pady)
 
         #OptionMenu
         # Create a Tkinter variable
@@ -184,19 +195,19 @@ class LSLPage(Frame):
         tkvar.set('type')  # set the default option
 
         optionMenu = OptionMenu(self, tkvar, *choices)
-        optionMenu.grid(row=2, column = 1)
+        optionMenu.grid(row=1, column=0, pady=pady, padx=padx)
 
         #text field
         entryVar = StringVar(self)
         entryVar.set("EEG")
         entry = Entry(self, textvariable=entryVar)
-        entry.grid(row=2, column=2)
+        entry.grid(row=1, column=1, pady=pady, padx=padx)
 
         connectButton = Button(self, text="Connect", command=lambda: controller.connectToLSLStream(tkvar.get(), entry.get()))
-        connectButton.grid(row=3, column=1, columnspan=2)
+        connectButton.grid(row=2, columnspan=2, pady=pady)
 
 class OfflineCaliPage(Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
         button = Button(self, text="Go to Live System", command=controller.showTestSysWindow)
         button.grid(row=1, column=1)

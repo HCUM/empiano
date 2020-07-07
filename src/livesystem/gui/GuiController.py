@@ -1,6 +1,6 @@
 import livesystem.gui.Window as window
 
-class windowController:
+class guiController:
 
     def __init__(self, programMaster):
         self.programMaster = programMaster
@@ -13,7 +13,7 @@ class windowController:
         return self.calibrationDone
 
     def getLslConnection(self):
-            return self.lslConnected
+        return self.lslConnected
 
     def launchWindow(self):
         self.app.showWindow()
@@ -56,7 +56,7 @@ class windowController:
 
     def startCali(self):
         self.programMaster.startCalibration()
-        #self.app.showFrame(window.CaliAnimation)
+        #self.app.showFrame(window.CaliAnimationPage)
 
     def endCali(self):
         self.programMaster.endCalibration()

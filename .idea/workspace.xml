@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4fa8f8d4-910e-47e2-bc64-d8c583a570be" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/livesystem/MidiManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/livesystem/MidiManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/livesystem/ProgramMaster.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/livesystem/ProgramMaster.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/livesystem/gui/Window.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/livesystem/gui/Window.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/livesystem/gui/WindowController.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/livesystem/gui/GuiController.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -59,7 +61,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/workers/RecordingsManager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1320">
+            <state relative-caret-position="571">
               <caret line="88" selection-start-line="88" selection-end-line="88" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
@@ -69,28 +71,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/livesystem/LiveSystemManager.py">
+        <entry file="file://$PROJECT_DIR$/src/livesystem/gui/GuiController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="37" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="37" />
+            <state relative-caret-position="173">
+              <caret line="15" column="32" selection-start-line="15" selection-start-column="32" selection-end-line="15" selection-end-column="32" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/livesystem/gui/WindowController.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" selection-start-line="8" selection-end-line="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/livesystem/gui/Window.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="36" column="31" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="31" />
+            <state relative-caret-position="907">
+              <caret line="186" column="37" selection-start-line="186" selection-start-column="37" selection-end-line="186" selection-end-column="37" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -98,11 +91,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/livesystem/ProgramMaster.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="41" lean-forward="true" selection-start-line="17" selection-start-column="41" selection-end-line="17" selection-end-column="41" />
+            <state relative-caret-position="185">
+              <caret line="31" column="29" lean-forward="true" selection-start-line="31" selection-start-column="29" selection-end-line="31" selection-end-column="29" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -128,6 +121,8 @@
     <findStrings>
       <find>connect</find>
       <find>constants</find>
+      <find>lsl</find>
+      <find>CaliAnimation</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -148,14 +143,18 @@
         <option value="$PROJECT_DIR$/src/livesystem/calibrationManager.py" />
         <option value="$PROJECT_DIR$/src/livesystem/midiManager.py" />
         <option value="$PROJECT_DIR$/src/livesystem/sender.py" />
-        <option value="$PROJECT_DIR$/src/livesystem/gui/Window.py" />
         <option value="$PROJECT_DIR$/src/livesystem/MidiManager.py" />
+        <option value="$PROJECT_DIR$/src/livesystem/gui/WindowController.py" />
+        <option value="$PROJECT_DIR$/src/livesystem/gui/guiController.py" />
         <option value="$PROJECT_DIR$/src/livesystem/ProgramMaster.py" />
+        <option value="$PROJECT_DIR$/src/livesystem/gui/GuiController.py" />
+        <option value="$PROJECT_DIR$/src/livesystem/gui/Window.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="23" />
+    <option name="x" value="-1" />
+    <option name="y" value="65" />
     <option name="width" value="1280" />
     <option name="height" value="777" />
   </component>
@@ -297,15 +296,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1594022647093</updated>
-      <workItem from="1594022650233" duration="7774000" />
+      <workItem from="1594022650233" duration="16589000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7774000" />
+    <option name="totallyTimeSpent" value="16589000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1280" height="777" extended-state="6" />
+    <frame x="-2" y="23" width="1280" height="777" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
@@ -318,9 +317,9 @@
       <window_info anchor="bottom" id="Python Console" order="4" weight="0.329927" />
       <window_info anchor="bottom" id="Docker" order="5" show_stripe_button="false" />
       <window_info anchor="bottom" id="Message" order="6" />
-      <window_info active="true" anchor="bottom" id="Find" order="7" visible="true" weight="0.5080292" />
-      <window_info anchor="bottom" id="Run" order="8" weight="0.42627737" />
-      <window_info anchor="bottom" id="Debug" order="9" weight="0.529927" />
+      <window_info anchor="bottom" id="Find" order="7" weight="0.34890512" />
+      <window_info active="true" anchor="bottom" id="Run" order="8" visible="true" weight="0.49635038" />
+      <window_info anchor="bottom" id="Debug" order="9" weight="0.42335767" />
       <window_info anchor="bottom" id="Cvs" order="10" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="11" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="12" />
@@ -334,19 +333,8 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/livesystem/gui/WindowController.py</url>
-          <line>8</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/empiano$mainLiveSys.coverage" NAME="mainLiveSys Coverage Results" MODIFIED="1594034348281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/empiano$mainLiveSys.coverage" NAME="mainLiveSys Coverage Results" MODIFIED="1594137710375" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitignore">
@@ -432,27 +420,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/livesystem/gui/WindowController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/livesystem/LiveSystemManager.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="37" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/workers/RecordingsManager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1320">
-          <caret line="88" selection-start-line="88" selection-end-line="88" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -500,22 +471,46 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/livesystem/gui/Window.py">
+    <entry file="file://$PROJECT_DIR$/src/workers/RecordingsManager.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="36" column="31" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="31" />
+        <state relative-caret-position="571">
+          <caret line="88" selection-start-line="88" selection-end-line="88" />
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/livesystem/ProgramMaster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="41" lean-forward="true" selection-start-line="17" selection-start-column="41" selection-end-line="17" selection-end-column="41" />
+        <state relative-caret-position="185">
+          <caret line="31" column="29" lean-forward="true" selection-start-line="31" selection-start-column="29" selection-end-line="31" selection-end-column="29" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/livesystem/gui/GuiController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="173">
+          <caret line="15" column="32" selection-start-line="15" selection-start-column="32" selection-end-line="15" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/Cellar/python/3.7.4/Frameworks/Python.framework/Versions/3.7/lib/python3.7/tkinter/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="2226" column="4" selection-start-line="2226" selection-start-column="4" selection-end-line="2226" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/livesystem/gui/Window.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="907">
+          <caret line="186" column="37" selection-start-line="186" selection-start-column="37" selection-end-line="186" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
           </folding>
         </state>
       </provider>
