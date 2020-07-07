@@ -43,6 +43,7 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
 ## Citing Hit the Thumb Jack!
 
 Below are the BibTex entries to cite Hit the Thumb Jack!
+
 ```
 @inproceedings{10.1145/3357236.3395500,
 author = {Karolus, Jakob and Kilian, Annika and Kosch, Thomas and Schmidt, Albrecht and Wozniak, Pawe\l{} W.},
