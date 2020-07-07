@@ -4,7 +4,7 @@ This repository contains a system that, in combination with the correct hard- an
 
 In short: the system is trained to recognize a performed finger gesture and adds a pitch vibrato to the sound output.
 
-![system sketch](./figures_teaser_new.png)
+![system sketch](./pics/figures_teaser_new.png)
 
 ##  Requirements
 
@@ -24,10 +24,10 @@ The source code itself can be found in the folder "src".
 
 ### Electrode Setup
 The electrodes were placed in two rings around the upper right forearm. Each of the rings counted five electrodes and had to include either ground or reference electrode.
-![system sketch](./figures_electrode_ring.JPG)
+![system sketch](./pics/figures_electrode_ring.JPG)
 
 ### Hardware Setup
-![system sketch](./fullSetup.png)
+![system sketch](./pics/fullSetup.png)
 
 ## Steps to Running the System
 1. Attach the electrodes to the piano player
@@ -43,3 +43,22 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
 ## Citing Hit the Thumb Jack!
 
 Below are the BibTex entries to cite Hit the Thumb Jack!
+
+```
+@inproceedings{10.1145/3357236.3395500,
+author = {Karolus, Jakob and Kilian, Annika and Kosch, Thomas and Schmidt, Albrecht and Wozniak, Pawe\l{} W.},
+title = {Hit the Thumb Jack! Using Electromyography to Augment the Piano Keyboard},
+year = {2020},
+isbn = {9781450369749},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3357236.3395500},
+doi = {10.1145/3357236.3395500},
+booktitle = {Proceedings of the 2020 ACM on Designing Interactive Systems Conference},
+pages = {429–440},
+numpages = {12},
+keywords = {creative support tool, motor tasks, electromyography, seamless integration, expressive piano play},
+location = {Eindhoven, Netherlands},
+series = {DIS ’20}
+}
+```
