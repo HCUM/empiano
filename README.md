@@ -43,3 +43,21 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
 ## Citing Hit the Thumb Jack!
 
 Below are the BibTex entries to cite Hit the Thumb Jack!
+```
+@inproceedings{10.1145/3357236.3395500,
+author = {Karolus, Jakob and Kilian, Annika and Kosch, Thomas and Schmidt, Albrecht and Wozniak, Pawe\l{} W.},
+title = {Hit the Thumb Jack! Using Electromyography to Augment the Piano Keyboard},
+year = {2020},
+isbn = {9781450369749},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3357236.3395500},
+doi = {10.1145/3357236.3395500},
+booktitle = {Proceedings of the 2020 ACM on Designing Interactive Systems Conference},
+pages = {429–440},
+numpages = {12},
+keywords = {creative support tool, motor tasks, electromyography, seamless integration, expressive piano play},
+location = {Eindhoven, Netherlands},
+series = {DIS ’20}
+}
+```
