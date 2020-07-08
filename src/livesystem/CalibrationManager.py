@@ -6,9 +6,9 @@ from joblib import dump
 from sklearn import svm
 from plotter import dataPlotter
 import storage.Constants as constants
-from workers import Preprocessor, CSVWriter
-import workers.MLDataManager as mlDataManager
-import workers.RecordingsManager as recordmanager
+from helpers import Preprocessor, CSVWriter
+import helpers.MLDataManager as mlDataManager
+import helpers.RecordingsManager as recordmanager
 from sklearn.model_selection import cross_val_score, ShuffleSplit
 
 
@@ -16,15 +16,13 @@ class calibrationManager:
     def __init__(self, programMaster):
         self.logger = logging.getLogger()
         self.programMaster = programMaster
-        self.resavedStreamData = [[] for i in range(constants.numberOfChannels)]
+        self.resavedStreamData = [[] for _ in range(constants.numberOfChannels)]
         self.streamData = []
         self.mods = []
         self.eegStreamTimeOffset = -1
         self.svm: svm.SVC
-        #self.logger.info("Calibration-Manager: Initialized")
 
     def startCalibration(self, inlet):
-        #self.logger.info("Calibration-Manager: Started")
         self.eegStreamTimeOffset = inlet.time_correction()
         CSVWriter.timestampToCsv(self.eegStreamTimeOffset)
         self.logger.info("Calibration-Manager: eeg time correction: %s", self.eegStreamTimeOffset)
@@ -33,15 +31,9 @@ class calibrationManager:
             self.saveSample(inlet.pull_sample())
 
     def saveSample(self, sample):
-        #print("sample received: ", sample)
-        #self.logger.info("Calibration-Manager: Sample received: %s", sample)
         (data, timestamp) = sample
-        #print("timestamp received: ", timestamp)
         #TODO had to adjust the following line
         self.streamData.append((np.asarray(data) * 0.000001, timestamp+self.eegStreamTimeOffset))
-        #self.streamData.append((np.asarray(data), timestamp))
-        #print("local timestamp: ", pylsl.local_clock())
-        #self.logger.info("Calibration-Manager: Sample being saved to data: %s", data)
 
 
     def prepareData(self):
@@ -49,10 +41,8 @@ class calibrationManager:
 
         for (modon, modoff) in self.programMaster.modsTimestamp:
             matchesOn = [tmstmp for (smp, tmstmp) in self.streamData if tmstmp >= modon]
-            #self.logger.info("Calibration-Manager: matches on: %s", matchesOn)
 
             matchesOff = [tmstmp for (smp, tmstmp) in self.streamData if tmstmp <= modoff]
-            #self.logger.info("Calibration-Manager: matches off: %s", matchesOff)
             #this is needed because the calibration end with a mod-phase.
             #so in case,
             if not matchesOff:
@@ -65,8 +55,6 @@ class calibrationManager:
         for (sample, timestamp) in self.streamData:
             for i in range(len(self.resavedStreamData)):
                 self.resavedStreamData[i].append(sample[i])
-        #self.logger.info("Calibration-Manager: stream data: %s", self.streamData)
-        #self.logger.info("Calibration-Manager: cali data: %s", self.resavedStreamData)
 
 
 
@@ -74,7 +62,6 @@ class calibrationManager:
         CSVWriter.dataPlusTimestampsToCsv(self.streamData, "calibration")
         CSVWriter.timestampMarkerToCsv(self.programMaster.modsTimestamp, "calibration")
 
-        #print("in the start training method")
         self.prepareData()
         #print("MODS NEW: ", self.mods)
         #TODO commented for study
@@ -86,14 +73,14 @@ class calibrationManager:
         #augData, nonAugData = mlDataManager.splitRecordedSample(self.resavedStreamData, self.mods, fromCali=True)
         #csvWriter.dataToCsv(augData, nonAugData)
         preprocessedStreamData = Preprocessor.performPreprocessing(self.resavedStreamData)
-        #self.logger.info("Calibration-Manager: Data after preprocessing: %s", self.caliData)
+
         #TODO changed the line below to the line below that line -> fromCali = False, so nothing is being cutted off
         #augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedStreamData, self.mods, fromCali=True)
         augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedStreamData, self.mods, fromCali=False)
         X_train, _, y_train, _, ratioAugSamples, _ = mlDataManager.createMLData(augData, nonAugData,
                                                                              wholeSplit=False, noSplit=True)
         self.trainSVM(X_train, y_train)
-        #self.logger.info("Calibration-Manager: Finished the Training")
+
         return augData, nonAugData, X_train, y_train
 
 

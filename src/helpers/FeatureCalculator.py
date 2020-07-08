@@ -1,6 +1,5 @@
 from math import sqrt
 import numpy as np
-import logging
 
 def calculateRMS(data):
     return sqrt(sum(n*n for n in data) / len(data))

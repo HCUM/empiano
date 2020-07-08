@@ -2,7 +2,7 @@ import copy
 import logging
 import numpy as np
 from storage import Constants as constants
-from workers.FeatureCalculator import calculateFeatureForWindow
+from helpers.FeatureCalculator import calculateFeatureForWindow
 
 
 '''
@@ -107,26 +107,11 @@ def createMLData(augData, nonAugData,  wholeSplit=False,noSplit=False):
 
 
         featuresCsv = []
-        #names = ["lightPlay", "noPlay", "fastPlay", "normalPlay"]
-        while (currentIndex + constants.samplesPerWindow <= len(array[0]) & len(array[0]) >= constants.samplesPerWindow):
-            currentNonAugFeature = calculateFeatureForWindow(array[:, currentIndex:currentIndex + constants.samplesPerWindow])
-            #TODO the following is just for testing WITH a window size of 0.25ms!!!!
-            # if currentIndex > 124:
-            #     bool = all(item in X_train[-1] for item in secondToLastNonAugFeature)
-            #     bool &= all(item in X_train[-1] for item in lastNonAugFeature)
-            #     if not bool:
-            #         print("MISTAKE!!!!!!!!! non aug features!!!!!!!")
-            #         print("letzte xtrain: ", X_train[-1])
-            #         print("secondtolast: ", secondToLastNonAugFeature)
-            #         print("last: ", lastNonAugFeature)
-            #         print("new current, should not be included: ", currentNonAugFeature)
-            # if currentIndex >186:
-            #     bool = all(item in X_train[-2] for item in secondToLastNonAugFeature)
-            #     #bool &= all(item in X_train[-2] for item in lastNonAugFeature)
-            #     if not bool:
-            #         print("MISTAKE!!!!!!!!! non aug features!!!!!!! SECOND IF")
-            #TODO testing was until here!!!
 
+        while (currentIndex + constants.samplesPerWindow <= len(array[0]) & len(array[0]) >= constants.samplesPerWindow):
+
+            currentNonAugFeature = calculateFeatureForWindow(
+                array[:, currentIndex:currentIndex + constants.samplesPerWindow])
             featuresCsv.append(currentNonAugFeature)
             featureNonAugVec = currentNonAugFeature.tolist()
             featureNonAugVec.extend(copy.deepcopy(lastNonAugFeature))

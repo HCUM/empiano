@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import datetime
 from storage import Constants
-from workers import Preprocessor
+from helpers import Preprocessor
 
 def plotDataWithTimestamps(data, mods):
     #print("in the plot timestamps method")

@@ -2,7 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4fa8f8d4-910e-47e2-bc64-d8c583a570be" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/livesystem/CalibrationManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/livesystem/CalibrationManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/livesystem/LiveSystemManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/livesystem/LiveSystemManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/livesystem/ProgramMaster.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/livesystem/ProgramMaster.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/livesystem/Sender.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/livesystem/Sender.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plotter/dataPlotter.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotter/dataPlotter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/workers/CSVWriter.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/helpers/CSVWriter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/workers/FeatureCalculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/helpers/FeatureCalculator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/workers/MLDataManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/helpers/MLDataManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/workers/Preprocessor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/helpers/Preprocessor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/workers/RecordingsManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/helpers/RecordingsManager.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,8 +34,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/livesystem/CalibrationManager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="19" selection-start-line="17" selection-start-column="19" selection-end-line="17" selection-end-column="19" />
+            <state relative-caret-position="197">
+              <caret line="78" column="58" lean-forward="true" selection-start-line="78" selection-start-column="58" selection-end-line="78" selection-end-column="58" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -34,19 +44,34 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/livesystem/Sender.py">
+        <entry file="file://$PROJECT_DIR$/src/helpers/MLDataManager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="26" selection-start-line="2" selection-start-column="26" selection-end-line="2" selection-end-column="26" />
+            <state relative-caret-position="-45">
+              <caret line="119" column="29" selection-start-line="119" selection-start-column="12" selection-end-line="119" selection-end-column="29" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/workers/FeatureCalculator.py">
+        <entry file="file://$PROJECT_DIR$/src/livesystem/Sender.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="14" selection-start-line="2" selection-start-column="14" selection-end-line="2" selection-end-column="14" />
+            <state relative-caret-position="600">
+              <caret line="40" column="28" lean-forward="true" selection-start-line="40" selection-start-column="28" selection-end-line="40" selection-end-column="28" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/helpers/FeatureCalculator.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="15">
+              <caret line="1" column="18" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -54,11 +79,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/workers/RecordingsManager.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/helpers/RecordingsManager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="571">
-              <caret line="88" selection-start-line="88" selection-end-line="88" />
+            <state relative-caret-position="45">
+              <caret line="3" column="37" selection-start-line="3" selection-start-column="37" selection-end-line="3" selection-end-column="37" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -87,11 +112,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/livesystem/ProgramMaster.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="86" selection-start-line="86" selection-end-line="86" />
+            <state relative-caret-position="-282">
+              <caret line="40" column="33" selection-start-line="40" selection-start-column="33" selection-end-line="40" selection-end-column="33" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -145,6 +170,11 @@
         <option value="$PROJECT_DIR$/src/livesystem/gui/Window.py" />
         <option value="$PROJECT_DIR$/src/livesystem/gui/GuiController.py" />
         <option value="$PROJECT_DIR$/src/livesystem/ProgramMaster.py" />
+        <option value="$PROJECT_DIR$/src/helpers/FeatureCalculator.py" />
+        <option value="$PROJECT_DIR$/src/livesystem/CalibrationManager.py" />
+        <option value="$PROJECT_DIR$/src/helpers/MLDataManager.py" />
+        <option value="$PROJECT_DIR$/src/livesystem/Sender.py" />
+        <option value="$PROJECT_DIR$/src/helpers/RecordingsManager.py" />
       </list>
     </option>
   </component>
@@ -190,12 +220,6 @@
               <item name="empiano" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="storage" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="empiano" type="b2602c69:ProjectViewProjectNode" />
-              <item name="empiano" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="workers" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -297,7 +321,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17266000" />
+    <option name="totallyTimeSpent" value="18775000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-2" y="23" width="1280" height="777" extended-state="6" />
@@ -313,8 +337,8 @@
       <window_info anchor="bottom" id="Python Console" order="4" weight="0.329927" />
       <window_info anchor="bottom" id="Docker" order="5" show_stripe_button="false" />
       <window_info anchor="bottom" id="Message" order="6" />
-      <window_info anchor="bottom" id="Find" order="7" weight="0.34890512" />
-      <window_info active="true" anchor="bottom" id="Run" order="8" visible="true" weight="0.49635038" />
+      <window_info active="true" anchor="bottom" id="Find" order="7" visible="true" weight="0.5109489" />
+      <window_info anchor="bottom" id="Run" order="8" weight="0.19416058" />
       <window_info anchor="bottom" id="Debug" order="9" weight="0.42335767" />
       <window_info anchor="bottom" id="Cvs" order="10" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="11" weight="0.4" />
@@ -368,15 +392,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/workers/MLDataManager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1979">
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/plotter/dataPlotter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-180">
@@ -388,33 +403,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="37" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/workers/FeatureCalculator.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="14" selection-start-line="2" selection-start-column="14" selection-end-line="2" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/livesystem/Sender.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="26" selection-start-line="2" selection-start-column="26" selection-end-line="2" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/livesystem/CalibrationManager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="19" selection-start-line="17" selection-start-column="19" selection-end-line="17" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -431,16 +419,6 @@
           <caret line="27" column="31" selection-start-line="27" selection-start-column="31" selection-end-line="27" selection-end-column="31" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/workers/RecordingsManager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="571">
-          <caret line="88" selection-start-line="88" selection-end-line="88" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -471,10 +449,60 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/livesystem/ProgramMaster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="86" selection-start-line="86" selection-end-line="86" />
+        <state relative-caret-position="-282">
+          <caret line="40" column="33" selection-start-line="40" selection-start-column="33" selection-end-line="40" selection-end-column="33" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/helpers/FeatureCalculator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="18" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/livesystem/CalibrationManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="78" column="58" lean-forward="true" selection-start-line="78" selection-start-column="58" selection-end-line="78" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/helpers/MLDataManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-45">
+          <caret line="119" column="29" selection-start-line="119" selection-start-column="12" selection-end-line="119" selection-end-column="29" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/livesystem/Sender.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="40" column="28" lean-forward="true" selection-start-line="40" selection-start-column="28" selection-end-line="40" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/helpers/RecordingsManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="37" selection-start-line="3" selection-start-column="37" selection-end-line="3" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>

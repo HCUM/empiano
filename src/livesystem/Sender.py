@@ -1,6 +1,6 @@
 import time
 import numpy as np
-from workers import RecordingsManager
+from helpers import RecordingsManager
 from pylsl import StreamInfo, StreamOutlet, pylsl
 
 def createDataStream():
@@ -15,20 +15,15 @@ def sendData(outlet, data):
     data = np.asarray(data)
     while i < len(data[0]):
         outlet.push_sample(x=data[:,i], timestamp=pylsl.local_clock())
-        #print("data sent: ", data[:, i])
         i += 1
         time.sleep(0.002)
     print("finished sending data")
 
 def sendLiveData(outlet, data):
-    #time.sleep(1)
     for (sample, timestamp) in data:
         outlet.push_sample(x=sample, timestamp=timestamp)
-        #print("sample sent: ", sample)
-        #time.sleep(0.002)
     while True:
         outlet.push_sample(x=[0 for i in range(12)], timestamp=0)
-    #time.sleep(3)
 
 def sendTestData(outlet, data):
     print("start sending data")
@@ -39,7 +34,8 @@ def sendTestData(outlet, data):
 
 def main():
     print("starting sender")
-    data, _ = RecordingsManager.getDataAndMarkersCsv("2019-08-08_20.31.22_livesystemRound1DataTimestamps", "2019-08-08_20.31.25_livesystemRound1TimestampMarker")
+    data, _ = RecordingsManager.getDataAndMarkersCsv("2019-08-08_20.31.22_livesystemRound1DataTimestamps",
+                                                     "2019-08-08_20.31.25_livesystemRound1TimestampMarker")
     outlet = createDataStream()
     sendLiveData(outlet, data)
     print("stopping sender")

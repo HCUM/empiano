@@ -1,12 +1,12 @@
 import re
 import mne
-import storage.Constants as constants
 import csv
-import numpy as np
+import storage.Constants as constants
 
 def getDataAndMarkers():
     start, end, mods, startNormal, endNormal, modsNormal = getAllMarkers(constants.recordingsPath)
-    rawData = mne.io.read_raw_brainvision(constants.recordingsPath + ".vhdr", montage=None, misc='auto', scale=1.0, preload=True,
+    rawData = mne.io.read_raw_brainvision(constants.recordingsPath + ".vhdr",
+                                          montage=None, misc='auto', scale=1.0, preload=True,
                                           verbose=True)
     rawRealData = rawData._data[constants.lowestValidChannel:constants.highestValidChannel + 1,
                   start:end]  # trim data to the start and end markers and to only the 8 channels that have been used

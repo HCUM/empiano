@@ -6,7 +6,7 @@ import logging
 import threading
 from collections import deque
 import livesystem.Sender as sender
-from workers import RecordingsManager
+from helpers import RecordingsManager
 import livesystem.MidiManager as midimanager
 import livesystem.LiveSystemManager as live
 import livesystem.CalibrationManager as calibration
@@ -18,14 +18,14 @@ class ProgramMaster:
         self.logger = logging.getLogger()
         self.streamInlet: pylsl.StreamInlet
 
-        self.calibrationSem   = threading.Semaphore()
-        self.calibrationOn    = False
+        self.calibrationSem = threading.Semaphore()
+        self.calibrationOn  = False
         self.calibrationThread: threading.Thread
 
         #liveSystem is referring to the situation after the calibration is completed
         #and the modulation can be used to trigger the sound modulation
-        self.liveSystemSem   = threading.Semaphore()
-        self.inLiveSystem    = False
+        self.liveSystemSem = threading.Semaphore()
+        self.inLiveSystem  = False
         self.liveSystemThread: threading.Thread
 
         self.midiManager        = midimanager.MidiManager(self)
@@ -34,11 +34,11 @@ class ProgramMaster:
         self.liveSystemManager: live.LiveSystemManager
 
 
-        self.predictionSem      = threading.Semaphore()
-        self.augmentCurrently   = False
-        self.lastTwoPredictions = deque([False, False])
-        self.midiEffectOn       = False
-        self.midiEffectThread   = threading.Thread(target=self.midiManager.sendEffect)
+        self.predictionSem       = threading.Semaphore()
+        self.currentlyAugmenting = False
+        self.lastTwoPredictions  = deque([False, False])  #False: no augmentation; True: augmentation
+        self.midiEffectOn        = False
+        self.midiEffectThread    = threading.Thread(target=self.midiManager.sendEffect)
         self.midiThread: threading.Thread
 
         self.offlineSystemData = []
@@ -68,7 +68,7 @@ class ProgramMaster:
 
     def getCurrentPrediction(self):
         self.predictionSem.acquire()
-        res = copy.deepcopy(self.augmentCurrently)
+        res = copy.deepcopy(self.currentlyAugmenting)
         self.predictionSem.release()
         return res
 
