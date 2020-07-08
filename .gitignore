@@ -134,3 +134,4 @@ dmypy.json
 log*
 currentProject/log/*
 currentProject/csv/*
+.idea/
