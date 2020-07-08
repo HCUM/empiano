@@ -38,10 +38,6 @@ class App:
             else:
                 self.controller.startMod()
                 self.modon = True
-        #
-        elif event.keysym == 'w':
-            print("turned on wizard of oz")
-            self.controller.startWizardOfOzSound()
 
 
     def showWindow(self):

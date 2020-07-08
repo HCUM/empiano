@@ -77,6 +77,3 @@ class guiController:
     def quit(self):
         self.app.window.destroy()
         self.programMaster.quit()
-
-    def startWizardOfOzSound(self):
-        self.programMaster.setWizardOfOzSound()

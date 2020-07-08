@@ -8,7 +8,7 @@ from collections import deque
 import livesystem.Sender as sender
 from workers import RecordingsManager
 import livesystem.MidiManager as midimanager
-import livesystem.LiveSystemManager as testsys
+import livesystem.LiveSystemManager as live
 import livesystem.CalibrationManager as calibration
 import livesystem.gui.GuiController as guiController
 
@@ -31,7 +31,7 @@ class ProgramMaster:
         self.midiManager        = midimanager.MidiManager(self)
         self.guiController      = guiController.guiController(self)
         self.calibrationManager = calibration.calibrationManager(self)
-        self.testSysManager: testsys.LiveSystemManager
+        self.liveSystemManager: live.LiveSystemManager
 
 
         self.predictionSem      = threading.Semaphore()
@@ -46,7 +46,6 @@ class ProgramMaster:
         self.modsTimestamp     = []     #saves all the timestamp pairs of the modulations: [(begin, end), ...]
         self.programPaused     = False
 
-        self.wizardOfOzSound   = False
 
 
     #run gui for the live-system
@@ -87,10 +86,6 @@ class ProgramMaster:
         self.liveSystemSem.release()
 
 
-    def setWizardOfOzSound(self):
-        self.wizardOfOzSound = not self.wizardOfOzSound
-
-
     def shouldAugment(self, fromPosAug):
         if fromPosAug:
             return self.lastTwoPredictions[0] and self.lastTwoPredictions[1]
@@ -99,10 +94,11 @@ class ProgramMaster:
 
 
     def setCurrentPrediction(self, augmentationOn):
-        if augmentationOn and not self.midiEffectThread.isAlive() and not self.wizardOfOzSound:
+        if augmentationOn and not self.midiEffectThread.isAlive():
             print("augmentation started")
             self.startMidiEffect()
-        elif not augmentationOn and self.midiEffectThread.isAlive() and not self.wizardOfOzSound:
+
+        elif not augmentationOn and self.midiEffectThread.isAlive():
             print("augmentation ended")
             self.endMidiEffect()
 
@@ -130,6 +126,7 @@ class ProgramMaster:
 
     def startOfflineCalibration(self):
         self.calibrationManager.offlineCali()
+
 
     def startFakeCali(self):
         senderThread = threading.Thread(target=sender.main)
@@ -170,13 +167,15 @@ class ProgramMaster:
     def startMod(self):
         self.modOnTimestamp = pylsl.local_clock()
         print("modon: ", self.modOnTimestamp)
-        if (self.inLiveSystem and self.wizardOfOzSound):# or self.calibrationOn:
+
+        if self.inLiveSystem:
             self.startMidiEffect()
 
     def endMod(self):
         self.modsTimestamp.append((self.modOnTimestamp, pylsl.local_clock()))
         print("mods: ", self.modsTimestamp)
-        if (self.inLiveSystem and self.wizardOfOzSound):
+
+        if self.inLiveSystem:
             self.endMidiEffect()
 
 
@@ -205,9 +204,9 @@ class ProgramMaster:
             self.logger.error("Live-Sys-Manager: YOU CANNOT START the system WITHOUT calibration!")
             return
 
-        self.testSysManager = testsys.LiveSystemManager(self, self.calibrationManager.svm)
+        self.liveSystemManager = live.LiveSystemManager(self, self.calibrationManager.svm)
         self.programPaused  = False
-        self.liveSystemThread  = threading.Thread(target=self.testSysManager.startSystem,
+        self.liveSystemThread  = threading.Thread(target=self.liveSystemManager.startSystem,
                                                   args=(self.streamInlet,))
         self.liveSystemThread.start()
 
@@ -223,8 +222,8 @@ class ProgramMaster:
             return
 
         self.connectToLSLStream()
-        self.testSysManager = testsys.LiveSystemManager(self, self.calibrationManager.svm)
-        self.liveSystemThread = threading.Thread(target=self.testSysManager.startSystem,
+        self.liveSystemManager = live.LiveSystemManager(self, self.calibrationManager.svm)
+        self.liveSystemThread = threading.Thread(target=self.liveSystemManager.startSystem,
                                                  args=(self.streamInlet,))
         self.liveSystemThread.start()
 
@@ -232,7 +231,7 @@ class ProgramMaster:
     def stopSystem(self, livesysturn):
         print("stopping the system: timestamp: ", pylsl.local_clock())
         self.setTestSystemOn(False)
-        self.testSysManager.stopSystem(livesysturn)
+        self.liveSystemManager.stopSystem(livesysturn)
         self.liveSystemThread.join()
         self.programPaused = True
         threading.Thread(target=self.keepPullingSamplesFromInlet).start()
