@@ -86,13 +86,6 @@ class ProgramMaster:
         self.liveSystemSem.release()
 
 
-    def shouldAugment(self, fromPosAug):
-        if fromPosAug:
-            return self.lastTwoPredictions[0] and self.lastTwoPredictions[1]
-        else:
-            return not self.lastTwoPredictions[0] and not self.lastTwoPredictions[1]
-
-
     def setCurrentPrediction(self, augmentationOn):
         if augmentationOn and not self.midiEffectThread.isAlive():
             print("augmentation started")
