@@ -3,7 +3,7 @@ import threading
 import numpy as np
 from collections import deque
 import storage.Constants as constants
-from helpers import Preprocessor, FeatureCalculator, CSVWriter
+from helpers import Preprocessor, FeatureCalculator
 
 class LiveSystemManager:
 
@@ -82,8 +82,3 @@ class LiveSystemManager:
 
         self.secondToLastFeature = copy.deepcopy(self.lastFeature)
         self.lastFeature         = copy.deepcopy(feature)
-
-
-    def stopSystem(self, livesysturn):
-        CSVWriter.dataPlusTimestampsToCsv(self.streamData, "livesystemRound" + str(livesysturn))
-        CSVWriter.timestampMarkerToCsv(self.programMaster.modsTimestamp, "livesystemRound" + str(livesysturn))

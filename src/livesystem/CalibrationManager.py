@@ -2,8 +2,8 @@ import datetime
 import numpy as np
 from joblib import dump
 from sklearn import svm
+from helpers import Preprocessor
 import storage.Constants as constants
-from helpers import Preprocessor, CSVWriter
 import helpers.MLDataManager as mlDataManager
 from sklearn.model_selection import cross_val_score, ShuffleSplit
 
@@ -20,7 +20,6 @@ class calibrationManager:
 
     def startCalibration(self, inlet):
         self.eegStreamTimeOffset = inlet.time_correction()
-        CSVWriter.timestampToCsv(self.eegStreamTimeOffset)
 
         while self.programMaster.getCalibrationOn():
             self.saveSample(inlet.pull_sample())
@@ -50,9 +49,6 @@ class calibrationManager:
 
 
     def startTraining(self):
-        CSVWriter.dataPlusTimestampsToCsv(self.streamData, "calibration")
-        CSVWriter.timestampMarkerToCsv(self.programMaster.modsTimestamp, "calibration")
-
         self.prepareData()
 
         preprocessedStreamData = Preprocessor.performPreprocessing(self.resavedStreamData)

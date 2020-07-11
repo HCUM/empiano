@@ -54,7 +54,7 @@ class guiController:
         self.programMaster.startLiveSystem()
 
     def stopLiveSystem(self):
-        self.programMaster.stopLiveSystem(self.liveSystemRound)
+        self.programMaster.stopLiveSystem()
         self.app.showFrame(window.StartLiveSystemPage)
 
     def quit(self):

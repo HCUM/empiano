@@ -3,8 +3,8 @@ import copy
 import pylsl
 import threading
 from collections import deque
-import livesystem.MidiManager as midimanager
 import livesystem.LiveSystemManager as live
+import livesystem.MidiManager as midimanager
 import livesystem.CalibrationManager as calibration
 import livesystem.gui.GuiController as guiController
 
@@ -158,9 +158,8 @@ class ProgramMaster:
         self.liveSystemThread.start()
 
 
-    def stopLiveSystem(self, livesysturn):
+    def stopLiveSystem(self):
         self.setInLiveSystem(False)
-        self.liveSystemManager.stopSystem(livesysturn)
         self.liveSystemThread.join()
         self.programPaused = True
         threading.Thread(target=self.keepPullingSamplesFromInlet).start()
