@@ -75,7 +75,7 @@ class ProgramMaster:
         self.calibrationSem.release()
 
 
-    def setTestSystemOn(self, bool):
+    def setInLiveSystem(self, bool):
         self.liveSystemSem.acquire()
         self.inLiveSystem = bool
         self.liveSystemSem.release()
@@ -116,6 +116,16 @@ class ProgramMaster:
                                                   args=(self.streamInlet,))
         self.calibrationThread.start()
 
+    def endCalibration(self):
+        self.setCalibrationOn(False)
+        self.calibrationThread.join()
+
+        self.calibrationManager.startTraining()
+        self.modsTimestamp = []
+        self.modOnTimestamp = -1
+        self.programPaused = True
+        threading.Thread(target=self.keepPullingSamplesFromInlet).start()
+
 
     def startMod(self):
         self.modOnTimestamp = pylsl.local_clock()
@@ -128,23 +138,13 @@ class ProgramMaster:
             self.endMidiEffect()
 
 
-    def endCalibration(self):
-        self.setCalibrationOn(False)
-        self.calibrationThread.join()
-
-        self.calibrationManager.startTraining()
-        self.modsTimestamp = []
-        self.modOnTimestamp = -1
-        self.programPaused = True
-        threading.Thread(target=self.keepPullingSamplesFromInlet).start()
-
     def keepPullingSamplesFromInlet(self):
         while self.programPaused:
             self.streamInlet.pull_sample()
 
 
     def startLiveSystem(self):
-        self.setTestSystemOn(True)
+        self.setInLiveSystem(True)
         self.modsTimestamp  = []
         self.modOnTimestamp = -1
 
@@ -159,8 +159,8 @@ class ProgramMaster:
         self.liveSystemThread.start()
 
 
-    def stopSystem(self, livesysturn):
-        self.setTestSystemOn(False)
+    def stopLiveSystem(self, livesysturn):
+        self.setInLiveSystem(False)
         self.liveSystemManager.stopSystem(livesysturn)
         self.liveSystemThread.join()
         self.programPaused = True

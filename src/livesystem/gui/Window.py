@@ -14,7 +14,7 @@ class App:
         self.container.grid(row=0, column=0, sticky="nsew")
         #frames
         self.frames= {}
-        for page in (StartPage, CaliPage, LSLPage, SysPage, NowSysPage):
+        for page in (StartPage, CalibrationPage, LSLPage, InLiveSystemPage, StartLiveSystemPage):
             frame = page(self.container, self.controller, self.width, self.height)
             self.frames[page] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -59,7 +59,7 @@ class StartPage(Frame):
 
 
 
-class CaliPage(Frame):
+class CalibrationPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
         self.controller = controller
@@ -75,17 +75,9 @@ class CaliPage(Frame):
         else:
             self.controller.endCali()
 
-    def handleModulation(self):
-        if self.modBut.cget('text') == "Start Modulation":
-            self.modBut.configure(text="Stop Modulation")
-            self.controller.startMod()
-        else:
-            self.modBut.configure(text="Start Modulation")
-            self.controller.endMod()
 
 
-
-class NowSysPage(Frame):
+class StartLiveSystemPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
 
@@ -99,13 +91,13 @@ class NowSysPage(Frame):
 
 
 
-class SysPage(Frame):
+class InLiveSystemPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
 
         self.controller = controller
         self.text   = Label(self, text="LIVE_SYSTEM, START NEW ROUND!",)
-        self.button = Button(self, text="Stop", command=self.controller.stopSystem)
+        self.button = Button(self, text="Stop", command=self.controller.stopLiveSystem)
 
         self.text.grid(row=1, column=1)
         self.button.grid(row=2, column=1)

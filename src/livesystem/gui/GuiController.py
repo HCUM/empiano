@@ -4,16 +4,8 @@ class guiController:
 
     def __init__(self, programMaster):
         self.programMaster = programMaster
-        self.calibrationDone = False
-        self.lslConnected = False
         self.app = window.App(self)
         self.liveSystemRound = 0
-
-    def getCalibration(self):
-        return self.calibrationDone
-
-    def getLslConnection(self):
-        return self.lslConnected
 
     def launchWindow(self):
         self.app.showWindow()
@@ -24,39 +16,31 @@ class guiController:
 
 
     def showCalibrationWindow(self):
-        self.app.showFrame(window.CaliPage)
+        self.app.showFrame(window.CalibrationPage)
 
     def showTestSysWindow(self):
-        self.app.showFrame(window.SysPage)
+        self.app.showFrame(window.InLiveSystemPage)
         self.programMaster.startTestSystem()
 
     def showNowSysWindow(self):
-        self.app.showFrame(window.NowSysPage)
+        self.app.showFrame(window.StartLiveSystemPage)
 
 
     # methods triggered by buttons etc
 
     def connectToLSLStream(self, connectionType, connectionVal):
-        self.app.showFrame(window.CaliPage)
+        self.app.showFrame(window.CalibrationPage)
         self.programMaster.connectToLSLStream(connectionType, connectionVal)
-
-    def startLiveSystem(self):
-        self.liveSystemRound += 1
-        self.app.showFrame(window.SysPage)
-        self.programMaster.startLiveSystem()
 
     def showSettingsWindow(self):
         self.app.showFrame(window.SettingPage)
-
-    def startFakeCali(self):
-        self.programMaster.startFakeCali()
 
     def startCali(self):
         self.programMaster.startCalibration()
 
     def endCali(self):
         self.programMaster.endCalibration()
-        self.app.showFrame(window.NowSysPage)
+        self.app.showFrame(window.StartLiveSystemPage)
 
     def startMod(self):
         self.programMaster.startMod()
@@ -64,9 +48,14 @@ class guiController:
     def endMod(self):
         self.programMaster.endMod()
 
-    def stopSystem(self):
-        self.programMaster.stopSystem(self.liveSystemRound)
-        self.app.showFrame(window.NowSysPage)
+    def startLiveSystem(self):
+        self.liveSystemRound += 1
+        self.app.showFrame(window.InLiveSystemPage)
+        self.programMaster.startLiveSystem()
+
+    def stopLiveSystem(self):
+        self.programMaster.stopLiveSystem(self.liveSystemRound)
+        self.app.showFrame(window.StartLiveSystemPage)
 
     def quit(self):
         self.app.window.destroy()
