@@ -28,13 +28,10 @@ class calibrationManager:
 
     def saveSample(self, sample):
         (data, timestamp) = sample
-        #TODO had to adjust the following line
         self.streamData.append((np.asarray(data) * 0.000001, timestamp+self.eegStreamTimeOffset))
 
 
     def prepareData(self):
-        #dataPlotter.plotDataWithTimestamps(self.streamData, self.liveSysManager.modsTimestamp)
-
         for (modon, modoff) in self.programMaster.modsTimestamp:
             matchesOn = [tmstmp for (smp, tmstmp) in self.streamData if tmstmp >= modon]
 
@@ -57,12 +54,6 @@ class calibrationManager:
         CSVWriter.timestampMarkerToCsv(self.programMaster.modsTimestamp, "calibration")
 
         self.prepareData()
-        #print("MODS NEW: ", self.mods)
-        #TODO commented for study
-        #csvWriter.wholeDataToCsv(self.resavedStreamData)
-        #csvWriter.markerToCsv(self.mods)
-
-        #dataPlotter.plotCaliData(self.resavedStreamData, self.mods)
 
         preprocessedStreamData = Preprocessor.performPreprocessing(self.resavedStreamData)
 
@@ -79,6 +70,6 @@ class calibrationManager:
         scores = cross_val_score(self.svm, X_train, y_train, cv=cv)
 
         self.svm.fit(X_train, y_train)
-        #TODO adjusted for study
+
         now = datetime.datetime.now()
         dump(self.svm, constants.savePath + now.strftime("%Y-%m-%d_%H.%M.%S_")+ 'svm.joblib')

@@ -74,10 +74,8 @@ def createMLData(augData, nonAugData):
             j+= constants.windowShift
 
         index += 2
-        #csvWriter.featuresToCsv(augNames[i], augFeaturesCsv)
 
     amtAugTrainSamples = len(X_train)
-    amtAugTestSamples = len(X_test)
 
     #create feature vectors for not augmented data
     index = 1

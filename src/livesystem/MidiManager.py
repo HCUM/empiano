@@ -1,6 +1,5 @@
 import mido
 import time
-import logging
 
 class MidiManager:
 

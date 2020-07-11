@@ -1,5 +1,4 @@
 from tkinter import *
-from storage import Constants
 
 class App:
     def __init__(self, controller):
@@ -54,13 +53,9 @@ class StartPage(Frame):
         Frame.__init__(self, parent)
         self.empianoText = Label(self, text="EMPiano", fg='#009440', font="Helvetica 70 bold")
         self.startButton = Button(self, text="Start", command=controller.showConnectFrame)
-        #self.offlineCaliBut = Button(self, text="Offline Calibration", command=controller.showOfflineCaliWindow)
-        #self.fakeLiveCaliBut = Button(self, text="fake live calibration", command=controller.startFakeCali)
 
-        self.empianoText.grid(row = 0, padx=10, pady=50)#, column= 0, columnspan=3)
-        self.startButton.grid(row=1)#, column=0)
-        #self.fakeLiveCaliBut.grid(row=1, column=1)
-        #self.offlineCaliBut.grid(row=1, column=2)
+        self.empianoText.grid(row = 0, padx=10, pady=50)
+        self.startButton.grid(row=1)
 
 
 
@@ -141,5 +136,6 @@ class LSLPage(Frame):
         entry = Entry(self, textvariable=entryVar)
         entry.grid(row=1, column=1, pady=pady, padx=padx)
 
-        connectButton = Button(self, text="Connect", command=lambda: controller.connectToLSLStream(tkvar.get(), entry.get()))
+        connectButton = Button(self, text="Connect",
+                               command=lambda: controller.connectToLSLStream(tkvar.get(), entry.get()))
         connectButton.grid(row=2, columnspan=2, pady=pady)

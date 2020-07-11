@@ -90,4 +90,3 @@ class LiveSystemManager:
     def stopSystem(self, livesysturn):
         CSVWriter.dataPlusTimestampsToCsv(self.streamData, "livesystemRound" + str(livesysturn))
         CSVWriter.timestampMarkerToCsv(self.programMaster.modsTimestamp, "livesystemRound" + str(livesysturn))
-        #self.plotter.finishPlot()

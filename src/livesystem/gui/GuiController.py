@@ -59,11 +59,9 @@ class guiController:
         self.app.showFrame(window.NowSysPage)
 
     def startMod(self):
-        #self.liveSysManager.modulation(on=True)
         self.programMaster.startMod()
 
     def endMod(self):
-        #self.liveSysManager.modulation(on=False)
         self.programMaster.endMod()
 
     def stopSystem(self):

@@ -5,8 +5,6 @@ from storage import Constants
 from helpers import Preprocessor
 
 def plotDataWithTimestamps(data, mods):
-    #print("in the plot timestamps method")
-    colors = ["black", "purple", "blue", "green", "yellow", "orange", "red", "grey"]
     timestamps = [tmstmp for (smp, tmstmp) in data]
 
     for i in range(Constants.numberOfChannels):
@@ -49,7 +47,6 @@ def plotCaliData(data, mods):
 
 class LivePlotter:
     def __init__(self):
-        #self.fig, self.axs = plt.subplots(constants.numberOfChannels, sharex=True)
         self.data = [[] for i in range(Constants.numberOfChannels)]
 
     def addSample(self, sample):
