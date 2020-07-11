@@ -1,5 +1,4 @@
 import copy
-import logging
 import threading
 import numpy as np
 from collections import deque
@@ -21,7 +20,6 @@ class LiveSystemManager:
         self.eegStreamTimeOffset = -1
         self.lastFeature = []
         self.secondToLastFeature = []
-
 
 
     def startSystem(self, inlet):
@@ -49,6 +47,7 @@ class LiveSystemManager:
         self.ringBuffer.append(usefulSample)
         self.plotter.addSample(usefulSample)
 
+
     def makeSampleUseful(self, sample):
         try:
             (data, _) = sample
@@ -57,6 +56,7 @@ class LiveSystemManager:
         data = np.asarray(data)
         data = data*0.000001
         return data[:constants.numberOfChannels]
+
 
     def performPrediction(self, ringBuffer):
         eegDf = [[] for i in range(constants.numberOfChannels)]
@@ -85,6 +85,7 @@ class LiveSystemManager:
 
         self.secondToLastFeature = copy.deepcopy(self.lastFeature)
         self.lastFeature         = copy.deepcopy(feature)
+
 
     def stopSystem(self, livesysturn):
         CSVWriter.dataPlusTimestampsToCsv(self.streamData, "livesystemRound" + str(livesysturn))

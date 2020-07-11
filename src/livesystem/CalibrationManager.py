@@ -1,14 +1,10 @@
-import mne
-import logging
 import datetime
 import numpy as np
 from joblib import dump
 from sklearn import svm
-from plotter import dataPlotter
 import storage.Constants as constants
 from helpers import Preprocessor, CSVWriter
 import helpers.MLDataManager as mlDataManager
-import helpers.RecordingsManager as recordmanager
 from sklearn.model_selection import cross_val_score, ShuffleSplit
 
 
@@ -21,12 +17,14 @@ class calibrationManager:
         self.eegStreamTimeOffset = -1
         self.svm: svm.SVC
 
+
     def startCalibration(self, inlet):
         self.eegStreamTimeOffset = inlet.time_correction()
         CSVWriter.timestampToCsv(self.eegStreamTimeOffset)
 
         while self.programMaster.getCalibrationOn():
             self.saveSample(inlet.pull_sample())
+
 
     def saveSample(self, sample):
         (data, timestamp) = sample
@@ -91,25 +89,3 @@ class calibrationManager:
         #TODO adjusted for study
         now = datetime.datetime.now()
         dump(self.svm, constants.savePath + now.strftime("%Y-%m-%d_%H.%M.%S_")+ 'svm.joblib')
-
-    def offlineCali(self):
-
-        path = "./recordings/testCalibration"
-        start, end, mods, startNormal, endNormal, modsNormal = recordmanager.getAllMarkers(path)
-        rawData = mne.io.read_raw_brainvision(path + ".vhdr", montage=None, misc='auto', scale=1.0,
-                                              preload=True, verbose=True)
-        rawRealData = rawData._data[constants.lowestValidChannel:constants.highestValidChannel + 1,
-                      start:end]  # trim data to the start and end markers and to only the 8 channels that have been used
-        preprocessedData = Preprocessor.performPreprocessing(rawRealData)
-        dataPlotter.plotCaliData(preprocessedData, mods)
-
-        self.programMaster.offlineSystemData = \
-            rawData._data[constants.lowestValidChannel:constants.highestValidChannel + 1, startNormal:endNormal]
-
-        #import plotter.fftPlotter
-        #plotter.fftPlotter.plotFFT(preprocessedData)
-        #need to cut data because I had 10 seconds break between every part
-        augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedData, mods, fromCali=True)
-        x_train, _, y_train, _, _ = mlDataManager.createMLData(augData, nonAugData, wholeSplit=False)
-        self.trainSVM(x_train, y_train)
-

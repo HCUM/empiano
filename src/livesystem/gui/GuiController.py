@@ -22,9 +22,6 @@ class guiController:
     def showConnectFrame(self):
         self.app.showFrame(window.LSLPage)
 
-    def showOfflineCaliWindow(self):
-        self.app.showFrame(window.OfflineCaliPage)
-        self.programMaster.startOfflineCalibration()
 
     def showCalibrationWindow(self):
         self.app.showFrame(window.CaliPage)

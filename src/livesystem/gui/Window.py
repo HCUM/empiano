@@ -15,7 +15,7 @@ class App:
         self.container.grid(row=0, column=0, sticky="nsew")
         #frames
         self.frames= {}
-        for page in (StartPage, CaliPage, LSLPage, SysPage, OfflineCaliPage, NowSysPage, CaliAnimationPage):
+        for page in (StartPage, CaliPage, LSLPage, SysPage, NowSysPage, CaliAnimationPage):
             frame = page(self.container, self.controller, self.width, self.height)
             self.frames[page] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -201,9 +201,3 @@ class LSLPage(Frame):
 
         connectButton = Button(self, text="Connect", command=lambda: controller.connectToLSLStream(tkvar.get(), entry.get()))
         connectButton.grid(row=2, columnspan=2, pady=pady)
-
-class OfflineCaliPage(Frame):
-    def __init__(self, parent, controller, width, height):
-        Frame.__init__(self, parent)
-        button = Button(self, text="Go to Live System", command=controller.showTestSysWindow)
-        button.grid(row=1, column=1)

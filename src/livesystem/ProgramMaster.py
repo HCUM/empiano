@@ -1,11 +1,8 @@
-import csv
 import sys
 import copy
 import pylsl
-import logging
 import threading
 from collections import deque
-from helpers import RecordingsManager
 import livesystem.MidiManager as midimanager
 import livesystem.LiveSystemManager as live
 import livesystem.CalibrationManager as calibration
@@ -113,10 +110,6 @@ class ProgramMaster:
         streams = pylsl.resolve_stream(connectionType, connectionVal)
         # create a new inlet to read from the stream
         self.streamInlet = pylsl.StreamInlet(streams[0])
-
-
-    def startOfflineCalibration(self):
-        self.calibrationManager.offlineCali()
 
 
     def startCalibration(self):
