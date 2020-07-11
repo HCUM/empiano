@@ -4,6 +4,7 @@ import logging
 import datetime
 import sys
 
+
 def initLogger():
     formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s',
                                   datefmt='%Y-%m-%d %H:%M:%S')
@@ -12,16 +13,15 @@ def initLogger():
     sh = logging.StreamHandler(sys.stdout)
     sh.setFormatter(formatter)
     now = datetime.datetime.now()
-    #TODO ADJUSTED for study!!
+    # TODO ADJUSTED for study!!
     pathFile = Constants.savePath + now.strftime("%Y-%m-%d_%H.%M.%S") + '.log'
     fh = logging.FileHandler(pathFile)
     fh.setLevel(logging.DEBUG)
     fh.setFormatter(formatter)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.ERROR)
     logging.getLogger().addHandler(sh)
     logging.getLogger().addHandler(fh)
     logAllConstants(logger)
+
 
 def logAllConstants(logger):
     logger.info("MAIN: Current Constants:")
