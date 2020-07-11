@@ -42,7 +42,7 @@ method is used to create the data which should be used to train the SVM
 param: augData    = storing the augmented data [[channels, data]]
         nonAugData = storing the dat representing no augmentation [channels, data]
 '''
-def createMLData(augData, nonAugData,  wholeSplit=False,noSplit=False):
+def createMLData(augData, nonAugData):
     X_train = []  #(n_samples, n_features)
     y_train = []  #(n_samples)->holding the lables/targets/classes
     X_test  = []
@@ -51,8 +51,7 @@ def createMLData(augData, nonAugData,  wholeSplit=False,noSplit=False):
 
     #create feature vectors for augmented data
     index = 2
-    for i in range(len(augData)):
-        singleAugData = np.asarray(augData[i])
+    for singleAugData in augData:
         lastFeature = calculateFeatureForWindow(singleAugData[:, 0:constants.samplesPerWindow])
         secondToLastFeature = calculateFeatureForWindow(
             singleAugData[:, constants.windowShift:constants.windowShift+constants.samplesPerWindow])
@@ -85,13 +84,15 @@ def createMLData(augData, nonAugData,  wholeSplit=False,noSplit=False):
     for k in range(len(nonAugData)):
         array = nonAugData[k]
         lastNonAugFeature = calculateFeatureForWindow(array[:, 0:constants.samplesPerWindow])
-        secondToLastNonAugFeature = calculateFeatureForWindow(array[:, constants.windowShift:constants.windowShift+constants.samplesPerWindow])
+        secondToLastNonAugFeature = calculateFeatureForWindow(
+            array[:, constants.windowShift:constants.windowShift+constants.samplesPerWindow])
         currentIndex = constants.windowShift*2
 
 
         featuresCsv = []
 
-        while (currentIndex + constants.samplesPerWindow <= len(array[0]) & len(array[0]) >= constants.samplesPerWindow):
+        while (currentIndex + constants.samplesPerWindow <= len(array[0])
+               & len(array[0]) >= constants.samplesPerWindow):
 
             currentNonAugFeature = calculateFeatureForWindow(
                 array[:, currentIndex:currentIndex + constants.samplesPerWindow])

@@ -39,17 +39,15 @@ class calibrationManager:
             matchesOn = [tmstmp for (smp, tmstmp) in self.streamData if tmstmp >= modon]
 
             matchesOff = [tmstmp for (smp, tmstmp) in self.streamData if tmstmp <= modoff]
-            #this is needed because the calibration end with a mod-phase.
-            #so in case,
+
             if not matchesOff:
                 (sam, time) = self.streamData[-1]
                 matchesOff.append(time)
 
             self.mods.append((len(self.streamData)-len(matchesOn), len(matchesOff)-1))
 
-
         for (sample, timestamp) in self.streamData:
-            for i in range(len(self.resavedStreamData)):
+            for i in range(constants.numberOfChannels):
                 self.resavedStreamData[i].append(sample[i])
 
 
@@ -66,13 +64,10 @@ class calibrationManager:
 
         #dataPlotter.plotCaliData(self.resavedStreamData, self.mods)
 
-        #augData, nonAugData = mlDataManager.splitRecordedSample(self.resavedStreamData, self.mods, fromCali=True)
-        #csvWriter.dataToCsv(augData, nonAugData)
         preprocessedStreamData = Preprocessor.performPreprocessing(self.resavedStreamData)
 
         augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedStreamData, self.mods)
-        X_train, _, y_train, _, ratioAugSamples, _ = mlDataManager.createMLData(augData, nonAugData,
-                                                                             wholeSplit=False, noSplit=True)
+        X_train, _, y_train, _, ratioAugSamples, _ = mlDataManager.createMLData(augData, nonAugData)
         self.trainSVM(X_train, y_train)
 
         return augData, nonAugData, X_train, y_train
