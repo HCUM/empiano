@@ -64,8 +64,4 @@ class calibrationManager:
         self.svm = svm.SVC()
         cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=0)
         scores = cross_val_score(self.svm, X_train, y_train, cv=cv)
-
         self.svm.fit(X_train, y_train)
-
-        now = datetime.datetime.now()
-        dump(self.svm, constants.savePath + now.strftime("%Y-%m-%d_%H.%M.%S_")+ 'svm.joblib')
