@@ -36,7 +36,6 @@ class ProgramMaster:
         self.midiEffectThread    = threading.Thread(target=self.midiManager.sendEffect)
         self.midiThread: threading.Thread
 
-        self.offlineSystemData = []
         self.modOnTimestamp    = -1
         self.modsTimestamp     = []     #saves all the timestamp pairs of the modulations: [(begin, end), ...]
         self.programPaused     = False
