@@ -36,7 +36,7 @@ class LiveSystemManager:
     def saveSampleToRingbuffer(self, sample):
         (data, timestamp) = sample
 
-        self.streamData.append((np.asarray(data) * 0.000001, timestamp + self.eegStreamTimeOffset))
+        self.streamData.append((np.asarray(data) * constants.dataSampleCorrection, timestamp + self.eegStreamTimeOffset))
 
         #remove the last element
         self.ringBuffer.popleft()
@@ -51,7 +51,7 @@ class LiveSystemManager:
         except:
             data = sample
         data = np.asarray(data)
-        data = data*0.000001
+        data = data * constants.dataSampleCorrection
         return data[:constants.numberOfChannels]
 
 

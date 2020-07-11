@@ -28,7 +28,7 @@ class calibrationManager:
 
     def saveSample(self, sample):
         (data, timestamp) = sample
-        self.streamData.append((np.asarray(data) * 0.000001, timestamp+self.eegStreamTimeOffset))
+        self.streamData.append((np.asarray(data) * constants.dataSampleCorrection, timestamp+self.eegStreamTimeOffset))
 
 
     def prepareData(self):

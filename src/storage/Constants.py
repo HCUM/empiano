@@ -11,6 +11,7 @@ samplesPerWindow     = int(windowSize / (1. / samplingRate))
 windowShift          = int(samplesPerWindow / 2)
 lowestValidChannel   = 0
 highestValidChannel  = 7
+dataSampleCorrection = 0.000001
 #for study
 savePath             = "./log/"
 
