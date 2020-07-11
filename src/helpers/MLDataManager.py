@@ -15,7 +15,6 @@ the splitted and returned data will have the following type:
    ]
 '''
 def splitRecordedSample(eegData, mods, fromCali=False):
-    logger = logging.getLogger()
     splittedAugData     = []
     splittedNonAugData  = []
 
@@ -58,14 +57,12 @@ param: augData    = storing the augmented data [[channels, data]]
         nonAugData = storing the dat representing no augmentation [channels, data]
 '''
 def createMLData(augData, nonAugData,  wholeSplit=False,noSplit=False):
-    logger = logging.getLogger()
     X_train = []  #(n_samples, n_features)
     y_train = []  #(n_samples)->holding the lables/targets/classes
     X_test  = []
     y_test  = []
     X_trainIndices = []
 
-    logger.info("------------ Starting with augmented data -------------")
     #create feature vectors for augmented data
     index = 2
     for i in range(len(augData)):
@@ -96,7 +93,6 @@ def createMLData(augData, nonAugData,  wholeSplit=False,noSplit=False):
     amtAugTrainSamples = len(X_train)
     amtAugTestSamples = len(X_test)
 
-    logger.info("------------ Starting with non-augmented data -------------")
     #create feature vectors for not augmented data
     index = 1
     for k in range(len(nonAugData)):
@@ -127,10 +123,5 @@ def createMLData(augData, nonAugData,  wholeSplit=False,noSplit=False):
 
 
     ratioAugSamples = amtAugTrainSamples / len(X_train)
-
-
-    #logger.info("WORKER ML-data-Manager: X_train: %s", X_train)
-    #logger.info("WORKER ML-data-Manager: y_train: %s", y_train)
-    logger.info("WORKER ML-data-Manager: ratio of augmented samples: %f", ratioAugSamples)
 
     return X_train, X_test, y_train, y_test, ratioAugSamples, X_trainIndices

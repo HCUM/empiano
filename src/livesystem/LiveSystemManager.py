@@ -10,14 +10,12 @@ from helpers import Preprocessor, FeatureCalculator, CSVWriter
 class LiveSystemManager:
 
     def __init__(self, programMaster, svm):
-        self.logger = logging.getLogger()
         self.svm = svm
         self.samplesToNextPrediction = constants.samplesPerWindow
         self.bufferSize = constants.samplesPerWindow * 10
         self.programMaster = programMaster
         self.predictionThread: threading.Thread
         self.ringBuffer = deque([[0.0 for j in range(constants.numberOfChannels)] for i in range(self.bufferSize)])
-        #self.logger.info("Test-Sys-Manager: Initialized")
         self.plotter = dataPlotter.LivePlotter()
         self.streamData = []
         self.eegStreamTimeOffset = -1
@@ -28,10 +26,9 @@ class LiveSystemManager:
 
     def startSystem(self, inlet):
         self.eegStreamTimeOffset = inlet.time_correction()
-        #self.logger.info("Test-Sys-Manager: Started")
+
         while(self.programMaster.getTestSystemOn()):
             self.saveSampleToRingbuffer(inlet.pull_sample())
-            #self.logger.info("Test-Sys-Manager: current last element Ringbuffer: %s", self.ringBuffer[-1])
 
             if self.samplesToNextPrediction == 0:
                 deepCopyRingBuffer = copy.deepcopy(self.ringBuffer)
@@ -45,7 +42,6 @@ class LiveSystemManager:
 
         self.streamData.append((np.asarray(data) * 0.000001, timestamp + self.eegStreamTimeOffset))
 
-        #self.logger.info("Test-Sys-Manager: sample received: %s", sample)
         #remove the last element
         self.ringBuffer.popleft()
         #add the latest
@@ -68,20 +64,14 @@ class LiveSystemManager:
         for sample in list(ringBuffer):
             for j in range(len(sample)):
                 eegDf[j].append(sample[j])
-        #self.logger.info("Test-Sys-Manager: Ring buffer: %s", ringBuffer)
-        #self.logger.info("Test-Sys-Manager: Resaved data: %s", eegDf)
 
         #preprocess data
         eegDf = Preprocessor.performPreprocessing(eegDf)
-        #self.logger.info("Test-Sys-Manager: Data after preprocessing: %s", eegDf)
 
         eegDf     = np.asarray(eegDf)
         lastIndex = len(eegDf[0])
-        #self.logger.info("Test-Sys-Manager: "
-        #                 "Data performing the feature calculation on: %s",
-        #                 eegDf[:, (lastIndex-constants.samplesPerWindow):lastIndex])
-        feature = FeatureCalculator.calculateFeatureForWindow(eegDf[:, (lastIndex - constants.samplesPerWindow):lastIndex])
-        #self.logger.info("Test-Sys-Manager: calculated feature: %s", feature)
+        feature = FeatureCalculator.calculateFeatureForWindow(
+            eegDf[:, (lastIndex - constants.samplesPerWindow):lastIndex])
 
         if len(self.lastFeature) != 0 and len(self.secondToLastFeature) != 0:
             featureVec = feature.tolist()

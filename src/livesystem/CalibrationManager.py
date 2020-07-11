@@ -14,7 +14,6 @@ from sklearn.model_selection import cross_val_score, ShuffleSplit
 
 class calibrationManager:
     def __init__(self, programMaster):
-        self.logger = logging.getLogger()
         self.programMaster = programMaster
         self.resavedStreamData = [[] for _ in range(constants.numberOfChannels)]
         self.streamData = []
@@ -25,7 +24,6 @@ class calibrationManager:
     def startCalibration(self, inlet):
         self.eegStreamTimeOffset = inlet.time_correction()
         CSVWriter.timestampToCsv(self.eegStreamTimeOffset)
-        self.logger.info("Calibration-Manager: eeg time correction: %s", self.eegStreamTimeOffset)
 
         while self.programMaster.getCalibrationOn():
             self.saveSample(inlet.pull_sample())
@@ -67,9 +65,9 @@ class calibrationManager:
         #TODO commented for study
         #csvWriter.wholeDataToCsv(self.resavedStreamData)
         #csvWriter.markerToCsv(self.mods)
-        #self.logger.info("Calibration-Manager: Plotting the CaliData")
+
         #dataPlotter.plotCaliData(self.resavedStreamData, self.mods)
-        #self.logger.info("Calibration-Manager: Starting the Training")
+
         #augData, nonAugData = mlDataManager.splitRecordedSample(self.resavedStreamData, self.mods, fromCali=True)
         #csvWriter.dataToCsv(augData, nonAugData)
         preprocessedStreamData = Preprocessor.performPreprocessing(self.resavedStreamData)
@@ -88,14 +86,14 @@ class calibrationManager:
         self.svm = svm.SVC()
         cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=0)
         scores = cross_val_score(self.svm, X_train, y_train, cv=cv)
-        self.logger.info("Calibration-Manager: cross-validation scores: %s", scores)
+
         self.svm.fit(X_train, y_train)
         #TODO adjusted for study
         now = datetime.datetime.now()
         dump(self.svm, constants.savePath + now.strftime("%Y-%m-%d_%H.%M.%S_")+ 'svm.joblib')
 
     def offlineCali(self):
-        self.logger.info("Calibration-Manager: starting the offline calibration")
+
         path = "./recordings/testCalibration"
         start, end, mods, startNormal, endNormal, modsNormal = recordmanager.getAllMarkers(path)
         rawData = mne.io.read_raw_brainvision(path + ".vhdr", montage=None, misc='auto', scale=1.0,
@@ -114,4 +112,4 @@ class calibrationManager:
         augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedData, mods, fromCali=True)
         x_train, _, y_train, _, _ = mlDataManager.createMLData(augData, nonAugData, wholeSplit=False)
         self.trainSVM(x_train, y_train)
-        self.logger.info("Calibration-Manager: Ended the offline calibration and successfully trained the SVM")
+

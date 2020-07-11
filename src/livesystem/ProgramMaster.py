@@ -15,7 +15,6 @@ import livesystem.gui.GuiController as guiController
 class ProgramMaster:
 
     def __init__(self):
-        self.logger = logging.getLogger()
         self.streamInlet: pylsl.StreamInlet
 
         self.calibrationSem = threading.Semaphore()
@@ -194,7 +193,7 @@ class ProgramMaster:
         self.modOnTimestamp = -1
 
         if not self.calibrationManager.svm:
-            self.logger.error("Live-Sys-Manager: YOU CANNOT START the system WITHOUT calibration!")
+            print("ERROR: Program-Manager: YOU CANNOT START the system WITHOUT calibration!")
             return
 
         self.liveSystemManager = live.LiveSystemManager(self, self.calibrationManager.svm)
@@ -205,13 +204,12 @@ class ProgramMaster:
 
 
     def startTestSystem(self):
-        self.logger.info("Live-Sys-Manager: test-system for the TEST ROUND started")
         self.setTestSystemOn(True)
         senderThread = threading.Thread(target=sender.main)
         senderThread.start()
 
         if not self.calibrationManager.svm:
-            self.logger.error("Live-Sys-Manager: YOU CANNOT START the system WITHOUT calibration!")
+            print("ERROR: Program-Manager: YOU CANNOT START the system WITHOUT calibration!")
             return
 
         self.connectToLSLStream()
