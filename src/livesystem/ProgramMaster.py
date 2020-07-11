@@ -83,11 +83,9 @@ class ProgramMaster:
 
     def setCurrentPrediction(self, augmentationOn):
         if augmentationOn and not self.midiEffectThread.isAlive():
-            print("augmentation started")
             self.startMidiEffect()
 
         elif not augmentationOn and self.midiEffectThread.isAlive():
-            print("augmentation ended")
             self.endMidiEffect()
 
         self.predictionSem.acquire()
@@ -121,15 +119,11 @@ class ProgramMaster:
 
     def startMod(self):
         self.modOnTimestamp = pylsl.local_clock()
-        print("modon: ", self.modOnTimestamp)
-
         if self.inLiveSystem:
             self.startMidiEffect()
 
     def endMod(self):
         self.modsTimestamp.append((self.modOnTimestamp, pylsl.local_clock()))
-        print("mods: ", self.modsTimestamp)
-
         if self.inLiveSystem:
             self.endMidiEffect()
 
@@ -150,7 +144,6 @@ class ProgramMaster:
 
 
     def startLiveSystem(self):
-        print("starting the system; this is the timestamp: ", pylsl.local_clock())
         self.setTestSystemOn(True)
         self.modsTimestamp  = []
         self.modOnTimestamp = -1
@@ -167,7 +160,6 @@ class ProgramMaster:
 
 
     def stopSystem(self, livesysturn):
-        print("stopping the system: timestamp: ", pylsl.local_clock())
         self.setTestSystemOn(False)
         self.liveSystemManager.stopSystem(livesysturn)
         self.liveSystemThread.join()
