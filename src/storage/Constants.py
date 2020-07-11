@@ -16,10 +16,6 @@ fileNameOfRecording  = "test_rda_full"
 recordingsPath       = "./recording_thursday/brainvision_recorder/" + fileNameOfRecording
 lowestValidChannel   = 0
 highestValidChannel  = 7
-calibrationOrder     = ['light play', 'normal mod']#, 'no play', 'slow mod', 'fast play', 'fast mod', 'normal play', 'mixed mod']
-secondsOfCaliTasks   = 20
-secondsOfCaliPause   = 10
-amtSamplesToCutOff   = 1000
 #for study
 savePath             = "./log/"
 

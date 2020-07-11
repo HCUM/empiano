@@ -70,9 +70,7 @@ class calibrationManager:
         #csvWriter.dataToCsv(augData, nonAugData)
         preprocessedStreamData = Preprocessor.performPreprocessing(self.resavedStreamData)
 
-        #TODO changed the line below to the line below that line -> fromCali = False, so nothing is being cutted off
-        #augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedStreamData, self.mods, fromCali=True)
-        augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedStreamData, self.mods, fromCali=False)
+        augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedStreamData, self.mods)
         X_train, _, y_train, _, ratioAugSamples, _ = mlDataManager.createMLData(augData, nonAugData,
                                                                              wholeSplit=False, noSplit=True)
         self.trainSVM(X_train, y_train)

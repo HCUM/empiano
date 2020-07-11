@@ -53,7 +53,6 @@ class guiController:
 
     def startCali(self):
         self.programMaster.startCalibration()
-        #self.app.showFrame(window.CaliAnimationPage)
 
     def endCali(self):
         self.programMaster.endCalibration()

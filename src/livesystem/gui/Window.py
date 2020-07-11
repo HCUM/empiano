@@ -15,7 +15,7 @@ class App:
         self.container.grid(row=0, column=0, sticky="nsew")
         #frames
         self.frames= {}
-        for page in (StartPage, CaliPage, LSLPage, SysPage, NowSysPage, CaliAnimationPage):
+        for page in (StartPage, CaliPage, LSLPage, SysPage, NowSysPage):
             frame = page(self.container, self.controller, self.width, self.height)
             self.frames[page] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -47,8 +47,6 @@ class App:
     def showFrame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
-        if cont is CaliAnimationPage:
-            frame.pause()
 
 
 class StartPage(Frame):
@@ -89,62 +87,6 @@ class CaliPage(Frame):
         else:
             self.modBut.configure(text="Start Modulation")
             self.controller.endMod()
-
-
-class CaliAnimationPage(Frame):
-    def __init__(self, parent, controller, width, height):
-        Frame.__init__(self, parent)
-        self.controller = controller
-
-        self.currentTaskLabel = Label(self, text="")
-        self.timerLabel = Label(self, text="")
-        self.nextTaskLabel = Label(self, text="next: ")
-
-        self.currentTaskLabel.grid(row=1, column=1)
-        self.timerLabel.grid(row=2, column=1)
-        self.nextTaskLabel.grid(row=3, column=1)
-
-        self.currentCalibrationTaskIndex = 0
-
-        self.pauseTime = Constants.secondsOfCaliPause
-        self.taskTime  = Constants.secondsOfCaliTasks
-
-
-    def handleCalibration(self):
-        currentTask = Constants.calibrationOrder[self.currentCalibrationTaskIndex]
-
-        self.currentTaskLabel.configure(text=currentTask)
-        self.timerLabel.configure(text=str(self.taskTime))
-
-        if self.taskTime == Constants.secondsOfCaliTasks:
-            if 'mod' in currentTask:
-                self.controller.startMod()
-
-        elif self.taskTime == 0:
-            if 'mod' in currentTask:
-                self.controller.endMod()
-            if self.currentCalibrationTaskIndex +1 == len(Constants.calibrationOrder):
-                self.controller.endCali()
-                return
-            self.currentCalibrationTaskIndex += 1
-            self.taskTime = Constants.secondsOfCaliTasks
-            self.currentTaskLabel.configure(text="")
-            self.pause()
-            return
-
-        self.taskTime -= 1
-        self.after(1000, self.handleCalibration)
-
-    def pause(self):
-        self.timerLabel.configure(text=str(self.pauseTime))
-        self.nextTaskLabel.configure(text="next: "+Constants.calibrationOrder[self.currentCalibrationTaskIndex])
-        if self.pauseTime == 0:
-            self.pauseTime = Constants.secondsOfCaliPause
-            self.nextTaskLabel.configure(text="")
-            self.handleCalibration()
-            return
-        self.pauseTime -= 1
-        self.after(1000, self.pause)
 
 
 

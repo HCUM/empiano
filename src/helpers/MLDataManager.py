@@ -1,5 +1,4 @@
 import copy
-import logging
 import numpy as np
 from storage import Constants as constants
 from helpers.FeatureCalculator import calculateFeatureForWindow
@@ -14,39 +13,26 @@ the splitted and returned data will have the following type:
     [[data_channel_1_last_aug][data_channel_2_last_aug] ... [data_channel_8_last_aug] ]
    ]
 '''
-def splitRecordedSample(eegData, mods, fromCali=False):
+def splitRecordedSample(eegData, mods):
     splittedAugData     = []
     splittedNonAugData  = []
 
     for mod in mods:
         oneAugPart  = []
         for channel in eegData:
-            if fromCali:
-                oneAugPart.append(np.array(channel[mod[0]+constants.amtSamplesToCutOff : mod[1]-constants.amtSamplesToCutOff]))
-            else:
-                oneAugPart.append(
-                    np.array(channel[mod[0]: mod[1]]))
-
+            oneAugPart.append(np.array(channel[mod[0]: mod[1]]))
         splittedAugData.append(oneAugPart)
-    #logger.info("WORKER ML-data-Manager: Splitted Augmented Data: %s", splittedAugData)
 
     smallestNonAugIndex = 0
     eegData = np.asarray(eegData)
     for mod in mods:
         slice = eegData[:,smallestNonAugIndex:mod[0]]
-        if fromCali:
-            #subtract 5000 from both sides, because I had 10s of pause between mod and nonmod
-            #sampling rate 500 -> 5000 samples in 10 seconds
-            slice = slice[:, 5000+constants.amtSamplesToCutOff:len(slice[0])-5000-constants.amtSamplesToCutOff]
         splittedNonAugData.append(slice)
         smallestNonAugIndex = mod[1]
-    #if I currently do offline calibration don't add the last piece (ended with modulation)
-    if not fromCali:
-        if smallestNonAugIndex < len(eegData[0]):
-            slice = eegData[:,smallestNonAugIndex:]
-            splittedNonAugData.append(slice)
 
-    #logger.info("WORKER ML-data-Manager: Splitted non-augmented Data: %s", splittedNonAugData)
+    if smallestNonAugIndex < len(eegData[0]):
+        slice = eegData[:,smallestNonAugIndex:]
+        splittedNonAugData.append(slice)
 
     return splittedAugData, splittedNonAugData
 
@@ -68,12 +54,13 @@ def createMLData(augData, nonAugData,  wholeSplit=False,noSplit=False):
     for i in range(len(augData)):
         singleAugData = np.asarray(augData[i])
         lastFeature = calculateFeatureForWindow(singleAugData[:, 0:constants.samplesPerWindow])
-        secondToLastFeature = calculateFeatureForWindow(singleAugData[:, constants.windowShift:constants.windowShift+constants.samplesPerWindow])
+        secondToLastFeature = calculateFeatureForWindow(
+            singleAugData[:, constants.windowShift:constants.windowShift+constants.samplesPerWindow])
 
         j = constants.windowShift *2
-        #augNames = ["normalMod", "slowMod", "fastMod", "mixedMod"]
         augFeaturesCsv = []
-        while (j + constants.samplesPerWindow <= len(singleAugData[0]) & len(singleAugData[0]) >= constants.samplesPerWindow):
+        while (j + constants.samplesPerWindow <= len(singleAugData[0]) &
+               len(singleAugData[0]) >= constants.samplesPerWindow):
 
             currentFeature = calculateFeatureForWindow(singleAugData[:, j:j + constants.samplesPerWindow])
             augFeaturesCsv.append(currentFeature)
