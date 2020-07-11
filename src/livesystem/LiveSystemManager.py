@@ -2,7 +2,6 @@ import copy
 import threading
 import numpy as np
 from collections import deque
-from plotter import dataPlotter
 import storage.Constants as constants
 from helpers import Preprocessor, FeatureCalculator, CSVWriter
 
@@ -15,7 +14,6 @@ class LiveSystemManager:
         self.programMaster = programMaster
         self.predictionThread: threading.Thread
         self.ringBuffer = deque([[0.0 for j in range(constants.numberOfChannels)] for i in range(self.bufferSize)])
-        self.plotter = dataPlotter.LivePlotter()
         self.streamData = []
         self.eegStreamTimeOffset = -1
         self.lastFeature = []
@@ -45,7 +43,6 @@ class LiveSystemManager:
         #add the latest
         usefulSample = self.makeSampleUseful(sample)
         self.ringBuffer.append(usefulSample)
-        self.plotter.addSample(usefulSample)
 
 
     def makeSampleUseful(self, sample):
