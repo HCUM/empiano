@@ -5,7 +5,6 @@ import pylsl
 import logging
 import threading
 from collections import deque
-import livesystem.Sender as sender
 from helpers import RecordingsManager
 import livesystem.MidiManager as midimanager
 import livesystem.LiveSystemManager as live
@@ -120,35 +119,6 @@ class ProgramMaster:
         self.calibrationManager.offlineCali()
 
 
-    def startFakeCali(self):
-        senderThread = threading.Thread(target=sender.main)
-        senderThread.start()
-        self.connectToLSLStream()
-        self.startCalibration()
-        data, self.modsTimestamp = RecordingsManager.getDataAndMarkersCsv("2019-08-08_20.31.22_livesystemRound1DataTimestamps",
-                                                         "2019-08-08_20.31.25_livesystemRound1TimestampMarker")
-
-        #senderThread.join()
-        print("sender thread joined")
-        self.setCalibrationOn(False)
-        self.calibrationThread.join()
-        print("cali thread joined")
-        self.calibrationManager.startTraining()
-
-        print("calibration ended")
-        #testing
-        features = []
-        with open("./study/pilotStudy/2019-08-09_15.42.24_pilotstudyLIVEFeature.csv") as csvFile:
-            csvReader = csv.reader(csvFile, delimiter=",")
-            #next(csvReader, None)
-            for row in csvReader:
-                row = [float(value) for value in row]
-                features.append(row)
-        if self.calibrationManager.X_train == features:
-            print("everything went right!!!")
-        else:
-            print("features are not the same :( debug")
-
     def startCalibration(self):
         self.setCalibrationOn(True)
         self.calibrationThread = threading.Thread(target=self.calibrationManager.startCalibration,
@@ -200,22 +170,6 @@ class ProgramMaster:
         self.programPaused  = False
         self.liveSystemThread  = threading.Thread(target=self.liveSystemManager.startSystem,
                                                   args=(self.streamInlet,))
-        self.liveSystemThread.start()
-
-
-    def startTestSystem(self):
-        self.setTestSystemOn(True)
-        senderThread = threading.Thread(target=sender.main)
-        senderThread.start()
-
-        if not self.calibrationManager.svm:
-            print("ERROR: Program-Manager: YOU CANNOT START the system WITHOUT calibration!")
-            return
-
-        self.connectToLSLStream()
-        self.liveSystemManager = live.LiveSystemManager(self, self.calibrationManager.svm)
-        self.liveSystemThread = threading.Thread(target=self.liveSystemManager.startSystem,
-                                                 args=(self.streamInlet,))
         self.liveSystemThread.start()
 
 
