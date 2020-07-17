@@ -6,56 +6,62 @@ from workers.FeatureCalculator import calculateFeatureForWindow
 
 
 '''
-This method is used for splitting the eegData into augmented and not augmented data
-the splitted and returned data will have the following type:
+Splits the emgData into augmented and not augmented data;
+resulting data will look as followed:
    [
     [ [data_channel_1_aug_1][data_channel_2_aug_1] ... [data_channel_8_aug_1] ]
        ...
     [[data_channel_1_last_aug][data_channel_2_last_aug] ... [data_channel_8_last_aug] ]
    ]
+returns two of those fields: 1. augmented data, 2. non-augmented data
 '''
-def splitRecordedSample(eegData, mods, fromCali=False):
+def splitRecordedSample(emgData, mods, fromCali=False):
     logger = logging.getLogger()
-    splittedAugData     = []
-    splittedNonAugData  = []
+    splittedAugmentedData     = []
+    splittedNonAugmentedData  = []
 
     for mod in mods:
         oneAugPart  = []
-        for channel in eegData:
+        for channel in emgData:
             if fromCali:
                 oneAugPart.append(np.array(channel[mod[0]+constants.amtSamplesToCutOff : mod[1]-constants.amtSamplesToCutOff]))
             else:
                 oneAugPart.append(
                     np.array(channel[mod[0]: mod[1]]))
 
-        splittedAugData.append(oneAugPart)
+        splittedAugmentedData.append(oneAugPart)
     #logger.info("WORKER ML-data-Manager: Splitted Augmented Data: %s", splittedAugData)
 
     smallestNonAugIndex = 0
-    eegData = np.asarray(eegData)
+    emgData = np.asarray(emgData)
     for mod in mods:
-        slice = eegData[:,smallestNonAugIndex:mod[0]]
+        slice = emgData[:, smallestNonAugIndex:mod[0]]
         if fromCali:
             #subtract 5000 from both sides, because I had 10s of pause between mod and nonmod
             #sampling rate 500 -> 5000 samples in 10 seconds
             slice = slice[:, 5000+constants.amtSamplesToCutOff:len(slice[0])-5000-constants.amtSamplesToCutOff]
-        splittedNonAugData.append(slice)
+        splittedNonAugmentedData.append(slice)
         smallestNonAugIndex = mod[1]
     #if I currently do offline calibration don't add the last piece (ended with modulation)
     if not fromCali:
-        if smallestNonAugIndex < len(eegData[0]):
-            slice = eegData[:,smallestNonAugIndex:]
-            splittedNonAugData.append(slice)
+        if smallestNonAugIndex < len(emgData[0]):
+            slice = emgData[:, smallestNonAugIndex:]
+            splittedNonAugmentedData.append(slice)
 
     #logger.info("WORKER ML-data-Manager: Splitted non-augmented Data: %s", splittedNonAugData)
 
-    return splittedAugData, splittedNonAugData
+    return splittedAugmentedData, splittedNonAugmentedData
 
 
 '''
-method is used to create the data which should be used to train the SVM
+Creates the data for training the SVM
 param: augData    = storing the augmented data [[channels, data]]
-        nonAugData = storing the dat representing no augmentation [channels, data]
+       nonAugData = storing the data representing no augmentation [channels, data]
+Splits the data into windows, calls the feature vector calculation for that window,
+adds the last two feature vectors to the current, to add some time aspect and
+labels everything with 'augmentation' or 'no augmentation'
+returns: X_train [[feature vector current window, last feature vector, feature vector before last]...]
+         y_train ['augmentation', ...]
 '''
 def createMLData(augData, nonAugData,  wholeSplit=False,noSplit=False):
     logger = logging.getLogger()
