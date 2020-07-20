@@ -25,7 +25,8 @@ class LiveSystemManager:
         self.secondToLastFeature = []
 
 
-
+    # Pulls samples from the LSL-stream and saves it to the ringbuffer
+    # Once there are enough samples for a prediction, it calls the right method
     def startSystem(self, inlet):
         self.eegStreamTimeOffset = inlet.time_correction()
         #self.logger.info("Test-Sys-Manager: Started")
@@ -40,6 +41,8 @@ class LiveSystemManager:
             self.samplesToNextPrediction -= 1
 
 
+    # Saves the received sample to the ringbuffer,
+    # after correcting the timestamp and its format
     def saveSampleToRingbuffer(self, sample):
         (data, timestamp) = sample
 
@@ -53,6 +56,7 @@ class LiveSystemManager:
         self.ringBuffer.append(usefulSample)
         self.plotter.addSample(usefulSample)
 
+    # Returns only the necessary data portion of a sample
     def makeSampleUseful(self, sample):
         try:
             (data, _) = sample
@@ -62,6 +66,8 @@ class LiveSystemManager:
         data = data*0.000001
         return data[:constants.numberOfChannels]
 
+    # First reformats the data ([[data channel 1][data channel 2]...[data channel n]]),
+    # preprocessing, feature calculation, SVM prediction
     def performPrediction(self, ringBuffer):
         eegDf = [[] for i in range(constants.numberOfChannels)]
 
@@ -80,7 +86,8 @@ class LiveSystemManager:
         #self.logger.info("Test-Sys-Manager: "
         #                 "Data performing the feature calculation on: %s",
         #                 eegDf[:, (lastIndex-constants.samplesPerWindow):lastIndex])
-        feature = FeatureCalculator.calculateFeatureForWindow(eegDf[:, (lastIndex - constants.samplesPerWindow):lastIndex])
+        feature = FeatureCalculator.calculateFeatureForWindow(
+            eegDf[:, (lastIndex - constants.samplesPerWindow):lastIndex])
         #self.logger.info("Test-Sys-Manager: calculated feature: %s", feature)
 
         if len(self.lastFeature) != 0 and len(self.secondToLastFeature) != 0:

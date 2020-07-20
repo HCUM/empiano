@@ -1,13 +1,13 @@
 from scipy.signal import butter, lfilter
 import storage.Constants as constants
 
-
+# applies a bandpass filter to the data
 def bandpassAllChannels(eegDf, lowcutParam=constants.lowerBoundCutOutFreq,
                         highcutParam=constants.upperBoundCutOutFreq, fsParam=constants.samplingRate):
     for i in range(constants.numberOfChannels):
         eegDf[i] = butter_band_filter(eegDf[i], lowcutParam, highcutParam, fsParam, 'band')
 
-
+# applies a bandstop filter to the data
 def bandStopAllChannels(eegDf, lowParam=constants.lowBandStopFreq,
                         highParam=constants.highBandStopFreq, fsParam=constants.samplingRate):
     for i in range(constants.numberOfChannels):
@@ -27,6 +27,7 @@ def butter_band_filter(data, lowcut_param, highcut_param, fs_param, type, order=
     y    = lfilter(b, a, data)
     return y
 
+# applies a bandstop and bandpass filter to all the channels of the data
 def performPreprocessing(rawData):
     bandStopData = []
     for channel in rawData:

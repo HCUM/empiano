@@ -2,10 +2,12 @@ from math import sqrt
 import numpy as np
 import logging
 
+# Calculates the root-mean-square for the given data (data = 1-D array)
 def calculateRMS(data):
     return sqrt(sum(n*n for n in data) / len(data))
 
-
+# Calculates the pairwise ratios of the RMS values (one for each channel) for one window
+# (every channel with all the others)
 def pairwiseRatio(rmsDataOneWindow):
     ratios = []
     for i in range(len(rmsDataOneWindow)):
@@ -15,8 +17,9 @@ def pairwiseRatio(rmsDataOneWindow):
     return ratios
 
 
-#This method is called for calculating the feature vector for the given window data
-#param: windowData = [channels, data_for_one_window]
+# This method is called for calculating the feature vector for the given window data
+# param: windowData = [[channel 1]...[channel n]] (data for one window)
+# returns: featureVector = [rms_channel_1, ..., rms_channel_n, ratios]
 def calculateFeatureForWindow(windowData, ratio=True):
     rmsData    = []
     for channel in windowData:

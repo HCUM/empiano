@@ -23,6 +23,7 @@ class calibrationManager:
         self.svm: svm.SVC
         #self.logger.info("Calibration-Manager: Initialized")
 
+    # starts to pull and save the data from the incoming LSL-stream
     def startCalibration(self, inlet):
         #self.logger.info("Calibration-Manager: Started")
         self.eegStreamTimeOffset = inlet.time_correction()
@@ -32,6 +33,7 @@ class calibrationManager:
         while self.programMaster.getCalibrationOn():
             self.saveSample(inlet.pull_sample())
 
+    # saves the received sample, after correcting its timestamp
     def saveSample(self, sample):
         #print("sample received: ", sample)
         #self.logger.info("Calibration-Manager: Sample received: %s", sample)
@@ -43,7 +45,8 @@ class calibrationManager:
         #print("local timestamp: ", pylsl.local_clock())
         #self.logger.info("Calibration-Manager: Sample being saved to data: %s", data)
 
-
+    # Calculates the corresponding indices for the timestamps marking modulation on and off
+    # Resaves the stream data, so it matches [[data channel 1][data channel 2]...[data channel n]]
     def prepareData(self):
         #dataPlotter.plotDataWithTimestamps(self.streamData, self.liveSysManager.modsTimestamp)
 
@@ -69,7 +72,8 @@ class calibrationManager:
         #self.logger.info("Calibration-Manager: cali data: %s", self.resavedStreamData)
 
 
-
+    # Calls all the functions needed for training the SVM:
+    # data preperation, preprocessing, splitting the data, feature calculation
     def startTraining(self):
         CSVWriter.dataPlusTimestampsToCsv(self.streamData, "calibration")
         CSVWriter.timestampMarkerToCsv(self.programMaster.modsTimestamp, "calibration")
@@ -96,7 +100,8 @@ class calibrationManager:
         #self.logger.info("Calibration-Manager: Finished the Training")
         return augData, nonAugData, X_train, y_train
 
-
+    # Performs a 5-fold cross validation
+    # Trains the SVM
     def trainSVM(self, X_train, y_train):
         self.svm = svm.SVC()
         cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=0)

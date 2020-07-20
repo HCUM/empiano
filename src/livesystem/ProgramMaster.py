@@ -54,7 +54,7 @@ class ProgramMaster:
         self.guiController.launchWindow()
 
 
-    # getter
+    # getter with semaphore
     def getCalibrationOn(self):
         self.calibrationSem.acquire()
         res = copy.deepcopy(self.calibrationOn)
@@ -74,7 +74,7 @@ class ProgramMaster:
         return res
 
 
-    # setter
+    # setter with semaphore
     def setCalibrationOn(self, bool):
         self.calibrationSem.acquire()
         self.calibrationOn = bool
@@ -97,7 +97,8 @@ class ProgramMaster:
         else:
             return not self.lastTwoPredictions[0] and not self.lastTwoPredictions[1]
 
-
+    # param: augmentationOn = current prediction of the SVM whether an augmentation was performed or not
+    # starts or ends the midi effect, when needed; updates the lastTwoPredictions field
     def setCurrentPrediction(self, augmentationOn):
         if augmentationOn and not self.midiEffectThread.isAlive() and not self.wizardOfOzSound:
             print("augmentation started")
@@ -111,17 +112,18 @@ class ProgramMaster:
         self.lastTwoPredictions.append(augmentationOn)
         self.predictionSem.release()
 
-
+    # Starts the midiManager for sending the midi sound effect, in a thread
     def startMidiEffect(self):
         self.midiEffectOn = True
         self.midiEffectThread = threading.Thread(target=self.midiManager.sendEffect)
         self.midiEffectThread.start()
 
+    # Sets the midi effect on false and waits for the thread handling the effect to join
     def endMidiEffect(self):
         self.midiEffectOn = False
         self.midiEffectThread.join()
 
-
+    # Connects to the defined LSL-stream and creates the inlet
     def connectToLSLStream(self, connectionType="type", connectionVal="EEG"):
         streams = pylsl.resolve_stream(connectionType, connectionVal)
         # create a new inlet to read from the stream
@@ -160,26 +162,30 @@ class ProgramMaster:
         else:
             print("features are not the same :( debug")
 
+    # Starts the calibrationManager, in a thread, for saving the data for the calibration
     def startCalibration(self):
         self.setCalibrationOn(True)
         self.calibrationThread = threading.Thread(target=self.calibrationManager.startCalibration,
                                                   args=(self.streamInlet,))
         self.calibrationThread.start()
 
-
+    # saves the timestamp of the start of the modulation
     def startMod(self):
         self.modOnTimestamp = pylsl.local_clock()
         print("modon: ", self.modOnTimestamp)
         if (self.inLiveSystem and self.wizardOfOzSound):# or self.calibrationOn:
             self.startMidiEffect()
 
+    # saves the timestamp of the end of the modulation, together with the start:
+    # (timestamp start, timestamp end) to the array holding all the modulation windows
     def endMod(self):
         self.modsTimestamp.append((self.modOnTimestamp, pylsl.local_clock()))
         print("mods: ", self.modsTimestamp)
         if (self.inLiveSystem and self.wizardOfOzSound):
             self.endMidiEffect()
 
-
+    # Waits for the calibration-thread to join and calls the method handling
+    # the SVM training
     def endCalibration(self):
         self.setCalibrationOn(False)
         self.calibrationThread.join()
@@ -190,11 +196,14 @@ class ProgramMaster:
         self.programPaused = True
         threading.Thread(target=self.keepPullingSamplesFromInlet).start()
 
+    # Pulls samples from the LSL-stream, without saving them
+    # Needed for the times outside of the calibration and livesystem
+    # -> buffer needs to be kept empty
     def keepPullingSamplesFromInlet(self):
         while self.programPaused:
             self.streamInlet.pull_sample()
 
-
+    # Starts the manager for the livesystem in a new thread
     def startLiveSystem(self):
         print("starting the system; this is the timestamp: ", pylsl.local_clock())
         self.setTestSystemOn(True)
@@ -228,7 +237,7 @@ class ProgramMaster:
                                                  args=(self.streamInlet,))
         self.liveSystemThread.start()
 
-
+    # Stops the livesystem and waits for the thread to join
     def stopSystem(self, livesysturn):
         print("stopping the system: timestamp: ", pylsl.local_clock())
         self.setTestSystemOn(False)
