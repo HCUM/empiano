@@ -32,10 +32,10 @@ class App:
         #space pressed -> to track the beginning and end of modulation
         if event.keysym == 'space':
             if self.modon:
-                self.controller.endMod()
+                self.controller.endModulation()
                 self.modon = False
             else:
-                self.controller.startMod()
+                self.controller.startModulation()
                 self.modon = True
 
 
@@ -70,10 +70,10 @@ class CalibrationPage(Frame):
 
     def handleCali(self):
         if self.startStopBut.cget('text') == "Start":
-            self.controller.startCali()
+            self.controller.startCalibration()
             self.startStopBut.configure(text="Stop")
         else:
-            self.controller.endCali()
+            self.controller.endCalibration()
 
 
 

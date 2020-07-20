@@ -35,18 +35,18 @@ class guiController:
     def showSettingsWindow(self):
         self.app.showFrame(window.SettingPage)
 
-    def startCali(self):
+    def startCalibration(self):
         self.programMaster.startCalibration()
 
-    def endCali(self):
+    def endCalibration(self):
         self.programMaster.endCalibration()
         self.app.showFrame(window.StartLiveSystemPage)
 
-    def startMod(self):
-        self.programMaster.startMod()
+    def startModulation(self):
+        self.programMaster.startModulation()
 
-    def endMod(self):
-        self.programMaster.endMod()
+    def endModulation(self):
+        self.programMaster.endModulation()
 
     def startLiveSystem(self):
         self.liveSystemRound += 1

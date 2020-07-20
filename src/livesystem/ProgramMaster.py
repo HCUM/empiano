@@ -126,12 +126,12 @@ class ProgramMaster:
         threading.Thread(target=self.keepPullingSamplesFromInlet).start()
 
 
-    def startMod(self):
+    def startModulation(self):
         self.modOnTimestamp = pylsl.local_clock()
         if self.inLiveSystem:
             self.startMidiEffect()
 
-    def endMod(self):
+    def endModulation(self):
         self.modsTimestamp.append((self.modOnTimestamp, pylsl.local_clock()))
         if self.inLiveSystem:
             self.endMidiEffect()
