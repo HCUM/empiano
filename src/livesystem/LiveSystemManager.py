@@ -36,23 +36,23 @@ class LiveSystemManager:
     def saveSampleToRingbuffer(self, sample):
         (data, timestamp) = sample
 
-        self.streamData.append((np.asarray(data) * constants.dataSampleCorrection, timestamp + self.eegStreamTimeOffset))
+        self.streamData.append((self.makeSampleDataUseful(data, dataFromSample=False),
+                                timestamp + self.eegStreamTimeOffset))
 
         #remove the last element
         self.ringBuffer.popleft()
         #add the latest
-        usefulSample = self.makeSampleUseful(sample)
+        usefulSample = self.makeSampleDataUseful(data)
         self.ringBuffer.append(usefulSample)
 
 
-    def makeSampleUseful(self, sample):
-        try:
-            (data, _) = sample
-        except:
-            data = sample
-        data = np.asarray(data)
+    def makeSampleDataUseful(self, dataFromSample, onlyChannels=True):
+        data = np.asarray(dataFromSample)
         data = data * constants.dataSampleCorrection
-        return data[:constants.numberOfChannels]
+        if onlyChannels:
+            return data[:constants.numberOfChannels]
+        else:
+            return data
 
 
     def performPrediction(self, ringBuffer):
