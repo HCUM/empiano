@@ -54,7 +54,7 @@ class calibrationManager:
         preprocessedStreamData = Preprocessor.performPreprocessing(self.resavedStreamData)
 
         augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedStreamData, self.mods)
-        X_train, _, y_train, _, ratioAugSamples, _ = mlDataManager.createMLData(augData, nonAugData)
+        X_train, y_train = mlDataManager.createMLData(augData, nonAugData)
         self.trainSVM(X_train, y_train)
 
         return augData, nonAugData, X_train, y_train
