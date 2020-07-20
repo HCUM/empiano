@@ -28,9 +28,9 @@ class App:
         self.window.bind("<KeyPress>", self.keydown)
         self.modon = False
 
-
+    # using the space key, the beginning and end of the modulation can be tracked
+    # -> used during the calibration
     def keydown(self, event):
-        #space pressed -> to track the beginning and end of modulation
         if event.keysym == 'space':
             if self.modon:
                 self.controller.endMod()
@@ -54,7 +54,7 @@ class App:
         if cont is CaliAnimationPage:
             frame.pause()
 
-
+# entrance page to the system
 class StartPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
@@ -69,7 +69,7 @@ class StartPage(Frame):
         #self.offlineCaliBut.grid(row=1, column=2)
 
 
-
+# page shown, when calibration is on
 class CaliPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
@@ -79,6 +79,7 @@ class CaliPage(Frame):
         self.startStopBut = Button(self, text="Start", command=self.handleCali)
         self.startStopBut.grid(row=2, column=1)
 
+    # starts and ends the calibration
     def handleCali(self):
         if self.startStopBut.cget('text') == "Start":
             self.controller.startCali()
@@ -151,7 +152,7 @@ class CaliAnimationPage(Frame):
         self.after(1000, self.pause)
 
 
-
+# page for going into the livesystem; here: program on pause
 class NowSysPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
@@ -165,7 +166,7 @@ class NowSysPage(Frame):
         quitBut.grid(row=3, column=1)
 
 
-
+# page during the livesystem
 class SysPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
@@ -178,7 +179,7 @@ class SysPage(Frame):
         self.button.grid(row=2, column=1)
 
 
-
+# page for connecting to the LSL-stream
 class LSLPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)

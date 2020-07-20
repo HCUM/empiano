@@ -39,10 +39,12 @@ class guiController:
 
     # methods triggered by buttons etc
 
+    # calls the method for connecting to the LSL-stream, given the type and value of the connection
     def connectToLSLStream(self, connectionType, connectionVal):
         self.app.showFrame(window.CaliPage)
         self.programMaster.connectToLSLStream(connectionType, connectionVal)
 
+    # calls the method for starting the livesystem
     def startLiveSystem(self):
         self.liveSystemRound += 1
         self.app.showFrame(window.SysPage)
@@ -54,26 +56,32 @@ class guiController:
     def startFakeCali(self):
         self.programMaster.startFakeCali()
 
+    # calls the method starting the calibration
     def startCali(self):
         self.programMaster.startCalibration()
         #self.app.showFrame(window.CaliAnimationPage)
 
+    # calls the method ending the calibration
     def endCali(self):
         self.programMaster.endCalibration()
         self.app.showFrame(window.NowSysPage)
 
+    # calls the method starting the modulation
     def startMod(self):
         #self.liveSysManager.modulation(on=True)
         self.programMaster.startMod()
 
+    # calls the method ending the modulation
     def endMod(self):
         #self.liveSysManager.modulation(on=False)
         self.programMaster.endMod()
 
+    # calls the method stopping the livesystem
     def stopSystem(self):
         self.programMaster.stopSystem(self.liveSystemRound)
         self.app.showFrame(window.NowSysPage)
 
+    # quitting the system and the window
     def quit(self):
         self.app.window.destroy()
         self.programMaster.quit()
