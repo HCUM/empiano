@@ -36,7 +36,7 @@ class LiveSystemManager:
     def saveSampleToRingbuffer(self, sample):
         (data, timestamp) = sample
 
-        self.streamData.append((self.makeSampleDataUseful(data, dataFromSample=False),
+        self.streamData.append((self.makeSampleDataUseful(data, onlyChannels=False),
                                 timestamp + self.eegStreamTimeOffset))
 
         #remove the last element

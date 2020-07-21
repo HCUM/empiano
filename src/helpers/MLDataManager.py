@@ -49,6 +49,7 @@ def createMLData(augmentedData, noAugmentedData):
     #create feature vectors for augmented data
     index = 2
     for singleAugData in augmentedData:
+        singleAugData = np.asarray(singleAugData)
         featureBeforeLast = calculateFeatureForWindow(singleAugData[:, 0:constants.samplesPerWindow])
         lastFeature = calculateFeatureForWindow(
             singleAugData[:, constants.windowShift:constants.windowShift+constants.samplesPerWindow])
