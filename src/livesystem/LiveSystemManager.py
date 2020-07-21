@@ -56,19 +56,19 @@ class LiveSystemManager:
 
 
     def performPrediction(self, ringBuffer):
-        eegDf = [[] for i in range(constants.numberOfChannels)]
+        emgDf = [[] for i in range(constants.numberOfChannels)]
 
         for sample in list(ringBuffer):
             for j in range(len(sample)):
-                eegDf[j].append(sample[j])
+                emgDf[j].append(sample[j])
 
         #preprocess data
-        eegDf = Preprocessor.performPreprocessing(eegDf)
+        emgDf = Preprocessor.performPreprocessing(emgDf)
 
-        eegDf     = np.asarray(eegDf)
-        lastIndex = len(eegDf[0])
+        emgDf     = np.asarray(emgDf)
+        lastIndex = len(emgDf[0])
         feature = FeatureCalculator.calculateFeatureForWindow(
-            eegDf[:, (lastIndex - constants.samplesPerWindow):lastIndex])
+            emgDf[:, (lastIndex - constants.samplesPerWindow):lastIndex])
 
         if len(self.lastFeature) != 0 and len(self.secondToLastFeature) != 0:
             featureVec = feature.tolist()
