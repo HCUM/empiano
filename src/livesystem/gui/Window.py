@@ -27,9 +27,9 @@ class App:
         self.window.bind("<KeyPress>", self.keydown)
         self.modon = False
 
-
+    # using the space key, the beginning and end of the modulation can be tracked
+    # -> used during the calibration
     def keydown(self, event):
-        #space pressed -> to track the beginning and end of modulation
         if event.keysym == 'space':
             if self.modon:
                 self.controller.endModulation()
@@ -47,7 +47,7 @@ class App:
         frame = self.frames[cont]
         frame.tkraise()
 
-
+# entrance page to the system
 class StartPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
@@ -58,7 +58,7 @@ class StartPage(Frame):
         self.startButton.grid(row=1)
 
 
-
+# page shown, when calibration is on
 class CalibrationPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
@@ -68,6 +68,7 @@ class CalibrationPage(Frame):
         self.startStopBut = Button(self, text="Start", command=self.handleCali)
         self.startStopBut.grid(row=2, column=1)
 
+    # starts and ends the calibration
     def handleCali(self):
         if self.startStopBut.cget('text') == "Start":
             self.controller.startCalibration()
@@ -76,7 +77,7 @@ class CalibrationPage(Frame):
             self.controller.endCalibration()
 
 
-
+# page for going into the livesystem; here: program on pause
 class StartLiveSystemPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
@@ -90,7 +91,7 @@ class StartLiveSystemPage(Frame):
         quitBut.grid(row=3, column=1)
 
 
-
+# page during the livesystem
 class InLiveSystemPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
@@ -103,7 +104,7 @@ class InLiveSystemPage(Frame):
         self.button.grid(row=2, column=1)
 
 
-
+# page for connecting to the LSL-stream
 class LSLPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)

@@ -1,6 +1,7 @@
 import mido
 import time
 
+# manages all the midi-related things
 class MidiManager:
 
     def __init__(self, programMaster):
@@ -9,6 +10,9 @@ class MidiManager:
         self.pitchValues = [0, 250, 500, 1000, 500, 250,  0, -250, -500, -1000, -500, -250]
 
 
+    # method is called whenever the system predicted an augmentation;
+    # constantly send pitchwheel midi-messages with different pitch values (specified in self.pitchValues);
+    # messages are sent to a virtual midi cable (specified in self.outport);
     def sendEffect(self):
         index = 0
         while(self.programMaster.midiEffectOn):
@@ -17,9 +21,10 @@ class MidiManager:
             index += 1
             time.sleep(1/8/len(self.pitchValues))
 
-        self.sendMidiMsg(
-            mido.Message('pitchwheel', channel=0, pitch=0))
+        #resets the pitchwheel value
+        self.sendMidiMsg(mido.Message('pitchwheel', channel=0, pitch=0))
 
+    # sends the reset pitchwheel midi-message
     def sendPitchWheelStopMsg(self):
         self.sendMidiMsg(mido.Message('pitchwheel', channel=0, pitch=0))
 
