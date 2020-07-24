@@ -1,6 +1,4 @@
-import datetime
 import numpy as np
-from joblib import dump
 from sklearn import svm
 from helpers import Preprocessor
 import storage.Constants as constants
