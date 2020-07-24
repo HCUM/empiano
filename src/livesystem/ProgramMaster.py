@@ -110,7 +110,7 @@ class ProgramMaster:
         # create a new inlet to read from the stream
         self.streamInlet = pylsl.StreamInlet(streams[0])
 
-    # Starts the calibrationManager, in a thread, for saving the data for the calibration
+    # Starts the calibrationManager, in a thread, for saving the data of the calibration
     def startCalibration(self):
         self.setCalibrationOn(True)
         self.calibrationThread = threading.Thread(target=self.calibrationManager.startCalibration,
@@ -142,7 +142,7 @@ class ProgramMaster:
         if self.inLiveSystem:
             self.endMidiEffect()
 
-    # Pulls samples from the LSL-stream, without saving them
+    # Pulls samples from the LSL-stream, without saving them.
     # Needed for the times outside of the calibration and livesystem
     # -> buffer needs to be kept empty
     def keepPullingSamplesFromInlet(self):
