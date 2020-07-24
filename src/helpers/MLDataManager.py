@@ -5,13 +5,14 @@ from helpers.FeatureCalculator import calculateFeatureForWindow
 
 
 '''
-This method is used for splitting the eegData into augmented and not augmented data
-the splitted and returned data will have the following type:
+Splits the emgData into augmented and not augmented data;
+resulting data will look as followed:
    [
     [ [data_channel_1_aug_1][data_channel_2_aug_1] ... [data_channel_8_aug_1] ]
        ...
     [[data_channel_1_last_aug][data_channel_2_last_aug] ... [data_channel_8_last_aug] ]
    ]
+returns two of those fields: 1. augmented data, 2. non-augmented data
 '''
 def splitRecordedSample(emgData, mods):
     splittedAugData     = []
@@ -38,9 +39,14 @@ def splitRecordedSample(emgData, mods):
 
 
 '''
-method is used to create the data which should be used to train the SVM
+Creates the data for training the SVM
 param: augData    = storing the augmented data [[channels, data]]
-        nonAugData = storing the dat representing no augmentation [channels, data]
+       nonAugData = storing the data representing no augmentation [channels, data]
+Splits the data into windows, calls the feature vector calculation for that window,
+adds the last two feature vectors to the current, to add some time aspect and
+labels everything with 'augmentation' or 'no augmentation'
+returns: X_train [[feature vector current window, last feature vector, feature vector before last]...]
+         y_train ['augmentation', ...]
 '''
 def createMLData(augmentedData, noAugmentedData):
     X_train = []  #(n_samples, n_features)
