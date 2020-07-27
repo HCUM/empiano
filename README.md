@@ -27,7 +27,7 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
 ![system sketch](./pics/figures_electrode_ring.jpg)
 
 ### Hardware Setup
-![system sketch](./pics/setup_full.png)
+![system sketch](./pics/setup_full.pdf)
 
 ## Steps to Running the System
 1. Attach the electrodes to the piano player
