@@ -50,7 +50,7 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
     - On **MacOS**: usually there is an inbuilt virtual MIDI cable available: IAC driver
 
 
-## Citing Hit the Thumb Jack!
+## Citing "Hit the Thumb Jack!"
 
 Below are the BibTex entries to cite Hit the Thumb Jack!
 
