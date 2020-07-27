@@ -8,11 +8,11 @@ In short: the system is trained to recognize a performed finger gesture and adds
 
 ##  Requirements
 
-- **Electrodes** and an **Amplifier** to capture the muscle activity. We used the LiveAmp EEG recorder from "Brain Products" (https://www.brainproducts.com/productdetails.php?id=63), to which eight plus one ground and one reference active surface electrodes were connected. An additional Windows PC was needed, because the amplifier program didn't work for MacOS.
-- **Lab Streaming Layer (LSL) framework** (https://github.com/sccn/labstreaminglayer)
-- Currently **MacBook**, because we make use of the inbuilt MIDI cable (IAC driver); used as the controlling PC
-- **Music software**, which is able to receive and play back MIDI. We used the free trial version of Ableton Live 10 (https://www.ableton.com/de/trial/)
-- **Electric-Piano**; We used a MIDI-to-USB cable to play the sound through Ableton
+- **Electrodes** and **Amplifier** to capture the muscle activity. We used the LiveAmp EEG recorder from "Brain Products" (https://www.brainproducts.com/productdetails.php?id=63), to which eight plus one ground and one reference active surface electrodes were connected. An additional Windows PC was needed, because the amplifier program didn't work for MacOS.
+- **Lab Streaming Layer (LSL) framework** (https://github.com/sccn/labstreaminglayer); We used BrainVision RDA Connector to tap the BrainVision data.
+- **Computer**, to run this system (controlling PC)
+- **Music software**, which is able to receive and play back MIDI. For example Waveform 11 (https://www.tracktion.com/products/waveform-free), together with the Piano-One instrument (https://neovst.com/piano-one/)
+- **Electric-Piano**; We used a MIDI-to-USB cable to play the sound through the music software
 - We additionally used **Speakers**, for the purpose of providing a better sound
 
 ## Installation
@@ -36,9 +36,19 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
 4. Start LSL stream
 5. Start this python program
 6. Connect this program to the LSL stream in the local network
-7. Open Ableton or another similar music program
+7. Open music program (check MIDI inputs)
 8. Perform Calibration
 9. Ready to go!
+
+
+## Additional Information
+- In order to use this system, the data sent through the LSL stream has to have the following format:  
+([channel 1, channel 2, ...], timestamp)
+- For sending the sound-modulation MIDI messages to the music software, a virtual MIDI cable is required:
+    - On **Windows**: Sometimes have an inbuilt **virtual MIDI cable** available,  
+    otherwise: use **loopMIDI** to create one yourself (http://www.tobias-erichsen.de/software/loopmidi.html).
+    - On **MacOS**: usually there is an inbuilt virtual MIDI cable available: IAC driver
+
 
 ## Citing Hit the Thumb Jack!
 
