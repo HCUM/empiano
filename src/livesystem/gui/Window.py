@@ -18,11 +18,6 @@ class App:
             frame = page(self.container, self.controller, self.width, self.height)
             self.frames[page] = frame
             frame.grid(row=0, column=0, sticky="nsew")
-        #buttons
-        self.caliButton: Button
-        self.testSystemButton: Button
-        self.settingsButton: Button
-        self.connectButton: Button
 
         self.window.bind("<KeyPress>", self.keydown)
         self.modon = False

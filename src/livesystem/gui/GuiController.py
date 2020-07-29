@@ -33,9 +33,6 @@ class guiController:
         self.app.showFrame(window.CalibrationPage)
         self.programMaster.connectToLSLStream(connectionType, connectionVal)
 
-    def showSettingsWindow(self):
-        self.app.showFrame(window.SettingPage)
-
     # calls the method starting the calibration
     def startCalibration(self):
         self.programMaster.startCalibration()
