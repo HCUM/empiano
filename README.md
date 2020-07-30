@@ -8,11 +8,16 @@ In short: the system is trained to recognize a performed finger gesture and adds
 
 ##  Requirements
 
-- **Electrodes** and **Amplifier** to capture the muscle activity. We used the LiveAmp EEG recorder from "Brain Products" (https://www.brainproducts.com/productdetails.php?id=63), to which eight plus one ground and one reference active surface electrodes were connected. An additional Windows PC was needed, because the amplifier program didn't work for MacOS.
-- **Lab Streaming Layer (LSL) framework** (https://github.com/sccn/labstreaminglayer); We used BrainVision RDA Connector to tap the BrainVision data.
+- **Electrodes** plus **Amplifier** to capture the muscle activity.  
+We used the LiveAmp EEG recorder from "Brain Products" (https://www.brainproducts.com/productdetails.php?id=63), to which eight plus one ground and one reference active surface electrodes were connected.  
+The recording software is only available on Windows for us.
+- **Lab Streaming Layer (LSL) framework** (https://github.com/sccn/labstreaminglayer)  
+We used BrainVision RDA Connector to tap the BrainVision data.
 - **Computer**, to run this system (controlling PC)
-- **Music software**, which is able to receive and play back MIDI. For example Waveform 11 (https://www.tracktion.com/products/waveform-free), together with the Piano-One instrument (https://neovst.com/piano-one/)
-- **Electric-Piano**; We used a MIDI-to-USB cable to play the sound through the music software
+- **Music software**, which is able to receive and play back MIDI.  
+For example Waveform 11 (https://www.tracktion.com/products/waveform-free), together with the Piano-One instrument (https://neovst.com/piano-one/)
+- **Electric-Piano** 
+ We used a MIDI-to-USB cable to play the sound through the music software.
 - We additionally used **Speakers**, for the purpose of providing a better sound
 
 ## Installation
