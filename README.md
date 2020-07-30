@@ -4,7 +4,7 @@ This repository contains a system that, in combination with the correct hard- an
 
 In short: the system is trained to recognize a performed finger gesture and adds a pitch vibrato to the sound output.
 
-![system sketch](./pics/figures_teaser_new.png =550x382,5)
+![](./pics/figures_teaser_new.png =550x382,5)
 
 ##  Requirements
 
@@ -24,10 +24,10 @@ The source code itself can be found in the folder "src".
 
 ### Electrode Setup
 The electrodes were placed in two rings around the upper right forearm. Each of the rings counted five electrodes and had to include either ground or reference electrode.
-![system sketch](./pics/figures_electrode_ring.jpg)
+![](./pics/figures_electrode_ring.jpg)
 
 ### Hardware Setup
-![system sketch](./pics/fullSetup.png)
+![](./pics/fullSetup.png)
 
 ## Steps to Running the System
 1. Attach the electrodes to the piano player
