@@ -24,7 +24,7 @@ The source code itself can be found in the folder "src".
 
 ### Electrode Setup
 The electrodes were placed in two rings around the upper right forearm. Each of the rings counted five electrodes and had to include either ground or reference electrode.
-![](./pics/figures_electrode_ring.jpg =550x382,5)
+![](./pics/figures_electrode_ring.jpg)
 
 ### Hardware Setup
 ![](./pics/fullSetup.png)
