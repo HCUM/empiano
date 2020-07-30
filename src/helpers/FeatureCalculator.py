@@ -1,6 +1,5 @@
 from math import sqrt
 import numpy as np
-import logging
 
 # Calculates the root-mean-square for the given data (data = 1-D array)
 def calculateRMS(data):

@@ -1,12 +1,10 @@
 import mido
 import time
-import logging
 
 # manages all the midi-related things
 class MidiManager:
 
     def __init__(self, programMaster):
-        self.logger = logging.getLogger()
         self.programMaster = programMaster
         self.outport = mido.open_output('IAC-Treiber IAC-Bus 1')  #input could be needed for the piano: port = 'USB MIDI Interface'
         self.pitchValues = [0, 250, 500, 1000, 500, 250,  0, -250, -500, -1000, -500, -250]
@@ -32,4 +30,3 @@ class MidiManager:
 
     def sendMidiMsg(self, msg):
         self.outport.send(msg)
-        #self.logger.info("MIDI-Manager: Message sent: %s", msg)

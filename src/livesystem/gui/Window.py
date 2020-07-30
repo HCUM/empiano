@@ -1,5 +1,4 @@
 from tkinter import *
-from storage import Constants
 
 class App:
     def __init__(self, controller):
@@ -15,15 +14,10 @@ class App:
         self.container.grid(row=0, column=0, sticky="nsew")
         #frames
         self.frames= {}
-        for page in (StartPage, CaliPage, LSLPage, SysPage, OfflineCaliPage, NowSysPage, CaliAnimationPage):
+        for page in (StartPage, CalibrationPage, LSLPage, InLiveSystemPage, StartLiveSystemPage):
             frame = page(self.container, self.controller, self.width, self.height)
             self.frames[page] = frame
             frame.grid(row=0, column=0, sticky="nsew")
-        #buttons
-        self.caliButton: Button
-        self.testSystemButton: Button
-        self.settingsButton: Button
-        self.connectButton: Button
 
         self.window.bind("<KeyPress>", self.keydown)
         self.modon = False
@@ -33,15 +27,11 @@ class App:
     def keydown(self, event):
         if event.keysym == 'space':
             if self.modon:
-                self.controller.endMod()
+                self.controller.endModulation()
                 self.modon = False
             else:
-                self.controller.startMod()
+                self.controller.startModulation()
                 self.modon = True
-        #
-        elif event.keysym == 'w':
-            print("turned on wizard of oz")
-            self.controller.startWizardOfOzSound()
 
 
     def showWindow(self):
@@ -51,8 +41,6 @@ class App:
     def showFrame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
-        if cont is CaliAnimationPage:
-            frame.pause()
 
 # entrance page to the system
 class StartPage(Frame):
@@ -60,17 +48,13 @@ class StartPage(Frame):
         Frame.__init__(self, parent)
         self.empianoText = Label(self, text="EMPiano", fg='#009440', font="Helvetica 70 bold")
         self.startButton = Button(self, text="Start", command=controller.showConnectFrame)
-        #self.offlineCaliBut = Button(self, text="Offline Calibration", command=controller.showOfflineCaliWindow)
-        #self.fakeLiveCaliBut = Button(self, text="fake live calibration", command=controller.startFakeCali)
 
-        self.empianoText.grid(row = 0, padx=10, pady=50)#, column= 0, columnspan=3)
-        self.startButton.grid(row=1)#, column=0)
-        #self.fakeLiveCaliBut.grid(row=1, column=1)
-        #self.offlineCaliBut.grid(row=1, column=2)
+        self.empianoText.grid(row = 0, padx=10, pady=50)
+        self.startButton.grid(row=1)
 
 
 # page shown, when calibration is on
-class CaliPage(Frame):
+class CalibrationPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
         self.controller = controller
@@ -82,78 +66,14 @@ class CaliPage(Frame):
     # starts and ends the calibration
     def handleCali(self):
         if self.startStopBut.cget('text') == "Start":
-            self.controller.startCali()
+            self.controller.startCalibration()
             self.startStopBut.configure(text="Stop")
         else:
-            self.controller.endCali()
-
-    def handleModulation(self):
-        if self.modBut.cget('text') == "Start Modulation":
-            self.modBut.configure(text="Stop Modulation")
-            self.controller.startMod()
-        else:
-            self.modBut.configure(text="Start Modulation")
-            self.controller.endMod()
-
-
-class CaliAnimationPage(Frame):
-    def __init__(self, parent, controller, width, height):
-        Frame.__init__(self, parent)
-        self.controller = controller
-
-        self.currentTaskLabel = Label(self, text="")
-        self.timerLabel = Label(self, text="")
-        self.nextTaskLabel = Label(self, text="next: ")
-
-        self.currentTaskLabel.grid(row=1, column=1)
-        self.timerLabel.grid(row=2, column=1)
-        self.nextTaskLabel.grid(row=3, column=1)
-
-        self.currentCalibrationTaskIndex = 0
-
-        self.pauseTime = Constants.secondsOfCaliPause
-        self.taskTime  = Constants.secondsOfCaliTasks
-
-
-    def handleCalibration(self):
-        currentTask = Constants.calibrationOrder[self.currentCalibrationTaskIndex]
-
-        self.currentTaskLabel.configure(text=currentTask)
-        self.timerLabel.configure(text=str(self.taskTime))
-
-        if self.taskTime == Constants.secondsOfCaliTasks:
-            if 'mod' in currentTask:
-                self.controller.startMod()
-
-        elif self.taskTime == 0:
-            if 'mod' in currentTask:
-                self.controller.endMod()
-            if self.currentCalibrationTaskIndex +1 == len(Constants.calibrationOrder):
-                self.controller.endCali()
-                return
-            self.currentCalibrationTaskIndex += 1
-            self.taskTime = Constants.secondsOfCaliTasks
-            self.currentTaskLabel.configure(text="")
-            self.pause()
-            return
-
-        self.taskTime -= 1
-        self.after(1000, self.handleCalibration)
-
-    def pause(self):
-        self.timerLabel.configure(text=str(self.pauseTime))
-        self.nextTaskLabel.configure(text="next: "+Constants.calibrationOrder[self.currentCalibrationTaskIndex])
-        if self.pauseTime == 0:
-            self.pauseTime = Constants.secondsOfCaliPause
-            self.nextTaskLabel.configure(text="")
-            self.handleCalibration()
-            return
-        self.pauseTime -= 1
-        self.after(1000, self.pause)
+            self.controller.endCalibration()
 
 
 # page for going into the livesystem; here: program on pause
-class NowSysPage(Frame):
+class StartLiveSystemPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
 
@@ -167,13 +87,13 @@ class NowSysPage(Frame):
 
 
 # page during the livesystem
-class SysPage(Frame):
+class InLiveSystemPage(Frame):
     def __init__(self, parent, controller, width, height):
         Frame.__init__(self, parent)
 
         self.controller = controller
         self.text   = Label(self, text="LIVE_SYSTEM, START NEW ROUND!",)
-        self.button = Button(self, text="Stop", command=self.controller.stopSystem)
+        self.button = Button(self, text="Stop", command=self.controller.stopLiveSystem)
 
         self.text.grid(row=1, column=1)
         self.button.grid(row=2, column=1)
@@ -204,11 +124,6 @@ class LSLPage(Frame):
         entry = Entry(self, textvariable=entryVar)
         entry.grid(row=1, column=1, pady=pady, padx=padx)
 
-        connectButton = Button(self, text="Connect", command=lambda: controller.connectToLSLStream(tkvar.get(), entry.get()))
+        connectButton = Button(self, text="Connect",
+                               command=lambda: controller.connectToLSLStream(tkvar.get(), entry.get()))
         connectButton.grid(row=2, columnspan=2, pady=pady)
-
-class OfflineCaliPage(Frame):
-    def __init__(self, parent, controller, width, height):
-        Frame.__init__(self, parent)
-        button = Button(self, text="Go to Live System", command=controller.showTestSysWindow)
-        button.grid(row=1, column=1)

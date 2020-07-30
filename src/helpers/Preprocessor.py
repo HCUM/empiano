@@ -1,19 +1,6 @@
 from scipy.signal import butter, lfilter
 import storage.Constants as constants
 
-# applies a bandpass filter to the data
-def bandpassAllChannels(eegDf, lowcutParam=constants.lowerBoundCutOutFreq,
-                        highcutParam=constants.upperBoundCutOutFreq, fsParam=constants.samplingRate):
-    for i in range(constants.numberOfChannels):
-        eegDf[i] = butter_band_filter(eegDf[i], lowcutParam, highcutParam, fsParam, 'band')
-
-# applies a bandstop filter to the data
-def bandStopAllChannels(eegDf, lowParam=constants.lowBandStopFreq,
-                        highParam=constants.highBandStopFreq, fsParam=constants.samplingRate):
-    for i in range(constants.numberOfChannels):
-        eegDf[i] = butter_band_filter(eegDf[i], lowParam, highParam, fsParam, 'bandstop')
-
-
 def butter_band(lowcut_param, highcut_param, fs_param, type, order=5):
     nyq  = 0.5 * fs_param
     low  = lowcut_param / nyq
