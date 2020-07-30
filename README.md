@@ -53,6 +53,8 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
     - On **Windows**: Sometimes have an inbuilt **virtual MIDI cable** available,  
     otherwise: use **loopMIDI** to create one yourself (http://www.tobias-erichsen.de/software/loopmidi.html).
     - On **MacOS**: usually there is an inbuilt virtual MIDI cable available: IAC driver
+    - Most of the times the library mido itself can be used to create a virtual MIDI cable, but it does not work when using Windows MultiMedia API.  
+    To open an outport check the corresponding box in the Settings. 
     - The name of your virtual MIDI cable can be changed in the Settings
 
 
