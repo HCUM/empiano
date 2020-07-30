@@ -11,4 +11,6 @@ windowSize           = 0.15 #in s -> 150ms = 0.15s -> our sampling rate = 500Hz-
 samplesPerWindow     = int(windowSize / (1. / samplingRate))
 windowShift          = int(samplesPerWindow / 2)
 dataSampleCorrection = 0.000001
+# virtual midi cable:
+virtualMIDICable = 'IAC-Treiber IAC-Bus 1'
 

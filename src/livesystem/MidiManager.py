@@ -1,12 +1,13 @@
 import mido
 import time
+from storage import Constants as constants
 
 # manages all the midi-related things
 class MidiManager:
 
     def __init__(self, programMaster):
         self.programMaster = programMaster
-        self.outport = mido.open_output('IAC-Treiber IAC-Bus 1')  #input could be needed for the piano: port = 'USB MIDI Interface'
+        self.outport = mido.open_output(constants.virtualMIDICable)
         self.pitchValues = [0, 250, 500, 1000, 500, 250,  0, -250, -500, -1000, -500, -250]
 
 

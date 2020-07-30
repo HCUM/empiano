@@ -4,7 +4,7 @@ This repository contains a system that, in combination with the correct hard- an
 
 In short: the system is trained to recognize a performed finger gesture and adds a pitch vibrato to the sound output.
 
-![system sketch](./pics/figures_teaser_new.png)
+![system sketch](./pics/figures_teaser_new.png =550x382,5)
 
 ##  Requirements
 
@@ -42,12 +42,14 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
 
 
 ## Additional Information
-- In order to use this system, the data sent through the LSL stream has to have the following format:  
+- Our system requires the data-samples sent through the LSL stream to have the following format:  
 ([channel 1, channel 2, ...], timestamp)
 - For sending the sound-modulation MIDI messages to the music software, a virtual MIDI cable is required:
     - On **Windows**: Sometimes have an inbuilt **virtual MIDI cable** available,  
     otherwise: use **loopMIDI** to create one yourself (http://www.tobias-erichsen.de/software/loopmidi.html).
     - On **MacOS**: usually there is an inbuilt virtual MIDI cable available: IAC driver
+    - The name of your virtual MIDI cable can be changed in the Settings
+
 
 
 ## Citing "Hit the Thumb Jack!"
