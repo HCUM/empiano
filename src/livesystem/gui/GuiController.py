@@ -1,7 +1,5 @@
-import livesystem.gui.Window as window
 import livesystem.gui.wxWindow as wxwindow
 import wx
-
 
 class guiController:
 
@@ -15,9 +13,6 @@ class guiController:
         frame.Show()
         self.app.MainLoop()
 
-    # methods which change the frames shown in the window
-    def showConnectFrame(self):
-        self.app.showFrame(window.LSLPage)
 
     # methods triggered by buttons etc
 
