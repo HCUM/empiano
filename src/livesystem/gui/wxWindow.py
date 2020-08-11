@@ -13,7 +13,8 @@ import wx.xrc
 
 class MyFrame(wx.Frame):
 	def __init__(self, controller):
-		wx.Frame.__init__(self, None, wx.ID_ANY, "EMPiano")
+		wx.Frame.__init__(self, None, wx.ID_ANY, title= u"EMPiano",  size = wx.Size( 430,520 ))
+		self.SetSizeHints(wx.Size(430, 520), wx.DefaultSize)
 
 		self.controller = controller
 
@@ -45,8 +46,6 @@ class StartPanel ( wx.Panel ):
 
 		self.controller = controller
 
-		self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOWFRAME ) )
-
 		verticalBoxes = wx.BoxSizer( wx.VERTICAL )
 
 
@@ -57,7 +56,6 @@ class StartPanel ( wx.Panel ):
 
 		self.empianoLabel.SetFont( wx.Font( 60, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial Black" ) )
 		self.empianoLabel.SetForegroundColour( wx.Colour( 17, 133, 49 ) )
-		self.empianoLabel.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOWFRAME ) )
 
 		verticalBoxes.Add( self.empianoLabel, 0, wx.ALL|wx.EXPAND, 5 )
 
@@ -83,7 +81,7 @@ class StartPanel ( wx.Panel ):
 
 		self.startButton.Bind(wx.EVT_BUTTON, self.showLSLPanel)
 		self.settingsButton.Bind(wx.EVT_BUTTON, self.showSettingsPanel)
-		self.exitButton.Bind(wx.EVT_BUTTON, self.controller.quit)
+		self.exitButton.Bind(wx.EVT_BUTTON, self.quitButtonPressed)
 
 		self.SetSizer( verticalBoxes )
 		self.Layout()
@@ -100,6 +98,9 @@ class StartPanel ( wx.Panel ):
 		self.Hide()
 		panel = self.Parent.panels[SettingsPanel]
 		panel.Show()
+
+	def quitButtonPressed(self, event):
+		self.controller.quit()
 
 
 ###########################################################################
