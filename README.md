@@ -13,7 +13,6 @@ We used the LiveAmp EEG recorder from "Brain Products" (https://www.brainproduct
 The recording software is only available on Windows for us.
 - **Lab Streaming Layer (LSL) framework** (https://github.com/sccn/labstreaminglayer)  
 We used BrainVision RDA Connector to tap the BrainVision data.
-- **Computer**, to run this system (controlling PC)
 - **Music software**, which is able to receive and play back MIDI.  
 For example Waveform 11 (https://www.tracktion.com/products/waveform-free), together with the Piano-One instrument (https://neovst.com/piano-one/)
 - **Electric-Piano** 

@@ -7,8 +7,16 @@ class MidiManager:
 
     def __init__(self, programMaster):
         self.programMaster = programMaster
-        self.outport = mido.open_output(constants.virtualMIDICable)
+        self.outport:mido.ports
         self.pitchValues = [0, 250, 500, 1000, 500, 250,  0, -250, -500, -1000, -500, -250]
+
+
+    #creates either a virtual MIDI cable or builds a connection to an existing virtual MIDI cable
+    def createMIDIOutport(self):
+        if constants.createMIDICable:
+            self.outport = mido.open_output(constants.virtualMIDICable, virtual=True)
+        else:
+            self.outport = mido.open_output(constants.virtualMIDICable)
 
 
     # method is called whenever the system predicted an augmentation;

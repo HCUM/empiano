@@ -3,6 +3,7 @@ import copy
 import pylsl
 import threading
 from collections import deque
+import storage.Constants as constants
 import livesystem.LiveSystemManager as live
 import livesystem.MidiManager as midimanager
 import livesystem.CalibrationManager as calibration
@@ -93,6 +94,11 @@ class ProgramMaster:
         self.lastTwoPredictions.append(augmentationOn)
         self.predictionSem.release()
 
+    def updateSettings(self, amtElectrodes, midiCableName, shouldCreateMidiCable):
+        constants.numberOfChannels = amtElectrodes
+        constants.virtualMIDICable = midiCableName
+        constants.createMIDICable  = shouldCreateMidiCable
+
     # Starts the midiManager for sending the midi sound effect, in a thread
     def startMidiEffect(self):
         self.midiEffectOn = True
@@ -159,6 +165,7 @@ class ProgramMaster:
             print("ERROR: Program-Manager: YOU CANNOT START the system WITHOUT calibration!")
             return
 
+        self.midiManager.createMIDIOutport()
         self.liveSystemManager = live.LiveSystemManager(self, self.calibrationManager.svm)
         self.programPaused  = False
         self.liveSystemThread  = threading.Thread(target=self.liveSystemManager.startSystem,

@@ -78,7 +78,7 @@ class StartLiveSystemPage(Frame):
         Frame.__init__(self, parent)
 
         text   = Label(self, text="START LIVE_SYSTEM NOW!")
-        button = Button(self, text="Go to Live System", command=controller.startLiveSystem)
+        button = Button(self, text="Go to Live System", command=controller.startButtonPressed)
         quitBut = Button(self, text="Quit", command=controller.quit)
 
         text.grid(row=1, column=1)
