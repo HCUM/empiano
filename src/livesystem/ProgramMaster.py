@@ -6,12 +6,14 @@ from collections import deque
 import storage.Constants as constants
 import livesystem.LiveSystemManager as live
 import livesystem.MidiManager as midimanager
+import livesystem.StreamManager as streammanager
 import livesystem.CalibrationManager as calibration
 import livesystem.gui.GuiController as guiController
 
 class ProgramMaster:
 
     def __init__(self):
+        self.streamManager = streammanager.StreamManager()
         self.streamInlet: pylsl.StreamInlet
 
         self.calibrationSem = threading.Semaphore()
@@ -110,11 +112,15 @@ class ProgramMaster:
         self.midiEffectOn = False
         self.midiEffectThread.join()
 
+    def checkStreamAvailability(self):
+        self.streamManager.checkStreamAvailability()
+
     # Connects to the defined LSL-stream and creates the inlet
-    def connectToLSLStream(self, connectionType="type", connectionVal="EEG"):
-        streams = pylsl.resolve_stream(connectionType, connectionVal)
+    def connectToLSLStream(self):#, connectionType="type", connectionVal="EEG"):
+        #streams = pylsl.resolve_stream(connectionType, connectionVal)
+        inlets = self.streamManager.connectStreams()
         # create a new inlet to read from the stream
-        self.streamInlet = pylsl.StreamInlet(streams[0])
+        self.streamInlet = inlets[0]#pylsl.StreamInlet(streams[0])
 
     # Starts the calibrationManager, in a thread, for saving the data of the calibration
     def startCalibration(self):
