@@ -28,7 +28,7 @@ class ProgramMaster:
 
         self.midiManager        = midimanager.MidiManager(self)
         self.guiController      = guiController.guiController(self)
-        self.calibrationManager = calibration.calibrationManager(self)
+        self.calibrationManager: calibration.CalibrationManager
         self.liveSystemManager: live.LiveSystemManager
 
 
@@ -129,6 +129,7 @@ class ProgramMaster:
 
     # Starts the calibrationManager, in a thread, for saving the data of the calibration
     def startCalibration(self):
+        self.calibrationManager = calibration.CalibrationManager(self)
         self.setCalibrationOn(True)
         self.calibrationThread = threading.Thread(target=self.calibrationManager.startCalibration,
                                                   args=(self.streamManager.stream,))
