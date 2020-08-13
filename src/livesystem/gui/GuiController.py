@@ -21,11 +21,11 @@ class guiController:
         self.programMaster.updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable)
 
     # calls the method for connecting to the LSL-stream, given the type and value of the connection
-    def connectToLSLStream(self):#, connectionType, connectionVal):
-        self.programMaster.connectToLSLStream()#connectionType, connectionVal)
+    def connectToLSLStream(self, uids):#, connectionType, connectionVal):
+        self.programMaster.connectToLSLStream(uids)#connectionType, connectionVal)
 
     def checkStreamAvailability(self):
-        self.programMaster.checkStreamAvailability()
+        return self.programMaster.checkStreamAvailability()
 
     # calls the method starting the calibration
     def startCalibration(self):
@@ -45,7 +45,7 @@ class guiController:
 
     # calls the method for starting the livesystem
     def startLiveSystem(self):
-        self.programMaster.startButtonPressed()
+        self.programMaster.startLiveSystem()
 
     # calls the method stopping the livesystem
     def stopLiveSystem(self):

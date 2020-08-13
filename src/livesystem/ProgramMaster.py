@@ -113,20 +113,25 @@ class ProgramMaster:
         self.midiEffectThread.join()
 
     def checkStreamAvailability(self):
-        self.streamManager.checkStreamAvailability()
+        streams = pylsl.resolve_stream("type", "EEG")
+        return self.streamManager.checkStreamAvailability()
 
     # Connects to the defined LSL-stream and creates the inlet
-    def connectToLSLStream(self):#, connectionType="type", connectionVal="EEG"):
-        #streams = pylsl.resolve_stream(connectionType, connectionVal)
-        inlets = self.streamManager.connectStreams()
-        # create a new inlet to read from the stream
-        self.streamInlet = inlets[0]#pylsl.StreamInlet(streams[0])
+    def connectToLSLStream(self, uids):#, connectionType="type", connectionVal="EEG"):
+        print("in connect lsl stream in program Master")
+        inlets = self.streamManager.connectStreams(uids)
+        print("those are the inlets: ", inlets)
+        #if inlets:
+        #    (rowid, inlet, time_correction)
+            # create a new inlet to read from the stream
+        #    self.streamManager.stream = inlets[0]#pylsl.StreamInlet(streams[0])
+        #    self.streamManager.streamInlet = self.streamManager.stream
 
     # Starts the calibrationManager, in a thread, for saving the data of the calibration
     def startCalibration(self):
         self.setCalibrationOn(True)
         self.calibrationThread = threading.Thread(target=self.calibrationManager.startCalibration,
-                                                  args=(self.streamInlet,))
+                                                  args=(self.streamManager.stream,))
         self.calibrationThread.start()
 
     # Waits for the calibration-thread to join and calls the method handling
@@ -159,7 +164,7 @@ class ProgramMaster:
     # -> buffer needs to be kept empty
     def keepPullingSamplesFromInlet(self):
         while self.programPaused:
-            self.streamInlet.pull_sample()
+            self.streamManager.keepPullingSamplesFromInlet()
 
     # Starts the manager for the livesystem in a new thread
     def startLiveSystem(self):
@@ -175,7 +180,7 @@ class ProgramMaster:
         self.liveSystemManager = live.LiveSystemManager(self, self.calibrationManager.svm)
         self.programPaused  = False
         self.liveSystemThread  = threading.Thread(target=self.liveSystemManager.startSystem,
-                                                  args=(self.streamInlet,))
+                                                  args=(self.streamManager.streamInlet,))
         self.liveSystemThread.start()
 
     # Stops the livesystem and waits for the thread to join

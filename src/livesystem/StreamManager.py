@@ -1,7 +1,7 @@
 from pylsl import ContinuousResolver, StreamInlet, resolve_stream, local_clock
 from threading import Thread, get_ident
-import pickle
 from datetime import datetime
+import pickle
 
 
 class StreamManager:
@@ -11,9 +11,12 @@ class StreamManager:
         self.inlets = []
         self.recordingThreads = []
         self.pathname = "."
+        self.stream = ()
+        self.streamInlet: StreamInlet
 
     def checkStreamAvailability(self):
-        return self.resolver.results()
+        results = self.resolver.results()
+        return results
 
     def connectStreams(self, uids):
         #disconnect all other streams
@@ -24,7 +27,11 @@ class StreamManager:
             inlet = StreamInlet(streams[0])
             time_correction = inlet.time_correction()
             self.inlets.append((rowid, inlet, time_correction))
-        return self.inlets
+        if self.inlets:
+            self.stream = self.inlets[0]
+            self.streamInlet = self.stream[1]
+        #print("following inlets: ", self.inlets)
+        #return self.inlets
 
     def startRecordingFromStreams(self, pathname):
         self.pathname = pathname
@@ -53,6 +60,9 @@ class StreamManager:
             file.write(str(info.name()) + "\t" + str(info.type()) + "\t" + str(info.channel_count()) + "\t" + str(info.nominal_srate()) + "\t" + str(info.channel_format()) + "\t" + str(info.hostname()) + "\t"
                        + str(info.uid()) + "\t" + str(thread.timeCorrection) + "\t" + str(info.source_id()) + "\t" + str(info.version()) + "\t" + str(info.created_at()) + "\n")
         self.recordingThreads = []
+
+    def keepPullingSamplesFromInlet(self):
+        self.streamInlet.pull_sample()
 
 
 class RecordThread(Thread):

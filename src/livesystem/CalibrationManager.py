@@ -17,11 +17,11 @@ class calibrationManager:
 
 
     # starts to pull and save the data from the incoming LSL-stream
-    def startCalibration(self, inlet):
-        self.eegStreamTimeOffset = inlet.time_correction()
+    def startCalibration(self, stream):
+        self.eegStreamTimeOffset = stream[2]#inlet.time_correction()
 
         while self.programMaster.getCalibrationOn():
-            self.saveSample(inlet.pull_sample())
+            self.saveSample(stream[1].pull_sample())
 
     # saves the received sample, after correcting its timestamp
     def saveSample(self, sample):

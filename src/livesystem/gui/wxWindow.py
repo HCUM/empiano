@@ -34,7 +34,6 @@ class MyFrame(wx.Frame):
         self.SetSizer(self.sizer)
 
 
-
 ###########################################################################
 ## Class StartPanel
 ###########################################################################
@@ -408,7 +407,7 @@ class StartLiveSystemPanel ( wx.Panel ):
         verticalBoxes.Add( ( 0, 50), 1, wx.EXPAND, 5 )
 
         self.startLiveSystemButton.Bind(wx.EVT_BUTTON, self.startButtonPressed)
-        self.exitButton.Bind(wx.EVT_BUTTON, self.controller.quit)
+        self.exitButton.Bind(wx.EVT_BUTTON, self.quitButtonPressed)
 
         self.SetSizer( verticalBoxes )
         self.Layout()
@@ -421,6 +420,9 @@ class StartLiveSystemPanel ( wx.Panel ):
         self.Hide()
         panel = self.Parent.panels[InLiveSystemPanel]
         panel.Show()
+
+    def quitButtonPressed(self, event):
+        self.controller.quit()
 
 
 ###########################################################################
@@ -542,6 +544,30 @@ class CalibrationPanel ( wx.Panel ):
         self.SetSizer( verticalBoxes )
         self.Layout()
 
+        # self.Bind(wx.EVT_KEY_DOWN, self.keydown)
+        #self.Bind(wx.EVT_CHAR_HOOK, self.keydown)
+        self.Bind(wx.EVT_KEY_UP, self.keydown)
+        # self.Bind("<KeyPress>", self.keydown)
+        self.modon = False
+
+        # using the space key, the beginning and end of the modulation can be tracked
+        # -> used during the calibration
+
+    def keydown(self, event):
+        print("keydown called")
+        print(event.GetKeyCode())
+        if event.GetKeyCode() == wx.WXK_ALT:
+            print("q pressed")
+            if self.modon:
+                print("end modulation")
+                self.controller.endModulation()
+                self.modon = False
+            else:
+                print("start modulation")
+                self.controller.startModulation()
+                self.modon = True
+
+
     def __del__( self ):
         pass
 
@@ -549,6 +575,7 @@ class CalibrationPanel ( wx.Panel ):
         if self.calibrationButton.GetLabel() == "Start":
             self.controller.startCalibration()
             self.calibrationButton.SetLabel("Stop")
+            self.SetFocus()
         else:
             self.controller.endCalibration()
             self.Hide()
@@ -589,7 +616,8 @@ class StreamOverviewPanel(wx.Panel):
         self.grid.ClearGrid()
         while self.grid.GetNumberRows() > 0:
             self.grid.DeleteRows()
-        streams = self.controller.checkStreamAvailability()
+        streams = self.controller.programMaster.streamManager.checkStreamAvailability()
+        print(streams)
         for streamInfo in streams:
             self.grid.InsertRows()
             self.grid.SetCellValue(0, 0, streamInfo.name())
@@ -602,20 +630,25 @@ class StreamOverviewPanel(wx.Panel):
             self.grid.SetCellValue(0, 7, "N/A")
             self.grid.SetCellValue(0, 8, "Disconnected")
         self.grid.AutoSize()
+        self.grid.AutoSizeRows()
 
     def connectToStreams(self):
         uids = []
         for i in self.grid.GetSelectedRows():
             uids.append((i, self.grid.GetCellValue(i, 6)))
-        streams = self.controller.connectToLSLStream()
-        for i in range(0, self.grid.GetNumberRows()):
-            self.grid.SetCellValue(i, 7, "N/A")
-            self.grid.SetCellValue(i, 8, "Disconnected")
-        for (rowid, inlets, timeCorrection) in streams:
-            self.grid.SetCellValue(rowid, 7, str(timeCorrection))
-            self.grid.SetCellValue(rowid, 8, "Connected")
-        self.grid.AutoSize()
-        self.parent.SetStatusText("Idle")
+        self.controller.connectToLSLStream(uids)
+        #TODO Fehlerbehandlung, falls stream connect fehl schlägt
+        self.Hide()
+        panel = self.Parent.panels[CalibrationPanel]
+        panel.Show()
+        #for i in range(0, self.grid.GetNumberRows()):
+        #    self.grid.SetCellValue(i, 7, "N/A")
+        #    self.grid.SetCellValue(i, 8, "Disconnected")
+        #for (rowid, inlets, timeCorrection) in streams:
+        #    self.grid.SetCellValue(rowid, 7, str(timeCorrection))
+        #    self.grid.SetCellValue(rowid, 8, "Connected")
+        #self.grid.AutoSize()
+        #self.parent.SetStatusText("Idle")
 
 
     def makeMenuBar(self):
