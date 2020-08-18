@@ -85,7 +85,7 @@ class StartPanel ( wx.Panel ):
 
     def showLSLPanel(self, event):
         self.Hide()
-        panel = self.Parent.panels[CalibrationPanel]#StreamOverviewPanel]
+        panel = self.Parent.panels[StreamOverviewPanel]
         panel.Show()
 
     def showSettingsPanel(self, event):
@@ -348,7 +348,7 @@ class InLiveSystemPanel ( wx.Panel ):
         self.Layout()
 
     def stopLiveSystem(self, event):
-        #self.controller.stopLiveSystem()
+        self.controller.stopLiveSystem()
         self.Hide()
         panel = self.Parent.panels[StartLiveSystemPanel]
         panel.Show()
@@ -403,7 +403,7 @@ class StartLiveSystemPanel ( wx.Panel ):
         pass
 
     def startButtonPressed(self, event):
-        #self.controller.startLiveSystem()
+        self.controller.startLiveSystem()
         self.Hide()
         panel = self.Parent.panels[InLiveSystemPanel]
         panel.Show()
@@ -472,13 +472,13 @@ class CalibrationPanel ( wx.Panel ):
 
     def calibrationButtonPressed(self, event):
         if self.calibrationButton.GetLabel() == "Start":
-            #self.controller.startCalibration()
+            self.controller.startCalibration()
             self.calibrationButton.SetLabel("Stop")
             self.modTrackButton.Enable(True)
 
             self.SetFocus()
         else:
-            #self.controller.endCalibration()
+            self.controller.endCalibration()
             self.Hide()
             panel = self.Parent.panels[StartLiveSystemPanel]
             panel.Show()
@@ -551,7 +551,6 @@ class StreamOverviewPanel(wx.Panel):
         fileMenu.AppendSeparator()
         exitItem = fileMenu.Append(wx.ID_EXIT)
         helpMenu = wx.Menu()
-        aboutItem = helpMenu.Append(wx.ID_ABOUT)
 
         menuBar = wx.MenuBar()
         menuBar.Append(fileMenu, "&File")
