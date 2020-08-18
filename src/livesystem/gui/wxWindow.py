@@ -19,7 +19,8 @@ class MyFrame(wx.Frame):
 
         self.controller = controller
 
-        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        panelSizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.panels = {}
         for panel in (StartPanel, SettingsPanel, InLiveSystemPanel, StartLiveSystemPanel,
@@ -27,11 +28,14 @@ class MyFrame(wx.Frame):
             newPanel = panel(self, self.controller)
             self.panels[panel] = newPanel
             newPanel.Hide()
-            self.sizer.Add(newPanel, 1, wx.EXPAND)
+            panelSizer.Add(newPanel, 0, wx.ALIGN_CENTER)# 1, wx.EXPAND)
 
         panel = self.panels[StartPanel]
         panel.Show()
 
+        self.sizer.AddStretchSpacer(1)
+        self.sizer.Add(panelSizer, 0, wx.ALIGN_CENTER)
+        self.sizer.AddStretchSpacer(1)
         self.SetSizer(self.sizer)
 
 
@@ -475,8 +479,6 @@ class CalibrationPanel ( wx.Panel ):
             self.controller.startCalibration()
             self.calibrationButton.SetLabel("Stop")
             self.modTrackButton.Enable(True)
-
-            self.SetFocus()
         else:
             self.controller.endCalibration()
             self.Hide()
@@ -494,7 +496,7 @@ class StreamOverviewPanel(wx.Panel):
         self.controller = controller
 
         self.vbox = wx.BoxSizer(wx.VERTICAL)
-        self.grid = wx.grid.Grid(self)
+        self.grid = wx.grid.Grid(self, size=(800,500))
         self.grid.EnableEditing(True)
         self.grid.CreateGrid(0,len(headers))
         for i in range(0, len(headers)):
@@ -509,6 +511,7 @@ class StreamOverviewPanel(wx.Panel):
         self.SetSizer(szr)
 
         self.makeMenuBar()
+        self.Layout()
         #self.parent.CreateStatusBar()
         #self.parent.SetStatusText("Idle")
 

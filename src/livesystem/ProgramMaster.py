@@ -11,7 +11,6 @@ import livesystem.CalibrationManager as calibration
 import livesystem.gui.GuiController as guiController
 
 class ProgramMaster:
-
     def __init__(self):
         self.streamManager = streammanager.StreamManager()
         self.streamInlet: pylsl.StreamInlet
@@ -121,9 +120,7 @@ class ProgramMaster:
 
     # Initializes the connecting to the defined LSL-stream and updates the sampling rate
     def connectToLSLStream(self, uids):
-        print("in connect lsl stream in program Master")
         inlets = self.streamManager.connectStreams(uids)
-        print("those are the inlets: ", inlets)
         constants.samplingRate = self.streamManager.streamInlet.nominal_srate()
 
     # Starts the calibrationManager, in a thread, for saving the data of the calibration
