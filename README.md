@@ -3,8 +3,8 @@
 This repository contains a system that, in combination with the correct hard- and softwares, offers sound modulation via muscular activity, captured by an electromyography device.
 
 In short: the system is trained to recognize a performed finger gesture and adds a pitch vibrato to the sound output.
+| <img src="./pics/figures_teaser_new.png" alt="system_teaser" width="500"/>|
 
-![](./pics/figures_teaser_new.png)
 
 ##  Requirements
 
