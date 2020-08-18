@@ -3,7 +3,8 @@
 This repository contains a system that, in combination with the correct hard- and softwares, offers sound modulation via muscular activity, captured by an electromyography device.
 
 In short: the system is trained to recognize a performed finger gesture and adds a pitch vibrato to the sound output.
-| <img src="./pics/figures_teaser_new.png" alt="system_teaser" width="500"/>|
+
+| <img src="./pics/figures_teaser_new.png" alt="system_teaser" width="1000"/>|
 
 
 ##  Requirements
@@ -29,10 +30,13 @@ The source code itself can be found in the folder "src".
 
 ### Electrode Setup
 The electrodes were placed in two rings around the upper right forearm. Each of the rings counted five electrodes and had to include either ground or reference electrode.
-![](./pics/figures_electrode_ring.jpg)
+
+| <img src="./pics/figures_electrode_ring.jpg" alt="electrode_ring" width="1000"/>|
+
 
 ### Hardware Setup
-![](./pics/fullSetup.png)
+| <img src="./pics/fullSetup.png" alt="electrode_ring" width="1000"/>|
+
 
 ## Steps to Running the System
 1. Attach the electrodes to the piano player
