@@ -39,7 +39,7 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
 
 ### Hardware Setup
 <p align="center">
-    <img src="./pics/fullSetup.png" alt="electrode_ring" width="600"/>
+    <img src="./pics/fullSetup.png" alt="electrode_ring" width="500"/>
 </p>
 
 
