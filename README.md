@@ -4,7 +4,7 @@ This repository contains a system that, in combination with the correct hard- an
 
 In short: the system is trained to recognize a performed finger gesture and adds a pitch vibrato to the sound output.
 
-| <img src="./pics/figures_teaser_new.png" alt="system_teaser" width="1000"/>|
+<img src="./pics/figures_teaser_new.png" alt="system_teaser" width="750"/>
 
 
 ##  Requirements
@@ -31,11 +31,11 @@ The source code itself can be found in the folder "src".
 ### Electrode Setup
 The electrodes were placed in two rings around the upper right forearm. Each of the rings counted five electrodes and had to include either ground or reference electrode.
 
-| <img src="./pics/figures_electrode_ring.jpg" alt="electrode_ring" width="1000"/>|
+<img src="./pics/figures_electrode_ring.jpg" alt="electrode_ring" width="750"/>
 
 
 ### Hardware Setup
-| <img src="./pics/fullSetup.png" alt="electrode_ring" width="1000"/>|
+<img src="./pics/fullSetup.png" alt="electrode_ring" width="750"/>
 
 
 ## Steps to Running the System
