@@ -8,8 +8,9 @@
 import wx
 import wx.xrc
 import wx.grid
-from threading import Thread
 from pubsub import pub
+from threading import Thread
+from wx.lib.intctrl import IntCtrl
 
 class MyFrame(wx.Frame):
     def __init__(self, controller):
@@ -22,7 +23,7 @@ class MyFrame(wx.Frame):
 
         self.panels = {}
         for panel in (StartPanel, SettingsPanel, InLiveSystemPanel, StartLiveSystemPanel,
-                      CalibrationPanel, LSLPanel, StreamOverviewPanel):
+                      CalibrationPanel, StreamOverviewPanel):
             newPanel = panel(self, self.controller)
             self.panels[panel] = newPanel
             newPanel.Hide()
@@ -47,33 +48,28 @@ class StartPanel ( wx.Panel ):
         self.controller = controller
 
         verticalBoxes = wx.BoxSizer( wx.VERTICAL )
-
-
         verticalBoxes.Add( ( 0, 70), 0, wx.EXPAND, 5 )
 
-        self.empianoLabel = wx.StaticText( self, wx.ID_ANY, u"EMPiano", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL )
+        self.empianoLabel = wx.StaticText( self, wx.ID_ANY, u"EMPiano", wx.DefaultPosition,
+                                           wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL )
         self.empianoLabel.Wrap( -1 )
-
-        self.empianoLabel.SetFont( wx.Font( 60, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial Black" ) )
+        self.empianoLabel.SetFont( wx.Font( 60, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                                            wx.FONTWEIGHT_BOLD, False, "Arial Black" ) )
         self.empianoLabel.SetForegroundColour( wx.Colour( 17, 133, 49 ) )
 
         verticalBoxes.Add( self.empianoLabel, 0, wx.ALL|wx.EXPAND, 5 )
-
-
         verticalBoxes.Add( ( 0, 70), 0, wx.EXPAND, 5 )
 
         self.startButton = wx.Button( self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.startButton.SetFont( wx.Font( 13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Arial" ) )
+        self.startButton.SetFont( wx.Font( 13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                                           wx.FONTWEIGHT_NORMAL, False, "Arial" ) )
 
         verticalBoxes.Add( self.startButton, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
-
-
         verticalBoxes.Add( ( 0, 20), 0, wx.EXPAND, 5 )
 
         self.settingsButton = wx.Button( self, wx.ID_ANY, u"Settings", wx.DefaultPosition, wx.DefaultSize, 0 )
+
         verticalBoxes.Add( self.settingsButton, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
-
-
         verticalBoxes.Add( ( 0, 20), 0, wx.EXPAND, 5 )
 
         self.exitButton = wx.Button( self, wx.ID_ANY, u"Exit", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -86,12 +82,10 @@ class StartPanel ( wx.Panel ):
         self.SetSizer( verticalBoxes )
         self.Layout()
 
-    def __del__( self ):
-        pass
 
     def showLSLPanel(self, event):
         self.Hide()
-        panel = self.Parent.panels[StreamOverviewPanel]
+        panel = self.Parent.panels[CalibrationPanel]#StreamOverviewPanel]
         panel.Show()
 
     def showSettingsPanel(self, event):
@@ -137,7 +131,8 @@ class SettingsPanel ( wx.Panel ):
 
         flexGridDataAcquisition.Add(self.amtChannelsLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.amtElectrodesInput = wx.TextCtrl(self, wx.ID_ANY, u"8", wx.DefaultPosition, wx.DefaultSize, wx.TE_RIGHT)
+        self.amtElectrodesInput = IntCtrl(self, wx.ID_ANY, 8, wx.DefaultPosition,
+                                             wx.DefaultSize, wx.TE_RIGHT, min=1)
 
         flexGridDataAcquisition.Add(self.amtElectrodesInput, 0, wx.ALL, 5)
 
@@ -241,10 +236,10 @@ class SettingsPanel ( wx.Panel ):
         flexGridMidiSettings.SetFlexibleDirection( wx.BOTH )
         flexGridMidiSettings.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-        self.midiCableName = wx.StaticText( self, wx.ID_ANY, u"Name of the virtual MIDI cable:", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.midiCableName.Wrap( -1 )
+        self.midiCableNameLable = wx.StaticText(self, wx.ID_ANY, u"Name of the virtual MIDI cable:", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.midiCableNameLable.Wrap(-1)
 
-        flexGridMidiSettings.Add( self.midiCableName, 0, wx.ALL, 5 )
+        flexGridMidiSettings.Add(self.midiCableNameLable, 0, wx.ALL, 5)
 
         self.midiCableNameInput = wx.TextCtrl(self, wx.ID_ANY, u"my_midi_cable", wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL | wx.TE_RIGHT)
         flexGridMidiSettings.Add(self.midiCableNameInput, 0, wx.ALL | wx.EXPAND, 5)
@@ -258,7 +253,9 @@ class SettingsPanel ( wx.Panel ):
         flexGridCreateCable.SetFlexibleDirection( wx.BOTH )
         flexGridCreateCable.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-        self.createMidiCableLabel = wx.StaticText( self, wx.ID_ANY, u"Create virtual MIDI cable (using mido library):", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.createMidiCableLabel = wx.StaticText( self, wx.ID_ANY,
+                                                   u"Create virtual MIDI cable (using mido library):",
+                                                   wx.DefaultPosition, wx.DefaultSize, 0 )
         self.createMidiCableLabel.Wrap( -1 )
 
         flexGridCreateCable.Add( self.createMidiCableLabel, 0, wx.ALL|wx.EXPAND, 5 )
@@ -280,21 +277,28 @@ class SettingsPanel ( wx.Panel ):
         # Connect Events
         self.setSettingsButton.Bind( wx.EVT_BUTTON, self.updateSettings )
 
-    def __del__( self ):
-        pass
 
-    # Virtual event handlers, overide them in your derived class
     def updateSettings(self, event):
-        try:
-            value = int(self.amtElectrodesInput.GetValue())
-            self.controller.updateSettings(value,
-                                           self.midiCableNameInput.GetValue(),
-                                           self.createMidiCableCheckbox.GetValue())
+        name = self.midiCableNameInput.GetValue()
+        if name == "":
+            dial = wx.MessageDialog(None, 'Please enter the name of the desired virtual midi-cable!',
+                                    'Error', wx.OK | wx.ICON_ERROR)
+            dial.ShowModal()
+
+        else:
+            if not self.createMidiCableCheckbox.GetValue():
+                success, name =self.controller.checkIfMidiCableCanBeFound(name)
+                if not success:
+                    dial = wx.MessageDialog(None, 'The entered name of the virtual midi-cable does not exist!',
+                                            'Error', wx.OK | wx.ICON_ERROR)
+                    dial.ShowModal()
+                    return
+            self.controller.updateSettings(self.amtElectrodesInput.GetValue(),
+                                       name,
+                                       self.createMidiCableCheckbox.GetValue())
             self.Hide()
             panel = self.Parent.panels[StartPanel]
             panel.Show()
-        except ValueError:
-            self.amtElectrodesInput.SetLabel("Insert an integer!")
 
 
 ###########################################################################
@@ -302,59 +306,49 @@ class SettingsPanel ( wx.Panel ):
 ###########################################################################
 
 class InLiveSystemPanel ( wx.Panel ):
-
-    def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString):
-        wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
+                 size=wx.Size(430, 500), style=wx.TAB_TRAVERSAL,
+                 name=wx.EmptyString):
+        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
 
         self.controller = controller
 
-        verticalBoxes = wx.BoxSizer( wx.VERTICAL )
+        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
-        verticalBoxes.Add( ( 0, 50), 1, wx.EXPAND, 5 )
+        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
-        self.livesystemLabel = wx.StaticText( self, wx.ID_ANY, u"Live-System",
-                                              wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL )
-        self.livesystemLabel.Wrap( -1 )
+        self.livesystemLabel = wx.StaticText(self, wx.ID_ANY, u"Live-System", wx.DefaultPosition, wx.DefaultSize,
+                                             wx.ALIGN_CENTER_HORIZONTAL)
+        self.livesystemLabel.Wrap(-1)
 
-        self.livesystemLabel.SetFont( wx.Font( 13, wx.FONTFAMILY_DEFAULT,
-                                               wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial" ) )
-        self.livesystemLabel.SetForegroundColour( wx.Colour( 17, 133, 49 ) )
+        self.livesystemLabel.SetFont(
+            wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
+        self.livesystemLabel.SetForegroundColour(wx.Colour(17, 133, 49))
 
-        verticalBoxes.Add( self.livesystemLabel, 0, wx.EXPAND|wx.ALL, 5 )
+        verticalBoxes.Add(self.livesystemLabel, 0, wx.EXPAND | wx.ALL, 5)
 
+        verticalBoxes.Add((0, 70), 0, 0, 5)
 
-        verticalBoxes.Add( ( 0, 30), 0, 0, 5 )
+        self.irrelevantForSpacing = wx.Button(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
+                                              wx.BORDER_NONE)
+        verticalBoxes.Add(self.irrelevantForSpacing, 0, wx.ALIGN_CENTER | wx.ALL, 5)
 
-        self.hintLabel = wx.StaticText( self, wx.ID_ANY, wx.EmptyString,
-                                        wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL )
-        self.hintLabel.Wrap( -1 )
+        self.stopLiveSystemButton = wx.Button(self, wx.ID_ANY, u"Stop", wx.DefaultPosition, wx.DefaultSize, 0)
+        verticalBoxes.Add(self.stopLiveSystemButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
-        self.hintLabel.SetFont( wx.Font( 13, wx.FONTFAMILY_DEFAULT,
-                                         wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL, False, "Arial" ) )
-        self.hintLabel.SetForegroundColour( wx.Colour( 0, 0, 0 ) )
+        self.irrelevantButton = wx.Button(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
+                                          wx.BORDER_NONE)
+        verticalBoxes.Add(self.irrelevantButton, 0, wx.ALIGN_CENTER | wx.ALL, 5)
 
-        verticalBoxes.Add( self.hintLabel, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
-
-
-        verticalBoxes.Add( ( 0, 30), 0, wx.EXPAND, 5 )
-
-        self.stopLiveSystemButton = wx.Button( self, wx.ID_ANY, u"Stop", wx.DefaultPosition, wx.DefaultSize, 0 )
-        verticalBoxes.Add( self.stopLiveSystemButton, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
-
-
-        verticalBoxes.Add( ( 0, 50), 1, wx.EXPAND, 5 )
+        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.stopLiveSystemButton.Bind(wx.EVT_BUTTON, self.stopLiveSystem)
 
-        self.SetSizer( verticalBoxes )
+        self.SetSizer(verticalBoxes)
         self.Layout()
 
-    def __del__( self ):
-        pass
-
     def stopLiveSystem(self, event):
-        self.controller.stopLiveSystem()
+        #self.controller.stopLiveSystem()
         self.Hide()
         panel = self.Parent.panels[StartLiveSystemPanel]
         panel.Show()
@@ -365,46 +359,39 @@ class InLiveSystemPanel ( wx.Panel ):
 
 class StartLiveSystemPanel ( wx.Panel ):
 
-    def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+    def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
+                  size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
         self.controller = controller
 
-        verticalBoxes = wx.BoxSizer( wx.VERTICAL )
+        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
+        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
-        verticalBoxes.Add( ( 0, 50), 1, wx.EXPAND, 5 )
+        self.livesystemLabel = wx.StaticText(self, wx.ID_ANY, u"Live-System", wx.DefaultPosition, wx.DefaultSize,
+                                             wx.ALIGN_CENTER_HORIZONTAL)
+        self.livesystemLabel.Wrap(-1)
 
-        self.livesystemLabel = wx.StaticText( self, wx.ID_ANY, u"Live-System", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL )
-        self.livesystemLabel.Wrap( -1 )
+        self.livesystemLabel.SetFont(
+            wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
+        self.livesystemLabel.SetForegroundColour(wx.Colour(17, 133, 49))
 
-        self.livesystemLabel.SetFont( wx.Font( 13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial" ) )
-        self.livesystemLabel.SetForegroundColour( wx.Colour( 17, 133, 49 ) )
+        verticalBoxes.Add(self.livesystemLabel, 0, wx.EXPAND | wx.ALL, 5)
 
-        verticalBoxes.Add( self.livesystemLabel, 0, wx.EXPAND|wx.ALL, 5 )
+        verticalBoxes.Add((0, 70), 0, wx.EXPAND, 5)
 
+        self.irrelevantButton = wx.Button(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
+                                          wx.BORDER_NONE)
+        verticalBoxes.Add(self.irrelevantButton, 0, wx.ALIGN_CENTER | wx.ALL, 5)
 
-        verticalBoxes.Add( ( 0, 30), 0, wx.EXPAND, 5 )
+        self.startLiveSystemButton = wx.Button(self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
+        verticalBoxes.Add(self.startLiveSystemButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
-        self.hintLabel = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL )
-        self.hintLabel.Wrap( -1 )
+        self.exitButton = wx.Button(self, wx.ID_ANY, u"Exit", wx.DefaultPosition, wx.DefaultSize, 0)
+        verticalBoxes.Add(self.exitButton, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
-        self.hintLabel.SetFont( wx.Font( 13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL, False, "Arial" ) )
-        self.hintLabel.SetForegroundColour( wx.Colour( 0, 0, 0 ) )
-
-        verticalBoxes.Add( self.hintLabel, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
-
-
-        verticalBoxes.Add( ( 0, 30), 0, wx.EXPAND, 5 )
-
-        self.startLiveSystemButton = wx.Button( self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0 )
-        verticalBoxes.Add( self.startLiveSystemButton, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
-
-        self.exitButton = wx.Button( self, wx.ID_ANY, u"Exit", wx.DefaultPosition, wx.DefaultSize, 0 )
-        verticalBoxes.Add( self.exitButton, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
-
-
-        verticalBoxes.Add( ( 0, 50), 1, wx.EXPAND, 5 )
+        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.startLiveSystemButton.Bind(wx.EVT_BUTTON, self.startButtonPressed)
         self.exitButton.Bind(wx.EVT_BUTTON, self.quitButtonPressed)
@@ -416,7 +403,7 @@ class StartLiveSystemPanel ( wx.Panel ):
         pass
 
     def startButtonPressed(self, event):
-        self.controller.startLiveSystem()
+        #self.controller.startLiveSystem()
         self.Hide()
         panel = self.Parent.panels[InLiveSystemPanel]
         panel.Show()
@@ -426,158 +413,72 @@ class StartLiveSystemPanel ( wx.Panel ):
 
 
 ###########################################################################
-## Class LSLPanel
-###########################################################################
-
-class LSLPanel ( wx.Panel ):
-
-    def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
-        wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
-
-        self.controller = controller
-
-        verticalBoxes = wx.BoxSizer( wx.VERTICAL )
-
-        self.lslConnectLabel = wx.StaticText( self, wx.ID_ANY, u"Connect to your LSL Stream", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL )
-        self.lslConnectLabel.Wrap( -1 )
-
-        self.lslConnectLabel.SetFont( wx.Font( 13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial" ) )
-        self.lslConnectLabel.SetForegroundColour( wx.Colour( 17, 133, 49 ) )
-
-        verticalBoxes.Add( self.lslConnectLabel, 0, wx.EXPAND|wx.TOP, 130 )
-
-        lslInformationGrid = wx.FlexGridSizer( 0, 2, 0, 0 )
-        lslInformationGrid.AddGrowableCol( 1 )
-        lslInformationGrid.SetFlexibleDirection( wx.BOTH )
-        lslInformationGrid.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
-
-        self.optionMenuChoices = [ u"type", u"name" ]
-        self.optionMenu = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition,
-                                     wx.DefaultSize, self.optionMenuChoices, 0 )
-        self.optionMenu.SetSelection( 0 )
-        lslInformationGrid.Add( self.optionMenu, 0, wx.ALIGN_CENTER|wx.RIGHT|wx.LEFT, 19 )
-
-        self.entry = wx.TextCtrl( self, wx.ID_ANY, u"EEG", wx.DefaultPosition, wx.DefaultSize, 0 )
-        lslInformationGrid.Add( self.entry, 0, wx.ALL|wx.EXPAND, 10 )
-
-
-        verticalBoxes.Add( lslInformationGrid, 0, wx.EXPAND|wx.ALL, 30 )
-
-        self.connectButton = wx.Button( self, wx.ID_ANY, u"Connect", wx.DefaultPosition, wx.DefaultSize, 0 )
-        verticalBoxes.Add( self.connectButton, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
-
-
-        self.SetSizer( verticalBoxes )
-        self.Layout()
-
-        # Connect Events
-        self.connectButton.Bind( wx.EVT_BUTTON, self.connectButtonPressed)
-
-    def __del__( self ):
-        pass
-
-
-    # Virtual event handlers, overide them in your derived class
-    def connectButtonPressed(self, event):
-        self.controller.connectToLSLStream(
-            self.optionMenuChoices[self.optionMenu.GetSelection()], self.entry.GetValue())
-        self.Hide()
-        panel = self.Parent.panels[CalibrationPanel]
-        panel.Show()
-
-
-###########################################################################
 ## Class CalibrationPanel
 ###########################################################################
 
 class CalibrationPanel ( wx.Panel ):
-
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
         self.controller = controller
 
-        verticalBoxes = wx.BoxSizer( wx.VERTICAL )
+        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
+        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
+        self.calibrationLabel = wx.StaticText(self, wx.ID_ANY, u"Calibration", wx.DefaultPosition, wx.DefaultSize,
+                                              wx.ALIGN_CENTER_HORIZONTAL)
+        self.calibrationLabel.Wrap(-1)
+        self.calibrationLabel.SetFont(
+            wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
+        self.calibrationLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        verticalBoxes.Add(self.calibrationLabel, 0, wx.EXPAND | wx.ALL, 5)
 
-        verticalBoxes.Add( ( 0, 50), 1, wx.EXPAND, 5 )
+        verticalBoxes.Add((0, 70), 0, wx.EXPAND, 5)
 
-        self.calibrationLabel = wx.StaticText( self, wx.ID_ANY, u"Calibration", wx.DefaultPosition,
-                                               wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL )
-        self.calibrationLabel.Wrap( -1 )
-
-        self.calibrationLabel.SetFont( wx.Font( 13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                                                wx.FONTWEIGHT_BOLD, False, "Arial" ) )
-        self.calibrationLabel.SetForegroundColour( wx.Colour( 17, 133, 49 ) )
-
-        verticalBoxes.Add( self.calibrationLabel, 0, wx.EXPAND|wx.ALL, 5 )
-
-
-        verticalBoxes.Add( ( 0, 30), 0, wx.EXPAND, 5 )
-
-        self.hintLabel = wx.StaticText( self, wx.ID_ANY, u"Hint: After starting, "
-                                                         u"the <Space> key can be used to track the "
-                                                         u"ground truth of the sound modultion motion "
-                                                         u"for the SVM training. Press it, whenever the "
-                                                         u"modulation motion is being started and also when "
-                                                         u"it is being ended.", wx.DefaultPosition, wx.DefaultSize,
-                                        wx.ALIGN_CENTER_HORIZONTAL )
-        self.hintLabel.Wrap( -1 )
-
-        self.hintLabel.SetFont( wx.Font( 13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL, False, "Arial" ) )
-        self.hintLabel.SetForegroundColour( wx.Colour( 0, 0, 0 ) )
-
-        verticalBoxes.Add( self.hintLabel, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
-
-
-        verticalBoxes.Add( ( 0, 30), 0, wx.EXPAND, 5 )
+        self.modTrackButton = wx.Button(self, wx.ID_ANY, "Mod:On", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.modTrackButton.Enable(False)
+        verticalBoxes.Add(self.modTrackButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
         self.calibrationButton = wx.Button(self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
         verticalBoxes.Add(self.calibrationButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
+        self.irrelevantButton = wx.Button(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
+                                          wx.BORDER_NONE)
+        verticalBoxes.Add(self.irrelevantButton, 0, wx.ALIGN_CENTER | wx.ALL, 5)
 
-        verticalBoxes.Add( ( 0, 50), 1, wx.EXPAND, 5 )
+        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.calibrationButton.Bind(wx.EVT_BUTTON, self.calibrationButtonPressed)
+        self.modTrackButton.Bind(wx.EVT_BUTTON, self.trackModulation)
+        self.modon = False
 
         self.SetSizer( verticalBoxes )
         self.Layout()
 
-        # self.Bind(wx.EVT_KEY_DOWN, self.keydown)
-        #self.Bind(wx.EVT_CHAR_HOOK, self.keydown)
-        self.Bind(wx.EVT_KEY_UP, self.keydown)
-        # self.Bind("<KeyPress>", self.keydown)
-        self.modon = False
 
-        # using the space key, the beginning and end of the modulation can be tracked
-        # -> used during the calibration
-
-    def keydown(self, event):
-        print("keydown called")
-        print(event.GetKeyCode())
-        if event.GetKeyCode() == wx.WXK_ALT:
-            print("q pressed")
-            if self.modon:
-                print("end modulation")
-                self.controller.endModulation()
-                self.modon = False
-            else:
-                print("start modulation")
-                self.controller.startModulation()
-                self.modon = True
-
-
-    def __del__( self ):
-        pass
+    # using the button, the beginning and end of the modulation can be tracked
+    def trackModulation(self, event):
+        if self.modon:
+            print("end modulation")
+            self.controller.endModulation()
+            self.modTrackButton.SetLabel("Mod:On")
+            self.modon = False
+        else:
+            print("start modulation")
+            self.controller.startModulation()
+            self.modTrackButton.SetLabel("Mod:Off")
+            self.modon = True
 
     def calibrationButtonPressed(self, event):
         if self.calibrationButton.GetLabel() == "Start":
-            self.controller.startCalibration()
+            #self.controller.startCalibration()
             self.calibrationButton.SetLabel("Stop")
+            self.modTrackButton.Enable(True)
+
             self.SetFocus()
         else:
-            self.controller.endCalibration()
+            #self.controller.endCalibration()
             self.Hide()
             panel = self.Parent.panels[StartLiveSystemPanel]
             panel.Show()
@@ -586,7 +487,6 @@ class CalibrationPanel ( wx.Panel ):
 headers = ["Stream", "Type", "#Channels", "SampleRate", "Format", "hosted on", "source id", "Time offset", "Status"]
 
 class StreamOverviewPanel(wx.Panel):
-
     def __init__(self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.Size(800,500), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         super(StreamOverviewPanel, self).__init__(parent, id = id, pos = pos, size = size, style = style, name = name )
@@ -609,8 +509,8 @@ class StreamOverviewPanel(wx.Panel):
         self.SetSizer(szr)
 
         self.makeMenuBar()
-        self.parent.CreateStatusBar()
-        self.parent.SetStatusText("Idle")
+        #self.parent.CreateStatusBar()
+        #self.parent.SetStatusText("Idle")
 
     def updateStreams(self):
         self.grid.ClearGrid()
@@ -641,15 +541,6 @@ class StreamOverviewPanel(wx.Panel):
         self.Hide()
         panel = self.Parent.panels[CalibrationPanel]
         panel.Show()
-        #for i in range(0, self.grid.GetNumberRows()):
-        #    self.grid.SetCellValue(i, 7, "N/A")
-        #    self.grid.SetCellValue(i, 8, "Disconnected")
-        #for (rowid, inlets, timeCorrection) in streams:
-        #    self.grid.SetCellValue(rowid, 7, str(timeCorrection))
-        #    self.grid.SetCellValue(rowid, 8, "Connected")
-        #self.grid.AutoSize()
-        #self.parent.SetStatusText("Idle")
-
 
     def makeMenuBar(self):
         fileMenu = wx.Menu()
@@ -671,33 +562,29 @@ class StreamOverviewPanel(wx.Panel):
         self.parent.Bind(wx.EVT_MENU, self.OnConnectStreams, connectStreamsItem)
 
         self.parent.Bind(wx.EVT_MENU, self.OnExit, exitItem)
-        self.parent.Bind(wx.EVT_MENU, self.OnAbout, aboutItem)
 
-        pub.subscribe(self.UpdateStatusBar, "streamManager")
+        #pub.subscribe(self.UpdateStatusBar, "streamManager")
 
 
     def OnUpdateStreams(self, event):
-        self.parent.SetStatusText("Looking for streams...")
+        #self.parent.SetStatusText("Looking for streams...")
         self.updateStreams()
-        self.parent.SetStatusText("Idle")
+        #self.parent.SetStatusText("Idle")
 
     def OnConnectStreams(self, event):
-        self.parent.SetStatusText("Connecting to streams...")
+        #self.parent.SetStatusText("Connecting to streams...")
         ConnectStreamsTask(self)
 
     def OnExit(self, event):
         self.Close(True)
 
-    def OnAbout(self, event):
-        wx.MessageBox("This is a wxPython Hello World sample", "About Hello World 2", wx.OK | wx.ICON_INFORMATION)
-
-    def UpdateStatusBar(self, msg):
-        if msg=="CONNECT_SUCCESS":
-            self.parent.SetStatusText("Idle")
-        elif msg=="RECORD_STOP":
-            self.parent.SetStatusText("Idle")
-        else:
-            self.parent.SetStatusText("Something went wrong!")
+    #def UpdateStatusBar(self, msg):
+    #    if msg=="CONNECT_SUCCESS":
+    #        self.parent.SetStatusText("Idle")
+    #    elif msg=="RECORD_STOP":
+    #        self.parent.SetStatusText("Idle")
+    #    else:
+    #        self.parent.SetStatusText("Something went wrong!")
 
 
 class ConnectStreamsTask(Thread):

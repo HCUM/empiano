@@ -113,19 +113,18 @@ class ProgramMaster:
         self.midiEffectThread.join()
 
     def checkStreamAvailability(self):
-        streams = pylsl.resolve_stream("type", "EEG")
+        #streams = pylsl.resolve_stream("type", "EEG")
         return self.streamManager.checkStreamAvailability()
 
-    # Connects to the defined LSL-stream and creates the inlet
-    def connectToLSLStream(self, uids):#, connectionType="type", connectionVal="EEG"):
+    def checkIfMidiCableCanBeFound(self, midiCableName):
+        return self.midiManager.findMidiCable(midiCableName)
+
+    # Initializes the connecting to the defined LSL-stream and updates the sampling rate
+    def connectToLSLStream(self, uids):
         print("in connect lsl stream in program Master")
         inlets = self.streamManager.connectStreams(uids)
         print("those are the inlets: ", inlets)
-        #if inlets:
-        #    (rowid, inlet, time_correction)
-            # create a new inlet to read from the stream
-        #    self.streamManager.stream = inlets[0]#pylsl.StreamInlet(streams[0])
-        #    self.streamManager.streamInlet = self.streamManager.stream
+        constants.samplingRate = self.streamManager.streamInlet.nominal_srate()
 
     # Starts the calibrationManager, in a thread, for saving the data of the calibration
     def startCalibration(self):

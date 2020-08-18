@@ -16,8 +16,17 @@ class MidiManager:
         if constants.createMIDICable:
             self.outport = mido.open_output(constants.virtualMIDICable, virtual=True)
         else:
-            self.outport = mido.open_output(constants.virtualMIDICable)
+            names = mido.get_output_names()
+            for name in names:
+                if name.startswith(constants.virtualMIDICable):
+                    self.outport = mido.open_output(name)
 
+    def findMidiCable(self, midiCableName):
+        names = mido.get_output_names()
+        for name in names:
+            if name.startswith(midiCableName):
+                return True, name
+        return False, midiCableName
 
     # method is called whenever the system predicted an augmentation;
     # constantly send pitchwheel midi-messages with different pitch values (specified in self.pitchValues);

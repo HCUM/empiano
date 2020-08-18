@@ -16,6 +16,9 @@ class guiController:
 
     # methods triggered by buttons etc
 
+    def checkIfMidiCableCanBeFound(self, midiCableName):
+        return self.programMaster.checkIfMidiCableCanBeFound(midiCableName)
+
     # updates the values changed in the settings
     def updateSettings(self, amtElectrodes, midiCableName, shouldCreateMidiCable):
         self.programMaster.updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable)
