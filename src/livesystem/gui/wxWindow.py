@@ -22,7 +22,7 @@ class MyFrame(wx.Frame):
         self.sizer = wx.BoxSizer(wx.VERTICAL)
 
         self.panels = {}
-        for panel in (StartPanel, SettingsPanel, InLiveSystemPanel, StartLiveSystemPanel,
+        for panel in (StartPanel, SettingsPanel, LiveSystemPanel,
                       CalibrationPanel, StreamOverviewPanel):
             newPanel = panel(self, self.controller)
             self.panels[panel] = newPanel
@@ -32,7 +32,12 @@ class MyFrame(wx.Frame):
         panel = self.panels[StartPanel]
         panel.Show()
 
+        self.Bind(wx.EVT_CLOSE, self.quit)
+
         self.SetSizer(self.sizer)
+
+    def quit(self, event):
+        self.controller.quit()
 
 
 ###########################################################################
@@ -73,12 +78,8 @@ class StartPanel ( wx.Panel ):
         verticalBoxes.Add( self.settingsButton, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
         verticalBoxes.Add( ( 0, 20), 0, wx.EXPAND, 5 )
 
-        self.exitButton = wx.Button( self, wx.ID_ANY, u"Exit", wx.DefaultPosition, wx.DefaultSize, 0 )
-        verticalBoxes.Add( self.exitButton, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
-
         self.startButton.Bind(wx.EVT_BUTTON, self.showLSLPanel)
         self.settingsButton.Bind(wx.EVT_BUTTON, self.showSettingsPanel)
-        self.exitButton.Bind(wx.EVT_BUTTON, self.quitButtonPressed)
 
         self.SetSizer( verticalBoxes )
         self.Layout()
@@ -315,64 +316,10 @@ class SettingsPanel ( wx.Panel ):
 
 
 ###########################################################################
-## Class InLiveSystemPanel
+## Class LiveSystemPanel
 ###########################################################################
 
-class InLiveSystemPanel ( wx.Panel ):
-    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                 size=wx.Size(430, 500), style=wx.TAB_TRAVERSAL,
-                 name=wx.EmptyString):
-        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
-        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
-
-        self.controller = controller
-
-        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
-
-        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
-
-        self.livesystemLabel = wx.StaticText(self, wx.ID_ANY, u"Live-System", wx.DefaultPosition, wx.DefaultSize,
-                                             wx.ALIGN_CENTER_HORIZONTAL)
-        self.livesystemLabel.Wrap(-1)
-
-        self.livesystemLabel.SetFont(
-            wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
-        self.livesystemLabel.SetForegroundColour(wx.Colour(17, 133, 49))
-
-        verticalBoxes.Add(self.livesystemLabel, 0, wx.EXPAND | wx.ALL, 5)
-
-        verticalBoxes.Add((0, 70), 0, 0, 5)
-
-        self.irrelevantForSpacing = wx.Button(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
-                                              wx.BORDER_NONE)
-        verticalBoxes.Add(self.irrelevantForSpacing, 0, wx.ALIGN_CENTER | wx.ALL, 5)
-
-        self.stopLiveSystemButton = wx.Button(self, wx.ID_ANY, u"Stop", wx.DefaultPosition, wx.DefaultSize, 0)
-        verticalBoxes.Add(self.stopLiveSystemButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
-
-        self.irrelevantButton = wx.Button(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
-                                          wx.BORDER_NONE)
-        verticalBoxes.Add(self.irrelevantButton, 0, wx.ALIGN_CENTER | wx.ALL, 5)
-
-        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
-
-        self.stopLiveSystemButton.Bind(wx.EVT_BUTTON, self.stopLiveSystem)
-
-        self.SetSizer(verticalBoxes)
-        self.Centre()
-        self.Layout()
-
-    def stopLiveSystem(self, event):
-        self.controller.stopLiveSystem()
-        self.Hide()
-        panel = self.Parent.panels[StartLiveSystemPanel]
-        panel.Show()
-
-###########################################################################
-## Class StartLiveSystemPanel
-###########################################################################
-
-class StartLiveSystemPanel ( wx.Panel ):
+class LiveSystemPanel (wx.Panel):
 
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
@@ -404,26 +351,25 @@ class StartLiveSystemPanel ( wx.Panel ):
         self.startLiveSystemButton = wx.Button(self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
         verticalBoxes.Add(self.startLiveSystemButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
-        self.exitButton = wx.Button(self, wx.ID_ANY, u"Exit", wx.DefaultPosition, wx.DefaultSize, 0)
-        verticalBoxes.Add(self.exitButton, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
-
         verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.startLiveSystemButton.Bind(wx.EVT_BUTTON, self.startButtonPressed)
-        self.exitButton.Bind(wx.EVT_BUTTON, self.quitButtonPressed)
 
         self.SetSizer( verticalBoxes )
         self.Centre()
         self.Layout()
 
-    def __del__( self ):
-        pass
 
     def startButtonPressed(self, event):
-        self.controller.startLiveSystem()
-        self.Hide()
-        panel = self.Parent.panels[InLiveSystemPanel]
-        panel.Show()
+        if self.startLiveSystemButton.GetLabel() == "Start":
+            self.controller.startLiveSystem()
+            self.startLiveSystemButton.SetLabel("Stop")
+        else:
+            self.stopLiveSystem()
+            self.startLiveSystemButton.SetLabel("Start")
+
+    def stopLiveSystem(self):
+        self.controller.stopLiveSystem()
 
     def quitButtonPressed(self, event):
         self.controller.quit()
@@ -461,10 +407,6 @@ class CalibrationPanel ( wx.Panel ):
         self.calibrationButton = wx.Button(self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
         verticalBoxes.Add(self.calibrationButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
-        self.irrelevantButton = wx.Button(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
-                                          wx.BORDER_NONE)
-        verticalBoxes.Add(self.irrelevantButton, 0, wx.ALIGN_CENTER | wx.ALL, 5)
-
         verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.calibrationButton.Bind(wx.EVT_BUTTON, self.calibrationButtonPressed)
@@ -479,12 +421,10 @@ class CalibrationPanel ( wx.Panel ):
     # using the button, the beginning and end of the modulation can be tracked
     def trackModulation(self, event):
         if self.modon:
-            print("end modulation")
             self.controller.endModulation()
             self.modTrackButton.SetLabel("Mod:On")
             self.modon = False
         else:
-            print("start modulation")
             self.controller.startModulation()
             self.modTrackButton.SetLabel("Mod:Off")
             self.modon = True
@@ -497,22 +437,23 @@ class CalibrationPanel ( wx.Panel ):
         else:
             self.controller.endCalibration()
             self.Hide()
-            panel = self.Parent.panels[StartLiveSystemPanel]
+            panel = self.Parent.panels[LiveSystemPanel]
             panel.Show()
 
 
-headers = ["Stream", "Type", "#Channels", "SampleRate", "Format", "hosted on", "source id", "Time offset", "Status"]
+headers = ["Stream", "Type", "#Channels", "SampleRate", "Format", "hosted on", "source id"]
 
 class StreamOverviewPanel(wx.Panel):
     def __init__(self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.Size(1000,500), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         super(StreamOverviewPanel, self).__init__(parent, id = id, pos = pos, size = size, style = style, name = name )
         self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
+
         self.parent = parent
         self.controller = controller
 
         self.vbox = wx.BoxSizer(wx.VERTICAL)
-        self.grid = wx.grid.Grid(self, size=(800,500))
+        self.grid = wx.grid.Grid(self)#, size=(800,500))
         self.grid.EnableEditing(True)
         self.grid.CreateGrid(0,len(headers))
         for i in range(0, len(headers)):
@@ -520,13 +461,29 @@ class StreamOverviewPanel(wx.Panel):
         self.grid.SetColFormatNumber(3)
         self.grid.SetColFormatNumber(4)
         self.grid.SetColFormatNumber(5)
-        self.grid.SetColFormatFloat(8)
+        self.grid.Centre()
+        self.vbox.Add(self.grid, 0, wx.EXPAND)
 
-        szr = wx.BoxSizer(wx.VERTICAL)
-        szr.Add(self.grid, 0, wx.EXPAND)
-        self.SetSizer(szr)
+        hButtonsBox = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.makeMenuBar()
+        self.backButton = wx.Button(self, wx.ID_ANY, "Back", wx.DefaultPosition, wx.DefaultSize, 0)
+        hButtonsBox.Add(self.backButton, 0, wx.ALL, 5)
+
+        self.checkStreamsButton = wx.Button(self, wx.ID_ANY, u"Find Streams", wx.DefaultPosition, wx.DefaultSize, 0)
+        hButtonsBox.Add(self.checkStreamsButton, 0, wx.ALL, 5)
+
+        self.connectButton = wx.Button(self, wx.ID_ANY, u"Connect", wx.DefaultPosition, wx.DefaultSize, 0)
+        hButtonsBox.Add(self.connectButton, 0, wx.ALL, 5)
+
+
+        self.vbox.Add((0, 300), 1, wx.EXPAND, 5)
+        self.vbox.Add(hButtonsBox, 0, wx.EXPAND)
+        self.SetSizer(self.vbox)
+
+        self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
+        self.checkStreamsButton.Bind(wx.EVT_BUTTON, self.onUpdateStreams)
+        self.connectButton.Bind(wx.EVT_BUTTON, self.onConnectStreams)
+
         self.Centre()
         self.Layout()
 
@@ -535,7 +492,6 @@ class StreamOverviewPanel(wx.Panel):
         while self.grid.GetNumberRows() > 0:
             self.grid.DeleteRows()
         streams = self.controller.programMaster.streamManager.checkStreamAvailability()
-        print(streams)
         for streamInfo in streams:
             self.grid.InsertRows()
             self.grid.SetCellValue(0, 0, streamInfo.name())
@@ -545,8 +501,6 @@ class StreamOverviewPanel(wx.Panel):
             self.grid.SetCellValue(0, 4, str(streamInfo.channel_format()))
             self.grid.SetCellValue(0, 5, streamInfo.hostname())
             self.grid.SetCellValue(0, 6, streamInfo.uid())
-            self.grid.SetCellValue(0, 7, "N/A")
-            self.grid.SetCellValue(0, 8, "Disconnected")
         self.grid.AutoSize()
         self.grid.AutoSizeRows()
 
@@ -560,35 +514,16 @@ class StreamOverviewPanel(wx.Panel):
         panel = self.Parent.panels[CalibrationPanel]
         panel.Show()
 
-    def makeMenuBar(self):
-        fileMenu = wx.Menu()
-
-        checkStreamsItem = fileMenu.Append(-1, "&Check streams \tCtrl-H", "Checking the network for all available LSL streams")
-        connectStreamsItem = fileMenu.Append(-1, "&Connect streams \tCtrl-J", "Connecting to marked streams")
-
-        fileMenu.AppendSeparator()
-        exitItem = fileMenu.Append(wx.ID_EXIT)
-        helpMenu = wx.Menu()
-
-        menuBar = wx.MenuBar()
-        menuBar.Append(fileMenu, "&File")
-        menuBar.Append(helpMenu, "&Help")
-        self.parent.SetMenuBar(menuBar)
-
-        self.parent.Bind(wx.EVT_MENU, self.OnUpdateStreams, checkStreamsItem)
-        self.parent.Bind(wx.EVT_MENU, self.OnConnectStreams, connectStreamsItem)
-
-        self.parent.Bind(wx.EVT_MENU, self.OnExit, exitItem)
-
-
-    def OnUpdateStreams(self, event):
+    def onUpdateStreams(self, event):
         self.updateStreams()
 
-    def OnConnectStreams(self, event):
+    def onConnectStreams(self, event):
         ConnectStreamsTask(self)
 
-    def OnExit(self, event):
-        self.Close(True)
+    def onBack(self, event):
+        self.Hide()
+        panel = self.Parent.panels[StartPanel]
+        panel.Show()
 
 
 class ConnectStreamsTask(Thread):
