@@ -24,6 +24,7 @@ class ProgramMaster:
         self.liveSystemSem = threading.Semaphore()
         self.inLiveSystem  = False
         self.liveSystemThread: threading.Thread
+        self.firstLiveRoundDone = False
 
         self.midiManager        = midimanager.MidiManager(self)
         self.guiController      = guiController.guiController(self)
@@ -172,7 +173,8 @@ class ProgramMaster:
             print("ERROR: Program-Manager: YOU CANNOT START the system WITHOUT calibration!")
             return
 
-        self.midiManager.createMIDIOutport()
+        if not self.firstLiveRoundDone:
+            self.midiManager.createMIDIOutport()
         self.liveSystemManager = live.LiveSystemManager(self, self.calibrationManager.svm)
         self.programPaused  = False
         self.liveSystemThread  = threading.Thread(target=self.liveSystemManager.startSystem,
@@ -182,6 +184,7 @@ class ProgramMaster:
     # Stops the livesystem and waits for the thread to join
     def stopLiveSystem(self):
         self.setInLiveSystem(False)
+        self.firstLiveRoundDone = True
         self.liveSystemThread.join()
         self.programPaused = True
         threading.Thread(target=self.keepPullingSamplesFromInlet).start()
