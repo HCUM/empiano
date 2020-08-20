@@ -10,13 +10,12 @@ import wx.xrc
 import wx.grid
 from pubsub import pub
 from threading import Thread
-from wx.lib.intctrl import IntCtrl
 
 class MyFrame(wx.Frame):
     def __init__(self, controller):
         wx.Frame.__init__(self, None, wx.ID_ANY, title= u"EMPiano",  size = wx.Size( 1000,600 ))
         self.SetSizeHints(wx.Size(1000, 600), wx.DefaultSize)
-
+        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
         self.controller = controller
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
@@ -44,6 +43,7 @@ class StartPanel ( wx.Panel ):
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.controller = controller
 
@@ -105,6 +105,7 @@ class SettingsPanel ( wx.Panel ):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.Size(430, 500), style=wx.TAB_TRAVERSAL,
                  name=wx.EmptyString):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
+        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.controller = controller
 
@@ -320,6 +321,7 @@ class InLiveSystemPanel ( wx.Panel ):
                  size=wx.Size(430, 500), style=wx.TAB_TRAVERSAL,
                  name=wx.EmptyString):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
+        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.controller = controller
 
@@ -373,6 +375,7 @@ class StartLiveSystemPanel ( wx.Panel ):
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.controller = controller
 
@@ -432,6 +435,7 @@ class CalibrationPanel ( wx.Panel ):
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.controller = controller
 
@@ -499,8 +503,9 @@ headers = ["Stream", "Type", "#Channels", "SampleRate", "Format", "hosted on", "
 
 class StreamOverviewPanel(wx.Panel):
     def __init__(self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.Size(800,500), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+                  size = wx.Size(1000,500), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         super(StreamOverviewPanel, self).__init__(parent, id = id, pos = pos, size = size, style = style, name = name )
+        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
         self.parent = parent
         self.controller = controller
 
