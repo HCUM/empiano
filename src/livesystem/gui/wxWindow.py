@@ -208,8 +208,8 @@ class SettingsPanel ( wx.Panel ):
 
         flexGridSVMSettings.Add( self.windowSizeLabel, 0, wx.ALL|wx.EXPAND, 5 )
 
-        self.midiCableNameInput = wx.TextCtrl(self, wx.ID_ANY, u"0.15", wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY | wx.TE_RIGHT)
-        flexGridSVMSettings.Add(self.midiCableNameInput, 0, wx.ALL, 5)
+        self.windowSizeInput = wx.TextCtrl(self, wx.ID_ANY, u"0.15", wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY | wx.TE_RIGHT)
+        flexGridSVMSettings.Add(self.windowSizeInput, 0, wx.ALL, 5)
 
         self.dataValCorrectionLabel = wx.StaticText( self, wx.ID_ANY, u"Value for Correcting the Data:", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.dataValCorrectionLabel.Wrap( -1 )
@@ -241,9 +241,9 @@ class SettingsPanel ( wx.Panel ):
 
         flexGridMidiSettings.Add(self.midiCableName, 0, wx.ALL, 5)
 
-        self.window_size_input1 = wx.TextCtrl(self, wx.ID_ANY, u"my_midi_cable", wx.DefaultPosition, wx.Size(140, -1),
+        self.midiCableNameInput = wx.TextCtrl(self, wx.ID_ANY, u"my_midi_cable", wx.DefaultPosition, wx.Size(140, -1),
                                               wx.HSCROLL | wx.TE_RIGHT)
-        flexGridMidiSettings.Add(self.window_size_input1, 0, wx.ALL, 5)
+        flexGridMidiSettings.Add(self.midiCableNameInput, 0, wx.ALL, 5)
 
         verticalBoxes.Add(flexGridMidiSettings, 0, wx.EXPAND | wx.ALL, 5)
 
