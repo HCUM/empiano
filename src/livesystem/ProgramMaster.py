@@ -119,9 +119,8 @@ class ProgramMaster:
         return self.midiManager.findMidiCable(midiCableName)
 
     # Initializes the connecting to the defined LSL-stream and updates the sampling rate
-    def connectToLSLStream(self, uids):
-        inlets = self.streamManager.connectStreams(uids)
-        constants.samplingRate = self.streamManager.streamInlet.nominal_srate()
+    def connectToLSLStream(self, streams):
+        self.streamManager.connectStreams(streams)
 
     # Starts the calibrationManager, in a thread, for saving the data of the calibration
     def startCalibration(self):

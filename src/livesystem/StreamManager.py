@@ -1,7 +1,5 @@
-from pylsl import ContinuousResolver, StreamInlet, resolve_stream, local_clock
-from threading import Thread, get_ident
-from datetime import datetime
-import pickle
+from pylsl import ContinuousResolver, StreamInlet, resolve_stream
+import storage.Constants as constants
 
 
 class StreamManager:
@@ -18,17 +16,18 @@ class StreamManager:
         results = self.resolver.results()
         return results
 
-    def connectStreams(self, uids):
+    def connectStreams(self, streams):
         #disconnect all other streams
         self.inlets = []
         #connect to streams given their uids
-        for (rowid, uid) in uids:
+        for (rowid, uid, samplingRate) in streams:
             streams = resolve_stream('uid', uid)
             inlet = StreamInlet(streams[0])
-            self.inlets.append((rowid, inlet, inlet.time_correction()))
+            self.inlets.append((rowid, inlet, inlet.time_correction(), samplingRate))
         if self.inlets:
             self.stream = self.inlets[0]
             self.streamInlet = self.stream[1]
+            constants.samplingRate = self.stream[3]
 
     def keepPullingSamplesFromInlet(self):
         self.streamInlet.pull_sample()

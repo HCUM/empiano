@@ -19,8 +19,7 @@ class MyFrame(wx.Frame):
 
         self.controller = controller
 
-        panelSizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
 
         self.panels = {}
         for panel in (StartPanel, SettingsPanel, InLiveSystemPanel, StartLiveSystemPanel,
@@ -28,14 +27,11 @@ class MyFrame(wx.Frame):
             newPanel = panel(self, self.controller)
             self.panels[panel] = newPanel
             newPanel.Hide()
-            panelSizer.Add(newPanel, 0, wx.ALIGN_CENTER)# 1, wx.EXPAND)
+            self.sizer.Add(newPanel, 1, wx.EXPAND)
 
         panel = self.panels[StartPanel]
         panel.Show()
 
-        self.sizer.AddStretchSpacer(1)
-        self.sizer.Add(panelSizer, 0, wx.ALIGN_CENTER)
-        self.sizer.AddStretchSpacer(1)
         self.SetSizer(self.sizer)
 
 
@@ -106,7 +102,6 @@ class StartPanel ( wx.Panel ):
 ###########################################################################
 
 class SettingsPanel ( wx.Panel ):
-
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
@@ -235,21 +230,22 @@ class SettingsPanel ( wx.Panel ):
 
         verticalBoxes.Add( self.midiSettingsLabel, 0, wx.ALL, 5 )
 
-        flexGridMidiSettings = wx.FlexGridSizer( 0, 2, 0, 0 )
-        flexGridMidiSettings.AddGrowableCol( 1 )
-        flexGridMidiSettings.SetFlexibleDirection( wx.BOTH )
-        flexGridMidiSettings.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+        flexGridMidiSettings = wx.FlexGridSizer(0, 2, 0, 50)
+        flexGridMidiSettings.AddGrowableCol(1)
+        flexGridMidiSettings.SetFlexibleDirection(wx.BOTH)
+        flexGridMidiSettings.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
 
-        self.midiCableNameLable = wx.StaticText(self, wx.ID_ANY, u"Name of the virtual MIDI cable:", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.midiCableNameLable.Wrap(-1)
+        self.midiCableName = wx.StaticText(self, wx.ID_ANY, u"Name of the virtual MIDI cable:", wx.DefaultPosition,
+                                           wx.DefaultSize, 0)
+        self.midiCableName.Wrap(-1)
 
-        flexGridMidiSettings.Add(self.midiCableNameLable, 0, wx.ALL, 5)
+        flexGridMidiSettings.Add(self.midiCableName, 0, wx.ALL, 5)
 
-        self.midiCableNameInput = wx.TextCtrl(self, wx.ID_ANY, u"my_midi_cable", wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL | wx.TE_RIGHT)
-        flexGridMidiSettings.Add(self.midiCableNameInput, 0, wx.ALL | wx.EXPAND, 5)
+        self.window_size_input1 = wx.TextCtrl(self, wx.ID_ANY, u"my_midi_cable", wx.DefaultPosition, wx.Size(140, -1),
+                                              wx.HSCROLL | wx.TE_RIGHT)
+        flexGridMidiSettings.Add(self.window_size_input1, 0, wx.ALL, 5)
 
-
-        verticalBoxes.Add( flexGridMidiSettings, 0, wx.EXPAND|wx.ALL, 5 )
+        verticalBoxes.Add(flexGridMidiSettings, 0, wx.EXPAND | wx.ALL, 5)
 
         flexGridCreateCable = wx.FlexGridSizer( 0, 2, 0, 0 )
         flexGridCreateCable.AddGrowableCol( 0 )
@@ -274,8 +270,8 @@ class SettingsPanel ( wx.Panel ):
         self.setSettingsButton = wx.Button( self, wx.ID_ANY, u"Done", wx.DefaultPosition, wx.DefaultSize, 0 )
         verticalBoxes.Add( self.setSettingsButton, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
 
-
-        self.SetSizer( verticalBoxes )
+        self.SetSizer(verticalBoxes)
+        self.Centre()
         self.Layout()
 
         # Connect Events
@@ -349,6 +345,7 @@ class InLiveSystemPanel ( wx.Panel ):
         self.stopLiveSystemButton.Bind(wx.EVT_BUTTON, self.stopLiveSystem)
 
         self.SetSizer(verticalBoxes)
+        self.Centre()
         self.Layout()
 
     def stopLiveSystem(self, event):
@@ -401,6 +398,7 @@ class StartLiveSystemPanel ( wx.Panel ):
         self.exitButton.Bind(wx.EVT_BUTTON, self.quitButtonPressed)
 
         self.SetSizer( verticalBoxes )
+        self.Centre()
         self.Layout()
 
     def __del__( self ):
@@ -458,6 +456,7 @@ class CalibrationPanel ( wx.Panel ):
         self.modon = False
 
         self.SetSizer( verticalBoxes )
+        self.Centre()
         self.Layout()
 
 
@@ -511,9 +510,8 @@ class StreamOverviewPanel(wx.Panel):
         self.SetSizer(szr)
 
         self.makeMenuBar()
+        self.Centre()
         self.Layout()
-        #self.parent.CreateStatusBar()
-        #self.parent.SetStatusText("Idle")
 
     def updateStreams(self):
         self.grid.ClearGrid()
@@ -536,10 +534,10 @@ class StreamOverviewPanel(wx.Panel):
         self.grid.AutoSizeRows()
 
     def connectToStreams(self):
-        uids = []
+        streams = []
         for i in self.grid.GetSelectedRows():
-            uids.append((i, self.grid.GetCellValue(i, 6)))
-        self.controller.connectToLSLStream(uids)
+            streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3))))
+        self.controller.connectToLSLStream(streams)
         #TODO Fehlerbehandlung, falls stream connect fehl schlägt
         self.Hide()
         panel = self.Parent.panels[CalibrationPanel]
@@ -565,28 +563,15 @@ class StreamOverviewPanel(wx.Panel):
 
         self.parent.Bind(wx.EVT_MENU, self.OnExit, exitItem)
 
-        #pub.subscribe(self.UpdateStatusBar, "streamManager")
-
 
     def OnUpdateStreams(self, event):
-        #self.parent.SetStatusText("Looking for streams...")
         self.updateStreams()
-        #self.parent.SetStatusText("Idle")
 
     def OnConnectStreams(self, event):
-        #self.parent.SetStatusText("Connecting to streams...")
         ConnectStreamsTask(self)
 
     def OnExit(self, event):
         self.Close(True)
-
-    #def UpdateStatusBar(self, msg):
-    #    if msg=="CONNECT_SUCCESS":
-    #        self.parent.SetStatusText("Idle")
-    #    elif msg=="RECORD_STOP":
-    #        self.parent.SetStatusText("Idle")
-    #    else:
-    #        self.parent.SetStatusText("Something went wrong!")
 
 
 class ConnectStreamsTask(Thread):

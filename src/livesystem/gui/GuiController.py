@@ -24,8 +24,8 @@ class guiController:
         self.programMaster.updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable)
 
     # calls the method for connecting to the LSL-stream, given the type and value of the connection
-    def connectToLSLStream(self, uids):#, connectionType, connectionVal):
-        self.programMaster.connectToLSLStream(uids)#connectionType, connectionVal)
+    def connectToLSLStream(self, streams):
+        self.programMaster.connectToLSLStream(streams)
 
     def checkStreamAvailability(self):
         return self.programMaster.checkStreamAvailability()
