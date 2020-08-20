@@ -10,6 +10,7 @@ import wx.xrc
 import wx.grid
 from pubsub import pub
 from threading import Thread
+from wx.lib.intctrl import IntCtrl
 
 class MyFrame(wx.Frame):
     def __init__(self, controller):
@@ -131,7 +132,8 @@ class SettingsPanel ( wx.Panel ):
         self.amtChannelsLabel.Wrap(-1)
         flexGridDataAcquisition.Add(self.amtChannelsLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.amtElectrodesInput = wx.TextCtrl(self, wx.ID_ANY, u"8", wx.DefaultPosition, wx.DefaultSize, wx.TE_RIGHT)
+        self.amtElectrodesInput = IntCtrl(self, wx.ID_ANY, 8, wx.DefaultPosition,
+                                          wx.DefaultSize, wx.TE_RIGHT, min=1)
         flexGridDataAcquisition.Add(self.amtElectrodesInput, 0, wx.ALL, 5)
 
         verticalBoxes.Add(flexGridDataAcquisition, 0, wx.ALL | wx.EXPAND, 5)
