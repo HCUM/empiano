@@ -1,4 +1,5 @@
 import numpy as np
+from pubsub import pub
 from sklearn import svm
 from helpers import Preprocessor
 import storage.Constants as constants
@@ -14,6 +15,7 @@ class CalibrationManager:
         self.mods = []
         self.eegStreamTimeOffset = -1
         self.svm: svm.SVC
+        self.crossValScores = []
 
 
     # starts to pull and save the data from the incoming LSL-stream
@@ -61,10 +63,11 @@ class CalibrationManager:
 
         return augData, nonAugData, X_train, y_train
 
-    # Performs a 5-fold cross validation
+    # Performs a 10-fold cross validation
     # Trains the SVM
     def trainSVM(self, X_train, y_train):
         self.svm = svm.SVC()
-        cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=0)
-        scores = cross_val_score(self.svm, X_train, y_train, cv=cv)
+        cv = ShuffleSplit(n_splits=10, test_size=0.3, random_state=0)
+        self.crossValScores = cross_val_score(self.svm, X_train, y_train, cv=cv)
+        pub.sendMessage("liveSystemPanelListener", msg="CROSS_VAL_SET", arg=self.crossValScores)
         self.svm.fit(X_train, y_train)

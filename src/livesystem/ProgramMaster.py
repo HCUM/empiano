@@ -96,6 +96,7 @@ class ProgramMaster:
         self.lastTwoPredictions.append(augmentationOn)
         self.predictionSem.release()
 
+
     def updateSettings(self, amtElectrodes, midiCableName, shouldCreateMidiCable):
         constants.numberOfChannels = amtElectrodes
         constants.virtualMIDICable = midiCableName
@@ -142,6 +143,9 @@ class ProgramMaster:
         self.modOnTimestamp = -1
         self.programPaused = True
         threading.Thread(target=self.keepPullingSamplesFromInlet).start()
+
+    def getCrossValScores(self):
+        return self.calibrationManager.crossValScores
 
     # saves the timestamp of the start of the modulation
     def startModulation(self):

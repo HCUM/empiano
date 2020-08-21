@@ -1,6 +1,7 @@
 import copy
 import threading
 import numpy as np
+from pubsub import pub
 from collections import deque
 import storage.Constants as constants
 from helpers import Preprocessor, FeatureCalculator
@@ -85,6 +86,7 @@ class LiveSystemManager:
             #set the new prediction
             prediction = self.svm.predict(featureVec)
             self.programMaster.setCurrentPrediction(prediction == "augmentation")
+            pub.sendMessage("liveSystemPanelListener", msg="PREDICTION_SET", arg=prediction)
 
         self.secondToLastFeature = copy.deepcopy(self.lastFeature)
         self.lastFeature         = copy.deepcopy(feature)

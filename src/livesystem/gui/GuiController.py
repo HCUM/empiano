@@ -38,6 +38,9 @@ class guiController:
     def endCalibration(self):
         self.programMaster.endCalibration()
 
+    def getCrossValScores(self):
+        return self.programMaster.getCrossValScores()
+
     # calls the method starting the modulation
     def startModulation(self):
         self.programMaster.startModulation()
@@ -58,3 +61,10 @@ class guiController:
     def quit(self):
         self.app.Destroy()
         self.programMaster.quit()
+
+    def showPanel(self, current, next):
+        current.Hide()
+        panel = current.Parent.panels[next]
+        panel.Show()
+        if type(panel) == wxwindow.LiveSystemPanel:
+            pass

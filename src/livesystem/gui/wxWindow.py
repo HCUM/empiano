@@ -17,7 +17,6 @@ frameSize = wx.Size(1000, 600)
 class MyFrame(wx.Frame):
     def __init__(self, controller):
         wx.Frame.__init__(self, None, wx.ID_ANY, title= u"EMPiano",  size = frameSize)
-        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
         self.controller = controller
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
@@ -52,7 +51,6 @@ class StartPanel ( wx.Panel ):
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
-        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.controller = controller
 
@@ -84,14 +82,10 @@ class StartPanel ( wx.Panel ):
 
 
     def showLSLPanel(self, event):
-        self.Hide()
-        panel = self.Parent.panels[StreamOverviewPanel]
-        panel.Show()
+        self.controller.showPanel(self, StreamOverviewPanel)
 
     def showSettingsPanel(self, event):
-        self.Hide()
-        panel = self.Parent.panels[SettingsPanel]
-        panel.Show()
+        self.controller.showPanel(self, SettingsPanel)
 
     def quitButtonPressed(self, event):
         self.controller.quit()
@@ -105,7 +99,6 @@ class SettingsPanel ( wx.Panel ):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize,
                  style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
-        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.controller = controller
 
@@ -308,9 +301,7 @@ class SettingsPanel ( wx.Panel ):
             self.controller.updateSettings(self.amtElectrodesInput.GetValue(),
                                        name,
                                        self.createMidiCableCheckbox.GetValue())
-            self.Hide()
-            panel = self.Parent.panels[StartPanel]
-            panel.Show()
+            self.controller.showPanel(self, StartPanel)
 
 
 ###########################################################################
@@ -318,44 +309,64 @@ class SettingsPanel ( wx.Panel ):
 ###########################################################################
 
 class LiveSystemPanel (wx.Panel):
-
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
-        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.controller = controller
+        pub.subscribe(self.infoListener, "liveSystemPanelListener")
 
-        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
+        self.verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
-        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
+
+        self.verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.livesystemLabel = wx.StaticText(self, wx.ID_ANY, u"Live-System", wx.DefaultPosition, wx.DefaultSize,
                                              wx.ALIGN_CENTER_HORIZONTAL)
         self.livesystemLabel.Wrap(-1)
-
         self.livesystemLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
         self.livesystemLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        self.verticalBoxes.Add(self.livesystemLabel, 0, wx.EXPAND | wx.ALL, 5)
 
-        verticalBoxes.Add(self.livesystemLabel, 0, wx.EXPAND | wx.ALL, 5)
-
-        verticalBoxes.Add((0, 70), 0, wx.EXPAND, 5)
-
+        self.infoLabel = wx.StaticText(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
+                                             wx.ALIGN_CENTER_HORIZONTAL)
+        self.infoLabel.Wrap(-1)
+        self.infoLabel.SetLabel("Cross-Validation (Calibration): ")
+        self.verticalBoxes.Add(self.infoLabel, 0, wx.EXPAND| wx.ALL, 30)
+        #verticalBoxes.Add((0,70), 0, wx.EXPAND, 5)
         self.irrelevantButton = wx.Button(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
                                           wx.BORDER_NONE)
-        verticalBoxes.Add(self.irrelevantButton, 0, wx.ALIGN_CENTER | wx.ALL, 5)
+        self.verticalBoxes.Add(self.irrelevantButton, 0, wx.ALIGN_CENTER | wx.ALL, 5)
 
         self.startLiveSystemButton = wx.Button(self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
-        verticalBoxes.Add(self.startLiveSystemButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+        self.verticalBoxes.Add(self.startLiveSystemButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
-        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
+        self.verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.startLiveSystemButton.Bind(wx.EVT_BUTTON, self.startButtonPressed)
 
-        self.SetSizerAndFit( verticalBoxes )
+        self.SetSizerAndFit(self.verticalBoxes)
         self.Centre()
         self.Layout()
+
+
+    def infoListener(self, msg, arg):
+        if msg == "CROSS_VAL_SET":
+            stringToShow = "Cross-Validation (Calibration):\n" + str(arg)
+            self.infoLabel.SetLabel(stringToShow)
+            self.SetSizerAndFit(self.verticalBoxes)
+            self.Centre()
+            self.Layout()
+        elif msg == "PREDICTION_SET":
+            stringToShow = "Current Prediction:\n" + str(arg)
+            self.infoLabel.SetLabel(stringToShow)
+            self.SetSizerAndFit(self.verticalBoxes)
+            self.Centre()
+            self.Layout()
+        else:
+            self.infoLabel.SetLabel("Something went wrong!")
+
 
 
     def startButtonPressed(self, event):
@@ -381,7 +392,6 @@ class CalibrationPanel ( wx.Panel ):
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
-        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.controller = controller
 
@@ -411,7 +421,7 @@ class CalibrationPanel ( wx.Panel ):
         self.modTrackButton.Bind(wx.EVT_BUTTON, self.trackModulation)
         self.modon = False
 
-        self.SetSizerAndFit( verticalBoxes )
+        self.SetSizerAndFit(verticalBoxes)
         self.Centre()
         self.Layout()
 
@@ -434,9 +444,7 @@ class CalibrationPanel ( wx.Panel ):
             self.modTrackButton.Enable(True)
         else:
             self.controller.endCalibration()
-            self.Hide()
-            panel = self.Parent.panels[LiveSystemPanel]
-            panel.Show()
+            self.controller.showPanel(self, LiveSystemPanel)
 
 
 headers = ["Stream", "Type", "#Channels", "SampleRate", "Format", "hosted on", "source id"]
@@ -445,7 +453,7 @@ class StreamOverviewPanel(wx.Panel):
     def __init__(self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         super(StreamOverviewPanel, self).__init__(parent, id = id, pos = pos, size = size, style = style, name = name )
-        self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
+        #self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.parent = parent
         self.controller = controller
@@ -506,9 +514,7 @@ class StreamOverviewPanel(wx.Panel):
             streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3))))
         self.controller.connectToLSLStream(streams)
         #TODO Fehlerbehandlung, falls stream connect fehl schlägt
-        self.Hide()
-        panel = self.Parent.panels[CalibrationPanel]
-        panel.Show()
+        self.controller.showPanel(self, CalibrationPanel)
 
     def onUpdateStreams(self, event):
         self.updateStreams()
