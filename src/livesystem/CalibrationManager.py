@@ -6,7 +6,7 @@ import helpers.MLDataManager as mlDataManager
 from sklearn.model_selection import cross_val_score, ShuffleSplit
 
 
-class calibrationManager:
+class CalibrationManager:
     def __init__(self, programMaster):
         self.programMaster = programMaster
         self.resavedStreamData = [[] for _ in range(constants.numberOfChannels)]
@@ -17,11 +17,12 @@ class calibrationManager:
 
 
     # starts to pull and save the data from the incoming LSL-stream
-    def startCalibration(self, inlet):
-        self.eegStreamTimeOffset = inlet.time_correction()
+    # input stream has the form: (rowid, inlet, time_correction)
+    def startCalibration(self, stream):
+        self.eegStreamTimeOffset = stream[2]
 
         while self.programMaster.getCalibrationOn():
-            self.saveSample(inlet.pull_sample())
+            self.saveSample(stream[1].pull_sample())
 
     # saves the received sample, after correcting its timestamp
     def saveSample(self, sample):

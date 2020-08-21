@@ -13,4 +13,5 @@ windowShift          = int(samplesPerWindow / 2)
 dataSampleCorrection = 0.000001
 # virtual midi cable:
 virtualMIDICable = 'IAC-Treiber IAC-Bus 1'
+createMIDICable  = True
 

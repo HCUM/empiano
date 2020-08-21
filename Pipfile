@@ -18,6 +18,8 @@ pandas = "*"
 mido = "*"
 python-rtmidi = "*"
 #pyportmidi = "*"
+wxpython = "*"
+pypubsub = "*"
 
 [requires]
 python_version = "3.8"

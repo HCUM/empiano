@@ -3,14 +3,16 @@ import copy
 import pylsl
 import threading
 from collections import deque
+import storage.Constants as constants
 import livesystem.LiveSystemManager as live
 import livesystem.MidiManager as midimanager
+import livesystem.StreamManager as streammanager
 import livesystem.CalibrationManager as calibration
 import livesystem.gui.GuiController as guiController
 
 class ProgramMaster:
-
     def __init__(self):
+        self.streamManager = streammanager.StreamManager()
         self.streamInlet: pylsl.StreamInlet
 
         self.calibrationSem = threading.Semaphore()
@@ -22,10 +24,11 @@ class ProgramMaster:
         self.liveSystemSem = threading.Semaphore()
         self.inLiveSystem  = False
         self.liveSystemThread: threading.Thread
+        self.firstLiveRoundDone = False
 
         self.midiManager        = midimanager.MidiManager(self)
         self.guiController      = guiController.guiController(self)
-        self.calibrationManager = calibration.calibrationManager(self)
+        self.calibrationManager: calibration.CalibrationManager
         self.liveSystemManager: live.LiveSystemManager
 
 
@@ -93,6 +96,11 @@ class ProgramMaster:
         self.lastTwoPredictions.append(augmentationOn)
         self.predictionSem.release()
 
+    def updateSettings(self, amtElectrodes, midiCableName, shouldCreateMidiCable):
+        constants.numberOfChannels = amtElectrodes
+        constants.virtualMIDICable = midiCableName
+        constants.createMIDICable  = shouldCreateMidiCable
+
     # Starts the midiManager for sending the midi sound effect, in a thread
     def startMidiEffect(self):
         self.midiEffectOn = True
@@ -104,17 +112,23 @@ class ProgramMaster:
         self.midiEffectOn = False
         self.midiEffectThread.join()
 
-    # Connects to the defined LSL-stream and creates the inlet
-    def connectToLSLStream(self, connectionType="type", connectionVal="EEG"):
-        streams = pylsl.resolve_stream(connectionType, connectionVal)
-        # create a new inlet to read from the stream
-        self.streamInlet = pylsl.StreamInlet(streams[0])
+    def checkStreamAvailability(self):
+        #streams = pylsl.resolve_stream("type", "EEG")
+        return self.streamManager.checkStreamAvailability()
+
+    def checkIfMidiCableCanBeFound(self, midiCableName):
+        return self.midiManager.findMidiCable(midiCableName)
+
+    # Initializes the connecting to the defined LSL-stream and updates the sampling rate
+    def connectToLSLStream(self, streams):
+        self.streamManager.connectStreams(streams)
 
     # Starts the calibrationManager, in a thread, for saving the data of the calibration
     def startCalibration(self):
+        self.calibrationManager = calibration.CalibrationManager(self)
         self.setCalibrationOn(True)
         self.calibrationThread = threading.Thread(target=self.calibrationManager.startCalibration,
-                                                  args=(self.streamInlet,))
+                                                  args=(self.streamManager.stream,))
         self.calibrationThread.start()
 
     # Waits for the calibration-thread to join and calls the method handling
@@ -147,7 +161,7 @@ class ProgramMaster:
     # -> buffer needs to be kept empty
     def keepPullingSamplesFromInlet(self):
         while self.programPaused:
-            self.streamInlet.pull_sample()
+            self.streamManager.keepPullingSamplesFromInlet()
 
     # Starts the manager for the livesystem in a new thread
     def startLiveSystem(self):
@@ -159,15 +173,18 @@ class ProgramMaster:
             print("ERROR: Program-Manager: YOU CANNOT START the system WITHOUT calibration!")
             return
 
+        if not self.firstLiveRoundDone:
+            self.midiManager.createMIDIOutport()
         self.liveSystemManager = live.LiveSystemManager(self, self.calibrationManager.svm)
         self.programPaused  = False
         self.liveSystemThread  = threading.Thread(target=self.liveSystemManager.startSystem,
-                                                  args=(self.streamInlet,))
+                                                  args=(self.streamManager.streamInlet,))
         self.liveSystemThread.start()
 
     # Stops the livesystem and waits for the thread to join
     def stopLiveSystem(self):
         self.setInLiveSystem(False)
+        self.firstLiveRoundDone = True
         self.liveSystemThread.join()
         self.programPaused = True
         threading.Thread(target=self.keepPullingSamplesFromInlet).start()
