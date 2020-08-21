@@ -12,14 +12,16 @@ from pubsub import pub
 from threading import Thread
 from wx.lib.intctrl import IntCtrl
 
+frameSize = wx.Size(1000, 600)
+
 class MyFrame(wx.Frame):
     def __init__(self, controller):
-        wx.Frame.__init__(self, None, wx.ID_ANY, title= u"EMPiano",  size = wx.Size( 1000,600 ))
-        self.SetSizeHints(wx.Size(1000, 600), wx.DefaultSize)
+        wx.Frame.__init__(self, None, wx.ID_ANY, title= u"EMPiano",  size = frameSize)
         self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
         self.controller = controller
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.AddStretchSpacer(prop=1)
 
         self.panels = {}
         for panel in (StartPanel, SettingsPanel, LiveSystemPanel,
@@ -34,6 +36,7 @@ class MyFrame(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self.quit)
 
+        self.sizer.AddStretchSpacer(prop=1)
         self.SetSizer(self.sizer)
 
     def quit(self, event):
@@ -47,14 +50,13 @@ class MyFrame(wx.Frame):
 class StartPanel ( wx.Panel ):
 
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
         self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.controller = controller
 
         verticalBoxes = wx.BoxSizer( wx.VERTICAL )
-        verticalBoxes.Add( ( 0, 70), 0, wx.EXPAND, 5 )
 
         self.empianoLabel = wx.StaticText( self, wx.ID_ANY, u"EMPiano", wx.DefaultPosition,
                                            wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL )
@@ -67,16 +69,12 @@ class StartPanel ( wx.Panel ):
         verticalBoxes.Add( ( 0, 70), 0, wx.EXPAND, 5 )
 
         self.startButton = wx.Button( self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.startButton.SetFont( wx.Font( 13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                                           wx.FONTWEIGHT_NORMAL, False, "Arial" ) )
-
         verticalBoxes.Add( self.startButton, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
         verticalBoxes.Add( ( 0, 20), 0, wx.EXPAND, 5 )
 
         self.settingsButton = wx.Button( self, wx.ID_ANY, u"Settings", wx.DefaultPosition, wx.DefaultSize, 0 )
 
         verticalBoxes.Add( self.settingsButton, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
-        verticalBoxes.Add( ( 0, 20), 0, wx.EXPAND, 5 )
 
         self.startButton.Bind(wx.EVT_BUTTON, self.showLSLPanel)
         self.settingsButton.Bind(wx.EVT_BUTTON, self.showSettingsPanel)
@@ -104,8 +102,8 @@ class StartPanel ( wx.Panel ):
 ###########################################################################
 
 class SettingsPanel ( wx.Panel ):
-    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.Size(430, 500), style=wx.TAB_TRAVERSAL,
-                 name=wx.EmptyString):
+    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize,
+                 style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
         self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
@@ -284,7 +282,7 @@ class SettingsPanel ( wx.Panel ):
         self.setSettingsButton = wx.Button(self, wx.ID_ANY, u"Done", wx.DefaultPosition, wx.DefaultSize, 0)
         verticalBoxes.Add(self.setSettingsButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
-        self.SetSizer(verticalBoxes)
+        self.SetSizerAndFit(verticalBoxes)
         self.Centre()
         self.Layout()
 
@@ -322,7 +320,7 @@ class SettingsPanel ( wx.Panel ):
 class LiveSystemPanel (wx.Panel):
 
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
         self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
@@ -355,7 +353,7 @@ class LiveSystemPanel (wx.Panel):
 
         self.startLiveSystemButton.Bind(wx.EVT_BUTTON, self.startButtonPressed)
 
-        self.SetSizer( verticalBoxes )
+        self.SetSizerAndFit( verticalBoxes )
         self.Centre()
         self.Layout()
 
@@ -381,7 +379,7 @@ class LiveSystemPanel (wx.Panel):
 
 class CalibrationPanel ( wx.Panel ):
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.Size( 430,500 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
         self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
@@ -413,7 +411,7 @@ class CalibrationPanel ( wx.Panel ):
         self.modTrackButton.Bind(wx.EVT_BUTTON, self.trackModulation)
         self.modon = False
 
-        self.SetSizer( verticalBoxes )
+        self.SetSizerAndFit( verticalBoxes )
         self.Centre()
         self.Layout()
 
@@ -445,7 +443,7 @@ headers = ["Stream", "Type", "#Channels", "SampleRate", "Format", "hosted on", "
 
 class StreamOverviewPanel(wx.Panel):
     def __init__(self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.Size(1000,500), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         super(StreamOverviewPanel, self).__init__(parent, id = id, pos = pos, size = size, style = style, name = name )
         self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
@@ -453,7 +451,7 @@ class StreamOverviewPanel(wx.Panel):
         self.controller = controller
 
         self.vbox = wx.BoxSizer(wx.VERTICAL)
-        self.grid = wx.grid.Grid(self)#, size=(800,500))
+        self.grid = wx.grid.Grid(self, size=(800,500))
         self.grid.EnableEditing(True)
         self.grid.CreateGrid(0,len(headers))
         for i in range(0, len(headers)):
@@ -475,10 +473,8 @@ class StreamOverviewPanel(wx.Panel):
         self.connectButton = wx.Button(self, wx.ID_ANY, u"Connect", wx.DefaultPosition, wx.DefaultSize, 0)
         hButtonsBox.Add(self.connectButton, 0, wx.ALL, 5)
 
-
-        self.vbox.Add((0, 300), 1, wx.EXPAND, 5)
         self.vbox.Add(hButtonsBox, 0, wx.EXPAND)
-        self.SetSizer(self.vbox)
+        self.SetSizerAndFit(self.vbox)
 
         self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
         self.checkStreamsButton.Bind(wx.EVT_BUTTON, self.onUpdateStreams)
@@ -505,10 +501,10 @@ class StreamOverviewPanel(wx.Panel):
         self.grid.AutoSizeRows()
 
     def connectToStreams(self):
-        streams = []
-        for i in self.grid.GetSelectedRows():
-            streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3))))
-        self.controller.connectToLSLStream(streams)
+        #streams = []
+        #for i in self.grid.GetSelectedRows():
+        #    streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3))))
+        #self.controller.connectToLSLStream(streams)
         #TODO Fehlerbehandlung, falls stream connect fehl schlägt
         self.Hide()
         panel = self.Parent.panels[CalibrationPanel]
