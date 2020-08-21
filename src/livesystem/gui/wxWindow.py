@@ -501,10 +501,10 @@ class StreamOverviewPanel(wx.Panel):
         self.grid.AutoSizeRows()
 
     def connectToStreams(self):
-        #streams = []
-        #for i in self.grid.GetSelectedRows():
-        #    streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3))))
-        #self.controller.connectToLSLStream(streams)
+        streams = []
+        for i in self.grid.GetSelectedRows():
+            streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3))))
+        self.controller.connectToLSLStream(streams)
         #TODO Fehlerbehandlung, falls stream connect fehl schlägt
         self.Hide()
         panel = self.Parent.panels[CalibrationPanel]
