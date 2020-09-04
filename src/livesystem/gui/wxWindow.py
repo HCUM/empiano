@@ -8,6 +8,7 @@
 import wx
 import wx.xrc
 import wx.grid
+import platform
 from pubsub import pub
 from threading import Thread
 from wx.lib.intctrl import IntCtrl
@@ -18,6 +19,10 @@ class MyFrame(wx.Frame):
     def __init__(self, controller):
         wx.Frame.__init__(self, None, wx.ID_ANY, title= u"EMPiano",  size = frameSize)
         self.controller = controller
+        self.platform = platform.platform()
+        self.isWindows = self.platform.startswith("Windows")
+        if not self.isWindows:
+            self.SetBackgroundColour(wx.Colour(0xE6, 0xE6, 0xE6))
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.AddStretchSpacer(prop=1)
@@ -52,6 +57,8 @@ class StartPanel ( wx.Panel ):
                   size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
+        if not parent.isWindows:
+            self.SetBackgroundColour(wx.Colour(0xE6, 0xE6, 0xE6))
         self.controller = controller
 
         verticalBoxes = wx.BoxSizer( wx.VERTICAL )
@@ -100,6 +107,8 @@ class SettingsPanel ( wx.Panel ):
                  style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
 
+        if not parent.isWindows:
+            self.SetBackgroundColour(wx.Colour(0xE6, 0xE6, 0xE6))
         self.controller = controller
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
@@ -313,6 +322,8 @@ class LiveSystemPanel (wx.Panel):
                   size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
+        if not parent.isWindows:
+            self.SetBackgroundColour(wx.Colour(0xE6, 0xE6, 0xE6))
         self.controller = controller
         pub.subscribe(self.infoListener, "liveSystemPanelListener")
 
@@ -393,6 +404,8 @@ class CalibrationPanel ( wx.Panel ):
                   size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
+        if not parent.isWindows:
+            self.SetBackgroundColour(wx.Colour(0xE6, 0xE6, 0xE6))
         self.controller = controller
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
@@ -453,9 +466,10 @@ class StreamOverviewPanel(wx.Panel):
     def __init__(self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         super(StreamOverviewPanel, self).__init__(parent, id = id, pos = pos, size = size, style = style, name = name )
-        #self.SetBackgroundColour(wx.Colour( 0xE6, 0xE6, 0xE6 ))
 
         self.parent = parent
+        if not self.parent.isWindows:
+            self.SetBackgroundColour(wx.Colour(0xE6, 0xE6, 0xE6))
         self.controller = controller
 
         self.vbox = wx.BoxSizer(wx.VERTICAL)
