@@ -11,6 +11,7 @@ import wx.grid
 from pubsub import pub
 from threading import Thread
 from wx.lib.intctrl import IntCtrl
+import storage.Constants as constants
 
 frameSize = wx.Size(1000, 600)
 
@@ -248,7 +249,7 @@ class SettingsPanel ( wx.Panel ):
         self.midiCableName.Wrap(-1)
         flexGridMidiSettings.Add(self.midiCableName, 0, wx.ALL, 5)
 
-        self.midiCableNameInput = wx.TextCtrl(self, wx.ID_ANY, u"my_midi_cable", wx.DefaultPosition, wx.Size(136, -1),
+        self.midiCableNameInput = wx.TextCtrl(self, wx.ID_ANY, constants.virtualMIDICable, wx.DefaultPosition, wx.Size(136, -1),
                                               wx.TE_RIGHT)
         flexGridMidiSettings.Add(self.midiCableNameInput, 0, wx.ALL, 5)
         verticalBoxes.Add(flexGridMidiSettings, 0, wx.EXPAND | wx.ALL, 5)
