@@ -125,7 +125,7 @@ class SettingsPanel ( wx.Panel ):
         self.amtChannelsLabel.Wrap(-1)
         flexGridDataAcquisition.Add(self.amtChannelsLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.amtElectrodesInput = IntCtrl(self, wx.ID_ANY, 8, wx.DefaultPosition,
+        self.amtElectrodesInput = IntCtrl(self, wx.ID_ANY, constants.numberOfChannels, wx.DefaultPosition,
                                           wx.DefaultSize, wx.TE_RIGHT, min=1)
         flexGridDataAcquisition.Add(self.amtElectrodesInput, 0, wx.ALL, 5)
 
@@ -152,8 +152,8 @@ class SettingsPanel ( wx.Panel ):
 
         flexGridPreprocessing.Add(self.lowCutoffBandpassLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.lowBandpassInput = wx.TextCtrl(self, wx.ID_ANY, u"2.0", wx.DefaultPosition, wx.DefaultSize,
-                                            wx.TE_READONLY | wx.TE_RIGHT)
+        self.lowBandpassInput = wx.TextCtrl(self, wx.ID_ANY, str(constants.lowerBoundCutOutFreq), wx.DefaultPosition,
+                                            wx.DefaultSize,  wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.lowBandpassInput, 0, wx.ALL | wx.LEFT, 5)
 
         self.highCutoffBandpassLabel = wx.StaticText(self, wx.ID_ANY,
@@ -163,8 +163,8 @@ class SettingsPanel ( wx.Panel ):
 
         flexGridPreprocessing.Add(self.highCutoffBandpassLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.highBandpassInput = wx.TextCtrl(self, wx.ID_ANY, u"100.0", wx.DefaultPosition, wx.DefaultSize,
-                                             wx.TE_READONLY | wx.TE_RIGHT)
+        self.highBandpassInput = wx.TextCtrl(self, wx.ID_ANY, str(constants.upperBoundCutOutFreq), wx.DefaultPosition,
+                                             wx.DefaultSize,  wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.highBandpassInput, 0, wx.ALL, 5)
 
         self.lowCutoffBandstopLabel = wx.StaticText(self, wx.ID_ANY, u"Low Cutoff Frequency for Bandstop Filter:",
@@ -173,7 +173,7 @@ class SettingsPanel ( wx.Panel ):
 
         flexGridPreprocessing.Add(self.lowCutoffBandstopLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.lowBandstopInput = wx.TextCtrl(self, wx.ID_ANY, u"49.0", wx.DefaultPosition, wx.DefaultSize,
+        self.lowBandstopInput = wx.TextCtrl(self, wx.ID_ANY, str(constants.lowBandStopFreq), wx.DefaultPosition, wx.DefaultSize,
                                             wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.lowBandstopInput, 0, wx.ALL, 5)
 
@@ -183,7 +183,7 @@ class SettingsPanel ( wx.Panel ):
 
         flexGridPreprocessing.Add(self.highCutoffBandstopLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.high_bandstop_input = wx.TextCtrl(self, wx.ID_ANY, u"51.0", wx.DefaultPosition, wx.DefaultSize,
+        self.high_bandstop_input = wx.TextCtrl(self, wx.ID_ANY, str(constants.highBandStopFreq), wx.DefaultPosition, wx.DefaultSize,
                                                wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.high_bandstop_input, 0, wx.ALL, 5)
 
@@ -220,12 +220,12 @@ class SettingsPanel ( wx.Panel ):
 
         verticalBoxSizerSVMRight = wx.BoxSizer(wx.VERTICAL)
 
-        self.windowSizeInput = wx.TextCtrl(self, wx.ID_ANY, u"0.15", wx.DefaultPosition, wx.DefaultSize,
+        self.windowSizeInput = wx.TextCtrl(self, wx.ID_ANY, str(constants.windowSize), wx.DefaultPosition, wx.DefaultSize,
                                            wx.TE_READONLY | wx.TE_RIGHT)
         verticalBoxSizerSVMRight.Add(self.windowSizeInput, 0, wx.ALL, 5)
 
-        self.dataValCorrectionInput = wx.TextCtrl(self, wx.ID_ANY, u"0.000001", wx.DefaultPosition, wx.DefaultSize,
-                                                  wx.TE_READONLY | wx.TE_RIGHT)
+        self.dataValCorrectionInput = wx.TextCtrl(self, wx.ID_ANY, str(constants.dataSampleCorrection), wx.DefaultPosition,
+                                                  wx.DefaultSize, wx.TE_READONLY | wx.TE_RIGHT)
         verticalBoxSizerSVMRight.Add(self.dataValCorrectionInput, 0, wx.ALL, 5)
         flexGridSVMSettings.Add(verticalBoxSizerSVMRight, 1, wx.EXPAND, 5)
 
@@ -268,7 +268,7 @@ class SettingsPanel ( wx.Panel ):
 
         self.createMidiCableCheckbox = wx.CheckBox(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
                                                    0)
-        self.createMidiCableCheckbox.SetValue(True)
+        self.createMidiCableCheckbox.SetValue(constants.createMIDICable)
         flexGridCreateCable.Add(self.createMidiCableCheckbox, 0, wx.ALL, 5)
 
         verticalBoxes.Add(flexGridCreateCable, 0, wx.EXPAND | wx.ALL, 5)
