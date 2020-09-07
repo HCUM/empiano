@@ -10,6 +10,10 @@ import livesystem.StreamManager as streammanager
 import livesystem.CalibrationManager as calibration
 import livesystem.gui.GuiController as guiController
 
+###########################################################################
+## Class ProgramMaster
+## -> everything goes through here, manages all the sub-classes
+###########################################################################
 class ProgramMaster:
     def __init__(self):
         self.streamManager = streammanager.StreamManager()
@@ -19,8 +23,8 @@ class ProgramMaster:
         self.calibrationOn  = False
         self.calibrationThread: threading.Thread
 
-        #liveSystem is referring to the situation after the calibration is completed
-        #and the modulation can be used to trigger the sound modulation
+        # liveSystem is referring to the situation after the calibration is completed
+        # and the modulation can be used to trigger the sound modulation
         self.liveSystemSem = threading.Semaphore()
         self.inLiveSystem  = False
         self.liveSystemThread: threading.Thread
@@ -50,7 +54,8 @@ class ProgramMaster:
         self.guiController.launchWindow()
 
 
-    # getter with semaphore
+    # getters with semaphore
+
     def getCalibrationOn(self):
         self.calibrationSem.acquire()
         res = copy.deepcopy(self.calibrationOn)
@@ -70,7 +75,8 @@ class ProgramMaster:
         return res
 
 
-    # setter with semaphore
+    # setters with semaphore
+
     def setCalibrationOn(self, bool):
         self.calibrationSem.acquire()
         self.calibrationOn = bool
@@ -82,8 +88,8 @@ class ProgramMaster:
         self.inLiveSystem = bool
         self.liveSystemSem.release()
 
-    # param: augmentationOn = current prediction of the SVM whether an augmentation was performed or not
-    # starts or ends the midi effect, when needed; updates the lastTwoPredictions field
+    # param: augmentationOn = current prediction of the SVM whether an augmentation was performed or not;
+    # starts or ends the sound effect, when needed; updates the lastTwoPredictions field
     def setCurrentPrediction(self, augmentationOn):
         if augmentationOn and not self.midiEffectThread.isAlive():
             self.startMidiEffect()
@@ -96,7 +102,7 @@ class ProgramMaster:
         self.lastTwoPredictions.append(augmentationOn)
         self.predictionSem.release()
 
-
+    # updates the values changed in the settings
     def updateSettings(self, amtElectrodes, midiCableName, shouldCreateMidiCable):
         constants.numberOfChannels = amtElectrodes
         constants.virtualMIDICable = midiCableName
@@ -108,19 +114,16 @@ class ProgramMaster:
         self.midiEffectThread = threading.Thread(target=self.midiManager.sendEffect)
         self.midiEffectThread.start()
 
-    # Sets the midi effect on false and waits for the thread handling the effect to join
+    # Sets the midi sound effect on false and waits for the thread handling the effect to join
     def endMidiEffect(self):
         self.midiEffectOn = False
         self.midiEffectThread.join()
 
-    def checkStreamAvailability(self):
-        #streams = pylsl.resolve_stream("type", "EEG")
-        return self.streamManager.checkStreamAvailability()
-
+    # checks whether the (in the settings) specified MIDI-cable can be found
     def checkIfMidiCableCanBeFound(self, midiCableName):
         return self.midiManager.findMidiCable(midiCableName)
 
-    # Initializes the connecting to the defined LSL-stream and updates the sampling rate
+    # Initializes the connection to the defined LSL-stream
     def connectToLSLStream(self, streams):
         self.streamManager.connectStreams(streams)
 
@@ -144,10 +147,12 @@ class ProgramMaster:
         self.programPaused = True
         threading.Thread(target=self.keepPullingSamplesFromInlet).start()
 
+    # gets the scores of the cross-validation of the SVM (after calibration)
     def getCrossValScores(self):
         return self.calibrationManager.crossValScores
 
     # saves the timestamp of the start of the modulation
+    # if in livesystem, the sound-effect is started
     def startModulation(self):
         self.modOnTimestamp = pylsl.local_clock()
         if self.inLiveSystem:
@@ -155,19 +160,18 @@ class ProgramMaster:
 
     # saves the timestamp of the end of the modulation, together with the start:
     # (timestamp start, timestamp end) to the array holding all the modulation windows
+    # if in livesystem, the sound-effect is ended
     def endModulation(self):
         self.modsTimestamp.append((self.modOnTimestamp, pylsl.local_clock()))
         if self.inLiveSystem:
             self.endMidiEffect()
 
-    # Pulls samples from the LSL-stream, without saving them.
-    # Needed for the times outside of the calibration and livesystem
-    # -> buffer needs to be kept empty
+    # calls the method which pulls samples from the LSL-stream, without saving them
     def keepPullingSamplesFromInlet(self):
         while self.programPaused:
             self.streamManager.keepPullingSamplesFromInlet()
 
-    # Starts the manager for the livesystem in a new thread
+    # starts the manager for the livesystem in a new thread
     def startLiveSystem(self):
         self.setInLiveSystem(True)
         self.modsTimestamp  = []
@@ -185,14 +189,13 @@ class ProgramMaster:
                                                   args=(self.streamManager.streamInlet,))
         self.liveSystemThread.start()
 
-    # Stops the livesystem and waits for the thread to join
+    # stops the livesystem and waits for the thread to join
     def stopLiveSystem(self):
         self.setInLiveSystem(False)
         self.firstLiveRoundDone = True
         self.liveSystemThread.join()
         self.programPaused = True
         threading.Thread(target=self.keepPullingSamplesFromInlet).start()
-
 
     def quit(self):
         self.programPaused = False

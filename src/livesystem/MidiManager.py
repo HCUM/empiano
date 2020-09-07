@@ -2,7 +2,10 @@ import mido
 import time
 from storage import Constants as constants
 
-# manages all the midi-related things
+###########################################################################
+## Class CalibrationManager
+## -> manages all the midi-related things
+###########################################################################
 class MidiManager:
 
     def __init__(self, programMaster):
@@ -21,6 +24,9 @@ class MidiManager:
                 if name.startswith(constants.virtualMIDICable):
                     self.outport = mido.open_output(name)
 
+    # looks for the virtual midi-cable with the given name
+    # this is needed, because sometimes the index of the virtual cable is added to the name,
+    # which cannot be known by the user
     def findMidiCable(self, midiCableName):
         names = mido.get_output_names()
         for name in names:
@@ -29,8 +35,8 @@ class MidiManager:
         return False, midiCableName
 
     # method is called whenever the system predicted an augmentation;
-    # constantly send pitchwheel midi-messages with different pitch values (specified in self.pitchValues);
-    # messages are sent to a virtual midi cable (specified in self.outport);
+    # constantly sends pitchwheel midi-messages with different pitch values (specified in self.pitchValues);
+    # these are sent to a virtual midi cable (specified in self.outport)
     def sendEffect(self):
         index = 0
         while(self.programMaster.midiEffectOn):

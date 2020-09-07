@@ -10,9 +10,9 @@ resulting data will look as followed:
    [
     [ [data_channel_1_aug_1][data_channel_2_aug_1] ... [data_channel_8_aug_1] ]
        ...
-    [[data_channel_1_last_aug][data_channel_2_last_aug] ... [data_channel_8_last_aug] ]
+    [ [data_channel_1_last_aug][data_channel_2_last_aug] ... [data_channel_8_last_aug] ]
    ]
-returns two of those fields: 1. augmented data, 2. non-augmented data
+returns two of those fields: 1. augmented data, 2. not-augmented data
 '''
 def splitRecordedSample(emgData, mods):
     splittedAugData     = []

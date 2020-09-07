@@ -16,6 +16,7 @@ class StreamManager:
         results = self.resolver.results()
         return results
 
+    # Initializes the connection to the defined LSL-stream
     def connectStreams(self, streams):
         #disconnect all other streams
         self.inlets = []
@@ -29,5 +30,8 @@ class StreamManager:
             self.streamInlet = self.stream[1]
             constants.samplingRate = self.stream[3]
 
+    # Pulls samples from the LSL-stream, without saving them.
+    # Needed for the times outside of the calibration and livesystem
+    # -> buffer needs to be kept empty
     def keepPullingSamplesFromInlet(self):
         self.streamInlet.pull_sample()

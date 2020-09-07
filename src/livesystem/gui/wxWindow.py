@@ -8,7 +8,6 @@
 import wx
 import wx.xrc
 import wx.grid
-import platform
 from pubsub import pub
 from threading import Thread
 from wx.lib.intctrl import IntCtrl

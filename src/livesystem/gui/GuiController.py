@@ -16,6 +16,7 @@ class guiController:
 
     # methods triggered by buttons etc
 
+    # calls the method which checks whether the (in the settings) specified MIDI cable can be found
     def checkIfMidiCableCanBeFound(self, midiCableName):
         return self.programMaster.checkIfMidiCableCanBeFound(midiCableName)
 
@@ -23,12 +24,9 @@ class guiController:
     def updateSettings(self, amtElectrodes, midiCableName, shouldCreateMidiCable):
         self.programMaster.updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable)
 
-    # calls the method for connecting to the LSL-stream, given the type and value of the connection
+    # calls the method for connecting to the LSL-stream, given the list of streams chosen in the UI
     def connectToLSLStream(self, streams):
         self.programMaster.connectToLSLStream(streams)
-
-    def checkStreamAvailability(self):
-        return self.programMaster.checkStreamAvailability()
 
     # calls the method starting the calibration
     def startCalibration(self):
@@ -38,6 +36,7 @@ class guiController:
     def endCalibration(self):
         self.programMaster.endCalibration()
 
+    # gets the scores of the cross-validation of the SVM (after calibration)
     def getCrossValScores(self):
         return self.programMaster.getCrossValScores()
 
@@ -57,11 +56,12 @@ class guiController:
     def stopLiveSystem(self):
         self.programMaster.stopLiveSystem()
 
-    # quitting the system and the window
+    # quitting the system and destroying the window
     def quit(self):
         self.app.Destroy()
         self.programMaster.quit()
 
+    # used for changing the panel displayed in the window
     def showPanel(self, current, next):
         current.Hide()
         panel = current.Parent.panels[next]

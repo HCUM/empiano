@@ -6,6 +6,10 @@ from collections import deque
 import storage.Constants as constants
 from helpers import Preprocessor, FeatureCalculator
 
+###########################################################################
+## Class LiveSystemManager
+## -> manages the live-system
+###########################################################################
 class LiveSystemManager:
 
     def __init__(self, programMaster, svm):
@@ -21,8 +25,8 @@ class LiveSystemManager:
         self.secondToLastFeature = []
 
 
-    # Pulls samples from the LSL-stream and saves it to the ringbuffer
-    # Once there are enough samples for a prediction, it calls the right method
+    # Pulls samples from the LSL-stream and saves it to the ringbuffer;
+    # once there are enough samples for a prediction, it calls the prediction method
     def startSystem(self, inlet):
         self.eegStreamTimeOffset = inlet.time_correction()
 
@@ -36,7 +40,7 @@ class LiveSystemManager:
             self.samplesToNextPrediction -= 1
 
 
-    # Saves the received sample to the ringbuffer,
+    # Saves the received sample to the ringbuffer
     # after correcting the timestamp and its format
     def saveSampleToRingbuffer(self, sample):
         (data, timestamp) = sample
@@ -60,8 +64,8 @@ class LiveSystemManager:
             return data
 
 
-    # First reformats the data ([[data channel 1][data channel 2]...[data channel n]]),
-    # preprocessing, feature calculation, SVM prediction
+    # First reformats the data ([ [data channel 1][data channel 2]...[data channel n] ]),
+    # calls preprocessing, feature calculation, SVM prediction
     def performPrediction(self, ringBuffer):
         emgDf = [[] for i in range(constants.numberOfChannels)]
 
