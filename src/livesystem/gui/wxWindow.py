@@ -582,6 +582,9 @@ class InbuiltCalibrationPanel ( wx.Panel ):
                     break
                 print("ein Durchlauf beendet, neuer Index: ", index)
 
+        self.controller.endCalibration()
+        self.controller.showPanel(self, LiveSystemPanel)
+
     def resetButtonPressed(self, event):
         self.video.Stop()
         self.video.Play()
