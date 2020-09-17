@@ -6,26 +6,35 @@
 ###########################################################################
 
 import wx
+import os
 import wx.xrc
 import wx.grid
+import platform
 from pubsub import pub
 from threading import Thread
 from wx.lib.intctrl import IntCtrl
+from wx.media import MediaCtrl
 import storage.Constants as constants
 
 frameSize = wx.Size(1000, 600)
+backgroundColorWindows = wx.Colour(0xE6, 0xE6, 0xE6)
 
 class MyFrame(wx.Frame):
     def __init__(self, controller):
         wx.Frame.__init__(self, None, wx.ID_ANY, title= u"EMPiano",  size = frameSize)
         self.controller = controller
+        self.platform = platform.platform()
+        self.isWindows = self.platform.startswith("Windows")
+        if self.isWindows:
+            self.SetBackgroundColour(backgroundColorWindows)
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.AddStretchSpacer(prop=1)
 
         self.panels = {}
         for panel in (StartPanel, SettingsPanel, LiveSystemPanel,
-                      CalibrationPanel, StreamOverviewPanel):
+                      CustomCalibrationPanel, StreamOverviewPanel,
+                      ChooseCalibrationPanel, InbuiltCalibrationPanel):
             newPanel = panel(self, self.controller)
             self.panels[panel] = newPanel
             newPanel.Hide()
@@ -54,6 +63,8 @@ class StartPanel ( wx.Panel ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
         self.controller = controller
+        if parent.isWindows:
+            self.SetBackgroundColour(backgroundColorWindows)
 
         verticalBoxes = wx.BoxSizer( wx.VERTICAL )
 
@@ -102,6 +113,8 @@ class SettingsPanel ( wx.Panel ):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
 
         self.controller = controller
+        if parent.isWindows:
+            self.SetBackgroundColour(backgroundColorWindows)
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
@@ -315,6 +328,8 @@ class LiveSystemPanel (wx.Panel):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
         self.controller = controller
+        if parent.isWindows:
+            self.SetBackgroundColour(backgroundColorWindows)
         pub.subscribe(self.infoListener, "liveSystemPanelListener")
 
         self.verticalBoxes = wx.BoxSizer(wx.VERTICAL)
@@ -384,17 +399,66 @@ class LiveSystemPanel (wx.Panel):
     def quitButtonPressed(self, event):
         self.controller.quit()
 
-
 ###########################################################################
-## Class CalibrationPanel
+## Class ChooseCalibrationPanel
 ###########################################################################
 
-class CalibrationPanel ( wx.Panel ):
+class ChooseCalibrationPanel ( wx.Panel ):
     def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
                   size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
         wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
         self.controller = controller
+        if parent.isWindows:
+            self.SetBackgroundColour(backgroundColorWindows)
+
+        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
+        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
+
+        self.calibrationLabel = wx.StaticText(self, wx.ID_ANY, u"Calibration", wx.DefaultPosition, wx.DefaultSize,
+                                              wx.ALIGN_CENTER_HORIZONTAL)
+        self.calibrationLabel.Wrap(-1)
+        self.calibrationLabel.SetFont(
+            wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
+        self.calibrationLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        verticalBoxes.Add(self.calibrationLabel, 0, wx.EXPAND | wx.ALL, 5)
+
+        verticalBoxes.Add((0, 70), 0, wx.EXPAND, 5)
+
+        self.inbuiltCalibrationButton = wx.Button(self, wx.ID_ANY, "Inbuilt", wx.DefaultPosition, wx.DefaultSize, 0)
+        verticalBoxes.Add(self.inbuiltCalibrationButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+
+        self.customCalibrationButton = wx.Button(self, wx.ID_ANY, u"Custom", wx.DefaultPosition, wx.DefaultSize, 0)
+        verticalBoxes.Add(self.customCalibrationButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+
+        verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
+
+        self.customCalibrationButton.Bind(wx.EVT_BUTTON, self.customCaliPressed)
+        self.inbuiltCalibrationButton.Bind(wx.EVT_BUTTON, self.inbuiltCaliPressed)
+        self.modon = False
+
+        self.SetSizerAndFit(verticalBoxes)
+        self.Centre()
+        self.Layout()
+
+    def customCaliPressed(self, event):
+        self.controller.showPanel(self, CustomCalibrationPanel)
+
+    def inbuiltCaliPressed(self, event):
+        self.controller.showPanel(self, InbuiltCalibrationPanel)
+
+###########################################################################
+## Class CustomCalibrationPanel
+###########################################################################
+
+class CustomCalibrationPanel (wx.Panel):
+    def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
+                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+        wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+        self.controller = controller
+        if parent.isWindows:
+            self.SetBackgroundColour(backgroundColorWindows)
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
         verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
@@ -447,7 +511,89 @@ class CalibrationPanel ( wx.Panel ):
             self.controller.endCalibration()
             self.controller.showPanel(self, LiveSystemPanel)
 
+###########################################################################
+## Class InbuiltCalibrationPanel
+###########################################################################
 
+class InbuiltCalibrationPanel ( wx.Panel ):
+    def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
+                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
+        wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+
+        self.controller = controller
+        if parent.isWindows:
+            self.SetBackgroundColour(backgroundColorWindows)
+        self.modTimes = [6000, 8000, 14000, 16000, 22000, 24000, 30000, 32000,
+                         38000, 40000, 46000, 48000, 54000, 56000, 62000, 64000]
+
+        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
+
+        self.calibrationLabel = wx.StaticText(self, wx.ID_ANY, u"Calibration", wx.DefaultPosition, wx.DefaultSize,
+                                              wx.ALIGN_CENTER_HORIZONTAL)
+        self.calibrationLabel.Wrap(-1)
+        self.calibrationLabel.SetFont(
+            wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
+        self.calibrationLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        verticalBoxes.Add(self.calibrationLabel, 0, wx.EXPAND | wx.ALL, 5)
+
+        filename = os.path.normpath(os.path.join(os.getcwd(), '..','pics/empiano_song.mp4'))
+        self.video = MediaCtrl(self, size=(800,500))
+        self.video.Load(filename)
+
+        verticalBoxes.Add(self.video, 0, wx.EXPAND, 5)
+
+        hButtonsBox = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.startButton = wx.Button(self, wx.ID_ANY, "Start", wx.DefaultPosition, wx.DefaultSize, 0)
+        hButtonsBox.Add(self.startButton, 0, wx.ALL, 5)
+
+        self.resetButton = wx.Button(self, wx.ID_ANY, u"Reset", wx.DefaultPosition, wx.DefaultSize, 0)
+        hButtonsBox.Add(self.resetButton, 0, wx.ALL, 5)
+
+        self.finishButton = wx.Button(self, wx.ID_ANY, u"Finish", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.finishButton.Enable(False)
+        hButtonsBox.Add(self.finishButton, 0, wx.ALL, 5)
+
+        verticalBoxes.Add(hButtonsBox, 0, wx.EXPAND)
+
+        self.startButton.Bind(wx.EVT_BUTTON, self.startButtonPressed)
+        self.resetButton.Bind(wx.EVT_BUTTON, self.resetButtonPressed)
+        self.finishButton.Bind(wx.EVT_BUTTON, self.finishButtonPressed)
+
+        self.SetSizerAndFit(verticalBoxes)
+        self.Centre()
+        self.Layout()
+
+    def startButtonPressed(self, event):
+        self.controller.startCalibration()
+        self.video.Play()
+        index = 0
+        while self.video.GetState() == wx.media.MEDIASTATE_PLAYING:
+            currentSecond = self.video.Tell()
+            if currentSecond == self.modTimes[index]:
+                if index % 2 == 0:
+                    self.controller.startModulation()
+                    print("modulation started: ", currentSecond)
+                else:
+                    self.controller.endModulation()
+                    print("modulation ended: ", currentSecond)
+                index = index + 1
+                if index == len(self.modTimes):
+                    break
+                print("ein Durchlauf beendet, neuer Index: ", index)
+
+    def resetButtonPressed(self, event):
+        self.video.Stop()
+        self.video.Play()
+
+    def finishButtonPressed(self, event):
+        self.controller.showPanel(self, InbuiltCalibrationPanel)
+
+
+
+###########################################################################
+## Class StreamOverviewPanel
+###########################################################################
 headers = ["Stream", "Type", "#Channels", "SampleRate", "Format", "hosted on", "source id"]
 
 class StreamOverviewPanel(wx.Panel):
@@ -458,6 +604,8 @@ class StreamOverviewPanel(wx.Panel):
         self.parent = parent
 
         self.controller = controller
+        if parent.isWindows:
+            self.SetBackgroundColour(backgroundColorWindows)
 
         self.vbox = wx.BoxSizer(wx.VERTICAL)
         self.grid = wx.grid.Grid(self, size=(800,500))
@@ -515,7 +663,7 @@ class StreamOverviewPanel(wx.Panel):
             streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3))))
         self.controller.connectToLSLStream(streams)
         #TODO Fehlerbehandlung, falls stream connect fehl schlägt
-        self.controller.showPanel(self, CalibrationPanel)
+        self.controller.showPanel(self, ChooseCalibrationPanel)
 
     def onUpdateStreams(self, event):
         self.updateStreams()
@@ -524,9 +672,7 @@ class StreamOverviewPanel(wx.Panel):
         ConnectStreamsTask(self)
 
     def onBack(self, event):
-        self.Hide()
-        panel = self.Parent.panels[StartPanel]
-        panel.Show()
+        self.controller.showPanel(self, StartPanel)
 
 
 class ConnectStreamsTask(Thread):
