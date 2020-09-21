@@ -7,9 +7,11 @@
 
 import wx
 import os
+import time
 import wx.xrc
 import wx.grid
 import platform
+import threading
 from pubsub import pub
 from threading import Thread
 from wx.lib.intctrl import IntCtrl
@@ -350,7 +352,7 @@ class LiveSystemPanel (wx.Panel):
         self.infoLabel.Wrap(-1)
         self.infoLabel.SetLabel("Cross-Validation (Calibration): ")
         self.verticalBoxes.Add(self.infoLabel, 0, wx.EXPAND| wx.ALL, 30)
-        #verticalBoxes.Add((0,70), 0, wx.EXPAND, 5)
+
         self.irrelevantButton = wx.Button(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
                                           wx.BORDER_NONE)
         self.verticalBoxes.Add(self.irrelevantButton, 0, wx.ALIGN_CENTER | wx.ALL, 5)
@@ -368,6 +370,8 @@ class LiveSystemPanel (wx.Panel):
 
 
     def infoListener(self, msg, arg):
+        print("in info listener")
+        print("current thread calling infoListener: ", threading.current_thread())
         if msg == "CROSS_VAL_SET":
             stringToShow = "Cross-Validation (Calibration):\n" + str(arg)
             self.infoLabel.SetLabel(stringToShow)
@@ -383,12 +387,30 @@ class LiveSystemPanel (wx.Panel):
         else:
             self.infoLabel.SetLabel("Something went wrong!")
 
+    def updatePredictionInfo(self):
+        midiEffect = self.controller.programMaster.midiEffectOn
+        print("last midieffect: ", midiEffect)
+        while self.controller.getLiveSysFromMaster():
+            current = self.controller.programMaster.midiEffectOn
+            print("in while: current: ", current)
+            if midiEffect != current:
+                print("in if")
+                stringToShow = "Currently Modulating:\n" + str(current)
+                self.infoLabel.SetLabel(stringToShow)
+                self.SetSizerAndFit(self.verticalBoxes)
+                self.Centre()
+                self.Layout()
+                midiEffect = current
+            time.sleep(1/constants.samplingRate)
 
 
     def startButtonPressed(self, event):
         if self.startLiveSystemButton.GetLabel() == "Start":
+            print("current thread calling the startButtonPressed: ", threading.current_thread())
             self.controller.startLiveSystem()
+            print("current thread calling the startButtonPressed: ", threading.current_thread())
             self.startLiveSystemButton.SetLabel("Stop")
+            self.updatePredictionInfo()
         else:
             self.stopLiveSystem()
             self.startLiveSystemButton.SetLabel("Start")
@@ -480,10 +502,15 @@ class CustomCalibrationPanel (wx.Panel):
         self.calibrationButton = wx.Button(self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
         verticalBoxes.Add(self.calibrationButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
+        self.resetButton = wx.Button(self, wx.ID_ANY, u"Reset", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.resetButton.Enable(False)
+        verticalBoxes.Add(self.resetButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+
         verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.calibrationButton.Bind(wx.EVT_BUTTON, self.calibrationButtonPressed)
         self.modTrackButton.Bind(wx.EVT_BUTTON, self.trackModulation)
+        self.resetButton.Bind(wx.EVT_BUTTON, self.resetCalibration)
         self.modon = False
 
         self.SetSizerAndFit(verticalBoxes)
@@ -506,10 +533,19 @@ class CustomCalibrationPanel (wx.Panel):
         if self.calibrationButton.GetLabel() == "Start":
             self.controller.startCalibration()
             self.calibrationButton.SetLabel("Stop")
+            self.resetButton.Enable(True)
             self.modTrackButton.Enable(True)
         else:
             self.controller.endCalibration()
             self.controller.showPanel(self, LiveSystemPanel)
+
+    def resetCalibration(self, event):
+        self.calibrationButton.SetLabel("Start")
+        self.calibrationButton.Enable(True)
+        self.modTrackButton.SetLabel("Mod:On")
+        self.modTrackButton.Enable(False)
+        self.resetButton.Enable(False)
+
 
 ###########################################################################
 ## Class InbuiltCalibrationPanel
@@ -525,6 +561,7 @@ class InbuiltCalibrationPanel ( wx.Panel ):
             self.SetBackgroundColour(backgroundColorWindows)
         self.modTimes = [6000, 8000, 14000, 16000, 22000, 24000, 30000, 32000,
                          38000, 40000, 46000, 48000, 54000, 56000, 62000, 64000]
+        self.caliThread : threading.Thread
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
@@ -548,6 +585,7 @@ class InbuiltCalibrationPanel ( wx.Panel ):
         hButtonsBox.Add(self.startButton, 0, wx.ALL, 5)
 
         self.resetButton = wx.Button(self, wx.ID_ANY, u"Reset", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.resetButton.Enable(False)
         hButtonsBox.Add(self.resetButton, 0, wx.ALL, 5)
 
         self.finishButton = wx.Button(self, wx.ID_ANY, u"Finish", wx.DefaultPosition, wx.DefaultSize, 0)
@@ -565,8 +603,14 @@ class InbuiltCalibrationPanel ( wx.Panel ):
         self.Layout()
 
     def startButtonPressed(self, event):
+        self.startButton.Enable(False)
+        self.resetButton.Enable(True)
         self.controller.startCalibration()
         self.video.Play()
+        self.caliThread = threading.Thread(target=self.trackCalibration)
+        self.caliThread.start()
+
+    def trackCalibration(self):
         index = 0
         while self.video.GetState() == wx.media.MEDIASTATE_PLAYING:
             currentSecond = self.video.Tell()
@@ -581,16 +625,22 @@ class InbuiltCalibrationPanel ( wx.Panel ):
                 if index == len(self.modTimes):
                     break
                 print("ein Durchlauf beendet, neuer Index: ", index)
-
-        self.controller.endCalibration()
-        self.controller.showPanel(self, LiveSystemPanel)
+        self.finishButton.Enable(True)
+        self.controller.stopCalibration()
 
     def resetButtonPressed(self, event):
         self.video.Stop()
-        self.video.Play()
+        self.caliThread.join()
+        self.controller.resetCalibration()
+        self.startButton.Enable(True)
+        self.finishButton.Enable(False)
+        self.resetButton.Enable(False)
 
     def finishButtonPressed(self, event):
-        self.controller.showPanel(self, InbuiltCalibrationPanel)
+        self.video.Stop()
+        self.caliThread.join()
+        self.controller.endCalibration()
+        self.controller.showPanel(self, LiveSystemPanel)
 
 
 

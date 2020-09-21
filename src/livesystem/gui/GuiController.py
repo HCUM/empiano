@@ -36,6 +36,22 @@ class guiController:
     def endCalibration(self):
         self.programMaster.endCalibration()
 
+    def stopCalibration(self):
+        self.programMaster.stopCalibration()
+
+    def resetCalibration(self):
+        self.programMaster.resetCalibration()
+
+    def updateView(self, prediction):
+        #self.
+        pass
+
+    def getPredictionFromMaster(self):
+        return self.programMaster.getCurrentPrediction()
+
+    def getLiveSysFromMaster(self):
+        return self.programMaster.getLiveSystemOn()
+
     # gets the scores of the cross-validation of the SVM (after calibration)
     def getCrossValScores(self):
         return self.programMaster.getCrossValScores()
@@ -66,5 +82,3 @@ class guiController:
         current.Hide()
         panel = current.Parent.panels[next]
         panel.Show()
-        if type(panel) == wxwindow.LiveSystemPanel:
-            pass

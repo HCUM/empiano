@@ -62,7 +62,7 @@ class ProgramMaster:
         self.calibrationSem.release()
         return res
 
-    def getTestSystemOn(self):
+    def getLiveSystemOn(self):
         self.liveSystemSem.acquire()
         res = copy.deepcopy(self.inLiveSystem)
         self.liveSystemSem.release()
@@ -102,6 +102,11 @@ class ProgramMaster:
         self.lastTwoPredictions.append(augmentationOn)
         self.predictionSem.release()
 
+    def setProgramPaused(self, pause=True):
+        self.programPaused = pause
+        threading.Thread(target=self.keepPullingSamplesFromInlet).start()
+
+
     # updates the values changed in the settings
     def updateSettings(self, amtElectrodes, midiCableName, shouldCreateMidiCable):
         constants.numberOfChannels = amtElectrodes
@@ -126,14 +131,34 @@ class ProgramMaster:
     # Initializes the connection to the defined LSL-stream
     def connectToLSLStream(self, streams):
         self.streamManager.connectStreams(streams)
+        self.setProgramPaused()
 
     # Starts the calibrationManager, in a thread, for saving the data of the calibration
     def startCalibration(self):
+        self.programPaused = False
         self.calibrationManager = calibration.CalibrationManager(self)
         self.setCalibrationOn(True)
         self.calibrationThread = threading.Thread(target=self.calibrationManager.startCalibration,
                                                   args=(self.streamManager.stream,))
         self.calibrationThread.start()
+
+    def stopCalibration(self):
+        self.setCalibrationOn(False)
+        self.calibrationThread.join()
+        self.setProgramPaused()
+
+    def resetCalibration(self):
+        print("in reset")
+        self.setCalibrationOn(False)
+        print("calibration on auf false")
+        self.calibrationThread.join()
+        print("calibration thread joined")
+        self.modsTimestamp = []
+        self.modOnTimestamp = -1
+        print("resetted the variables")
+        self.setProgramPaused()
+        print("prgram on pause")
+
 
     # Waits for the calibration-thread to join and calls the method handling
     # the SVM training
@@ -142,10 +167,11 @@ class ProgramMaster:
         self.calibrationThread.join()
 
         self.calibrationManager.startTraining()
-        self.modsTimestamp = []
-        self.modOnTimestamp = -1
-        self.programPaused = True
-        threading.Thread(target=self.keepPullingSamplesFromInlet).start()
+
+        #self.modsTimestamp = []
+        #self.modOnTimestamp = -1
+        self.setProgramPaused()
+
 
     # gets the scores of the cross-validation of the SVM (after calibration)
     def getCrossValScores(self):
@@ -177,16 +203,22 @@ class ProgramMaster:
         self.modsTimestamp  = []
         self.modOnTimestamp = -1
 
+        print("startLiveSys 1: ", threading.current_thread())
         if not self.calibrationManager.svm:
             print("ERROR: Program-Manager: YOU CANNOT START the system WITHOUT calibration!")
             return
 
+        print("startLiveSys 2: ", threading.current_thread())
         if not self.firstLiveRoundDone:
             self.midiManager.createMIDIOutport()
+            print("startLiveSys 3: ", threading.current_thread())
         self.liveSystemManager = live.LiveSystemManager(self, self.calibrationManager.svm)
+        print("startLiveSys 4: ", threading.current_thread())
         self.programPaused  = False
+        print("startLiveSys 5: ", threading.current_thread())
         self.liveSystemThread  = threading.Thread(target=self.liveSystemManager.startSystem,
                                                   args=(self.streamManager.streamInlet,))
+        print("startLiveSys 6: ", threading.current_thread())
         self.liveSystemThread.start()
 
     # stops the livesystem and waits for the thread to join
@@ -204,5 +236,6 @@ class ProgramMaster:
 
 def main():
     programMaster = ProgramMaster()
+    print("thread in main: ", threading.current_thread())
     programMaster.startWindow()
 

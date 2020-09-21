@@ -31,10 +31,10 @@ def splitRecordedSample(emgData, mods):
         splittedNonAugData.append(slice)
         smallestNonAugIndex = mod[1]
 
-    if smallestNonAugIndex < len(emgData[0]):
-        slice = emgData[:, smallestNonAugIndex:]
-        if len(slice) >= (constants.samplesPerWindow + constants.windowShift):
-            splittedNonAugData.append(slice)
+    if (smallestNonAugIndex < len(emgData[0])) and \
+            (len(emgData[:, smallestNonAugIndex:]) >=
+             (constants.samplesPerWindow + constants.windowShift)):
+        splittedNonAugData.append(emgData[:, smallestNonAugIndex:])
 
     return splittedAugData, splittedNonAugData
 

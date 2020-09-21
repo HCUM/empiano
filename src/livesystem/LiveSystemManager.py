@@ -30,7 +30,7 @@ class LiveSystemManager:
     def startSystem(self, inlet):
         self.eegStreamTimeOffset = inlet.time_correction()
 
-        while(self.programMaster.getTestSystemOn()):
+        while(self.programMaster.getLiveSystemOn()):
             self.saveSampleToRingbuffer(inlet.pull_sample())
 
             if self.samplesToNextPrediction == 0:
@@ -88,9 +88,14 @@ class LiveSystemManager:
             featureVec = [featureVec]
 
             #set the new prediction
-            prediction = self.svm.predict(featureVec)
-            self.programMaster.setCurrentPrediction(prediction == "augmentation")
-            pub.sendMessage("liveSystemPanelListener", msg="PREDICTION_SET", arg=prediction)
+            newPrediction = self.svm.predict(featureVec)
+            #oldPrediction = self.programMaster.getCurrentPrediction()
+            #print("new prediction: ", newPrediction)
+            self.programMaster.setCurrentPrediction(newPrediction == "augmentation")
+            #if newPrediction != oldPrediction:
+                #self.programMaster.guiController.updateView(newPrediction)
+                #print("message sent")
+                #pub.sendMessage("liveSystemPanelListener", msg="PREDICTION_SET", arg=newPrediction)
 
         self.secondToLastFeature = copy.deepcopy(self.lastFeature)
         self.lastFeature         = copy.deepcopy(feature)
