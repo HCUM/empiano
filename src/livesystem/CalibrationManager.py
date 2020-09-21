@@ -31,7 +31,6 @@ class CalibrationManager:
 
     # saves the received sample after correcting its timestamp
     def saveSample(self, sample):
-        print("sample: ", sample)
         (data, timestamp) = sample
         self.streamData.append((np.asarray(data) * constants.dataSampleCorrection, timestamp+self.eegStreamTimeOffset))
 

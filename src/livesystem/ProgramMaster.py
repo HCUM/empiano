@@ -146,6 +146,7 @@ class ProgramMaster:
         self.setCalibrationOn(False)
         self.calibrationThread.join()
         self.setProgramPaused()
+        print("mods: ", self.modsTimestamp)
 
     def resetCalibration(self):
         print("in reset")

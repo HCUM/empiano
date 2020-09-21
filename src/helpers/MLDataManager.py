@@ -22,17 +22,22 @@ def splitRecordedSample(emgData, mods):
         oneAugPart  = []
         for channel in emgData:
             oneAugPart.append(np.array(channel[mod[0]: mod[1]]))
-        splittedAugData.append(oneAugPart)
+        if (len(oneAugPart[0]) >= (constants.samplesPerWindow + constants.windowShift)):
+            splittedAugData.append(oneAugPart)
 
     smallestNonAugIndex = 0
     emgData = np.asarray(emgData)
     for mod in mods:
-        slice = emgData[:, smallestNonAugIndex:mod[0]]
-        splittedNonAugData.append(slice)
+        if (smallestNonAugIndex < len(emgData[0])) and \
+            (len(emgData[0, smallestNonAugIndex:(mod[0]+1)]) >=
+             (constants.samplesPerWindow + constants.windowShift)):
+            slice = emgData[:, smallestNonAugIndex:(mod[0]+1)]
+            splittedNonAugData.append(slice)
+            break
         smallestNonAugIndex = mod[1]
-
+    #rest behind last mod part
     if (smallestNonAugIndex < len(emgData[0])) and \
-            (len(emgData[:, smallestNonAugIndex:]) >=
+            (len(emgData[0, smallestNonAugIndex:]) >=
              (constants.samplesPerWindow + constants.windowShift)):
         splittedNonAugData.append(emgData[:, smallestNonAugIndex:])
 
