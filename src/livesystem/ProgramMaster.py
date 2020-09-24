@@ -19,6 +19,8 @@ class ProgramMaster:
         self.streamManager = streammanager.StreamManager()
         self.streamInlet: pylsl.StreamInlet
 
+        self.programPauseThread: threading.Thread
+
         self.calibrationSem = threading.Semaphore()
         self.calibrationOn  = False
         self.calibrationThread: threading.Thread
@@ -104,7 +106,8 @@ class ProgramMaster:
 
     def setProgramPaused(self, pause=True):
         self.programPaused = pause
-        threading.Thread(target=self.keepPullingSamplesFromInlet).start()
+        self.programPauseThread = threading.Thread(target=self.keepPullingSamplesFromInlet)
+        self.programPauseThread.start()
 
 
     # updates the values changed in the settings
@@ -204,22 +207,19 @@ class ProgramMaster:
         self.modsTimestamp  = []
         self.modOnTimestamp = -1
 
-        print("startLiveSys 1: ", threading.current_thread())
         if not self.calibrationManager.svm:
             print("ERROR: Program-Manager: YOU CANNOT START the system WITHOUT calibration!")
             return
 
-        print("startLiveSys 2: ", threading.current_thread())
         if not self.firstLiveRoundDone:
             self.midiManager.createMIDIOutport()
-            print("startLiveSys 3: ", threading.current_thread())
         self.liveSystemManager = live.LiveSystemManager(self, self.calibrationManager.svm)
-        print("startLiveSys 4: ", threading.current_thread())
+
         self.programPaused  = False
-        print("startLiveSys 5: ", threading.current_thread())
+        self.programPauseThread.join()
+
         self.liveSystemThread  = threading.Thread(target=self.liveSystemManager.startSystem,
                                                   args=(self.streamManager.streamInlet,))
-        print("startLiveSys 6: ", threading.current_thread())
         self.liveSystemThread.start()
 
     # stops the livesystem and waits for the thread to join

@@ -332,6 +332,7 @@ class LiveSystemPanel (wx.Panel):
         self.controller = controller
         if parent.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
+        #threading.Thread(target=pub.subscribe, args=(self.infoListener,"liveSystemPanelListener")).start()
         pub.subscribe(self.infoListener, "liveSystemPanelListener")
 
         self.verticalBoxes = wx.BoxSizer(wx.VERTICAL)
@@ -381,9 +382,9 @@ class LiveSystemPanel (wx.Panel):
         elif msg == "PREDICTION_SET":
             stringToShow = "Current Prediction:\n" + str(arg)
             self.infoLabel.SetLabel(stringToShow)
-            self.SetSizerAndFit(self.verticalBoxes)
-            self.Centre()
-            self.Layout()
+            #self.SetSizerAndFit(self.verticalBoxes)
+            #self.Centre()
+            #self.Layout()
         else:
             self.infoLabel.SetLabel("Something went wrong!")
 
@@ -401,7 +402,7 @@ class LiveSystemPanel (wx.Panel):
                 self.Centre()
                 self.Layout()
                 midiEffect = current
-            time.sleep(1/constants.samplingRate)
+            time.sleep(1/(constants.samplingRate/2))
 
 
     def startButtonPressed(self, event):
@@ -410,7 +411,8 @@ class LiveSystemPanel (wx.Panel):
             self.controller.startLiveSystem()
             print("current thread calling the startButtonPressed: ", threading.current_thread())
             self.startLiveSystemButton.SetLabel("Stop")
-            self.updatePredictionInfo()
+            #threading.Thread(target=self.updatePredictionInfo).start()
+            #self.updatePredictionInfo()
         else:
             self.stopLiveSystem()
             self.startLiveSystemButton.SetLabel("Start")
@@ -457,7 +459,6 @@ class ChooseCalibrationPanel ( wx.Panel ):
 
         self.customCalibrationButton.Bind(wx.EVT_BUTTON, self.customCaliPressed)
         self.inbuiltCalibrationButton.Bind(wx.EVT_BUTTON, self.inbuiltCaliPressed)
-        self.modon = False
 
         self.SetSizerAndFit(verticalBoxes)
         self.Centre()
@@ -540,11 +541,13 @@ class CustomCalibrationPanel (wx.Panel):
             self.controller.showPanel(self, LiveSystemPanel)
 
     def resetCalibration(self, event):
+        self.controller.resetCalibration()
         self.calibrationButton.SetLabel("Start")
         self.calibrationButton.Enable(True)
         self.modTrackButton.SetLabel("Mod:On")
         self.modTrackButton.Enable(False)
         self.resetButton.Enable(False)
+        self.modon = False
 
 
 ###########################################################################

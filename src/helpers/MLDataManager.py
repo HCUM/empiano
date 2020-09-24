@@ -32,15 +32,24 @@ def splitRecordedSample(emgData, mods):
             (len(emgData[0, smallestNonAugIndex:(mod[0]+1)]) >=
              (constants.samplesPerWindow + constants.windowShift)):
             slice = emgData[:, smallestNonAugIndex:(mod[0]+1)]
+            print("added slice: ", slice)
             splittedNonAugData.append(slice)
-            break
+            print("non aug data: ", splittedNonAugData)
         smallestNonAugIndex = mod[1]
     #rest behind last mod part
     if (smallestNonAugIndex < len(emgData[0])) and \
             (len(emgData[0, smallestNonAugIndex:]) >=
              (constants.samplesPerWindow + constants.windowShift)):
         splittedNonAugData.append(emgData[:, smallestNonAugIndex:])
-
+    for mod in splittedAugData:
+        for channel in mod:
+            print(mod, " length: ", len(channel))
+    print("splitted aug finished")
+    print("size non aug: ", len(splittedNonAugData))
+    for mod in splittedNonAugData:
+        print("new mod non aug")
+        for channel in mod:
+            print("length: ", len(channel))
     return splittedAugData, splittedNonAugData
 
 
