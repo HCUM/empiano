@@ -332,8 +332,8 @@ class LiveSystemPanel (wx.Panel):
         self.controller = controller
         if parent.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
-        #threading.Thread(target=pub.subscribe, args=(self.infoListener,"liveSystemPanelListener")).start()
-        pub.subscribe(self.infoListener, "liveSystemPanelListener")
+        threading.Thread(target=pub.subscribe, args=(self.infoListener,"liveSystemPanelListener")).start()
+        #pub.subscribe(self.infoListener, "liveSystemPanelListener")
 
         self.verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
@@ -369,24 +369,23 @@ class LiveSystemPanel (wx.Panel):
         self.Centre()
         self.Layout()
 
+    def setInfoLable(self, string):
+        self.infoLabel.SetLabel(string)
+        self.SetSizerAndFit(self.verticalBoxes)
+        self.Centre()
+        self.Layout()
 
     def infoListener(self, msg, arg):
         print("in info listener")
         print("current thread calling infoListener: ", threading.current_thread())
         if msg == "CROSS_VAL_SET":
             stringToShow = "Cross-Validation (Calibration):\n" + str(arg)
-            self.infoLabel.SetLabel(stringToShow)
-            self.SetSizerAndFit(self.verticalBoxes)
-            self.Centre()
-            self.Layout()
-        elif msg == "PREDICTION_SET":
+            wx.CallAfter(self.setInfoLable, stringToShow)
+        elif msg == "PREDICTION_CHANGED":
             stringToShow = "Current Prediction:\n" + str(arg)
-            self.infoLabel.SetLabel(stringToShow)
-            #self.SetSizerAndFit(self.verticalBoxes)
-            #self.Centre()
-            #self.Layout()
+            wx.CallAfter(self.setInfoLable, stringToShow)
         else:
-            self.infoLabel.SetLabel("Something went wrong!")
+            wx.CallAfter(self.setInfoLable, "Something went wrong!")
 
     def updatePredictionInfo(self):
         midiEffect = self.controller.programMaster.midiEffectOn

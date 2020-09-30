@@ -39,7 +39,6 @@ class ProgramMaster:
 
 
         self.predictionSem       = threading.Semaphore()
-        self.currentlyAugmenting = False
         self.lastTwoPredictions  = deque([False, False])  #False: no augmentation; True: augmentation
         self.midiEffectOn        = False
         self.midiEffectThread    = threading.Thread(target=self.midiManager.sendEffect)
@@ -68,12 +67,6 @@ class ProgramMaster:
         self.liveSystemSem.acquire()
         res = copy.deepcopy(self.inLiveSystem)
         self.liveSystemSem.release()
-        return res
-
-    def getCurrentPrediction(self):
-        self.predictionSem.acquire()
-        res = copy.deepcopy(self.currentlyAugmenting)
-        self.predictionSem.release()
         return res
 
 

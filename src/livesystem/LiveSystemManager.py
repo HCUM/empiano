@@ -89,13 +89,18 @@ class LiveSystemManager:
 
             #set the new prediction
             newPrediction = self.svm.predict(featureVec)
-            #oldPrediction = self.programMaster.getCurrentPrediction()
+            print("new prediction: ", newPrediction)
+            oldPrediction = self.programMaster.lastTwoPredictions[1]
+            boolPrediction = (newPrediction[0] == "augmentation")
             #print("new prediction: ", newPrediction)
-            self.programMaster.setCurrentPrediction(newPrediction == "augmentation")
-            #if newPrediction != oldPrediction:
+            self.programMaster.setCurrentPrediction(boolPrediction)
+            print("bool prediction: ", boolPrediction)
+            print("old prediction: ", oldPrediction)
+            if boolPrediction != oldPrediction:
+                print("pub message sent")
                 #self.programMaster.guiController.updateView(newPrediction)
                 #print("message sent")
-                #pub.sendMessage("liveSystemPanelListener", msg="PREDICTION_SET", arg=newPrediction)
+                pub.sendMessage("liveSystemPanelListener", msg="PREDICTION_CHANGED", arg=newPrediction)
 
         self.secondToLastFeature = copy.deepcopy(self.lastFeature)
         self.lastFeature         = copy.deepcopy(feature)
