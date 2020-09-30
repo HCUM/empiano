@@ -354,10 +354,6 @@ class LiveSystemPanel (wx.Panel):
         self.infoLabel.SetLabel("Cross-Validation (Calibration): ")
         self.verticalBoxes.Add(self.infoLabel, 0, wx.EXPAND| wx.ALL, 30)
 
-        self.irrelevantButton = wx.Button(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
-                                          wx.BORDER_NONE)
-        self.verticalBoxes.Add(self.irrelevantButton, 0, wx.ALIGN_CENTER | wx.ALL, 5)
-
         self.startLiveSystemButton = wx.Button(self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
         self.verticalBoxes.Add(self.startLiveSystemButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
@@ -406,12 +402,8 @@ class LiveSystemPanel (wx.Panel):
 
     def startButtonPressed(self, event):
         if self.startLiveSystemButton.GetLabel() == "Start":
-            print("current thread calling the startButtonPressed: ", threading.current_thread())
             self.controller.startLiveSystem()
-            print("current thread calling the startButtonPressed: ", threading.current_thread())
             self.startLiveSystemButton.SetLabel("Stop")
-            #threading.Thread(target=self.updatePredictionInfo).start()
-            #self.updatePredictionInfo()
         else:
             self.stopLiveSystem()
             self.startLiveSystemButton.SetLabel("Start")
@@ -524,15 +516,18 @@ class CustomCalibrationPanel (wx.Panel):
             self.controller.endModulation()
             self.modTrackButton.SetLabel("Mod:On")
             self.modon = False
+            self.calibrationButton.Enable(True)
         else:
             self.controller.startModulation()
             self.modTrackButton.SetLabel("Mod:Off")
             self.modon = True
+            self.calibrationButton.Enable(False)
 
     def calibrationButtonPressed(self, event):
         if self.calibrationButton.GetLabel() == "Start":
             self.controller.startCalibration()
             self.calibrationButton.SetLabel("Stop")
+            self.calibrationButton.Enable(False)
             self.resetButton.Enable(True)
             self.modTrackButton.Enable(True)
         else:

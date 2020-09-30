@@ -71,5 +71,5 @@ class CalibrationManager:
         self.svm = svm.SVC()
         cv = ShuffleSplit(n_splits=10, test_size=0.3, random_state=0)
         self.crossValScores = cross_val_score(self.svm, X_train, y_train, cv=cv)
-        pub.sendMessage("liveSystemPanelListener", msg="CROSS_VAL_SET", arg=self.crossValScores)
+        pub.sendMessage("liveSystemPanelListener", msg="CROSS_VAL_SET", arg=self.crossValScores.round(2))
         self.svm.fit(X_train, y_train)
