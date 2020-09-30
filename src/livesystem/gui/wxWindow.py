@@ -627,8 +627,7 @@ class InbuiltCalibrationPanel ( wx.Panel ):
                 if index == len(self.modTimes):
                     break
                 print("ein Durchlauf beendet, neuer Index: ", index)
-        self.finishButton.Enable(True)
-        self.controller.stopCalibration()
+        wx.CallAfter(self.finishButton.Enable, True)
 
     def resetButtonPressed(self, event):
         self.video.Stop()
