@@ -614,6 +614,7 @@ class InbuiltCalibrationPanel(wx.Panel):
     def mediaLoaded(self, event):
         print("in media is loaded")
         self.isMediaLoaded = True
+        self.video.Seek(1)
 
     def startButtonPressed(self, event):
         if not self.isMediaLoaded:
