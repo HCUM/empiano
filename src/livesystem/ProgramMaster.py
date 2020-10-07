@@ -2,6 +2,7 @@ import sys
 import copy
 import pylsl
 import threading
+from pubsub import pub
 from collections import deque
 import storage.Constants as Constants
 import livesystem.LiveSystemManager as Live
@@ -12,37 +13,36 @@ import livesystem.gui.GuiController as GuiController
 
 
 ###########################################################################
-## Class ProgramMaster
-## -> everything goes through here, manages all the sub-classes
+# Class ProgramMaster
+# -> everything goes through here, manages all the sub-classes
 ###########################################################################
 class ProgramMaster:
     def __init__(self):
         self.streamManager = StreamManager.StreamManager()
-        self.streamInlet: pylsl.StreamInlet
 
-        self.programPauseThread: threading.Thread
+        self.programPauseThread = None
 
         self.calibrationSem = threading.Semaphore()
         self.calibrationOn = False
-        self.calibrationThread: threading.Thread
+        self.calibrationThread = None
 
         # liveSystem is referring to the situation after the calibration is completed
         # and the modulation can be used to trigger the sound modulation
         self.liveSystemSem = threading.Semaphore()
         self.inLiveSystem = False
-        self.liveSystemThread: threading.Thread
+        self.liveSystemThread = None
         self.firstLiveRoundDone = False
 
         self.midiManager = MidiManager.MidiManager(self)
         self.guiController = GuiController.guiController(self)
-        self.calibrationManager: Calibration.CalibrationManager
-        self.liveSystemManager: Live.LiveSystemManager
+        self.calibrationManager = None
+        self.liveSystemManager = None
 
         self.predictionSem = threading.Semaphore()
         self.lastTwoPredictions = deque([False, False])  # False: no augmentation; True: augmentation
         self.midiEffectOn = False
         self.midiEffectThread = threading.Thread(target=self.midiManager.sendEffect)
-        self.midiThread: threading.Thread
+        self.midiThread = None
 
         self.modOnTimestamp = -1
         self.modsTimestamp = []  # saves all the timestamp pairs of the modulations: [(begin, end), ...]
@@ -121,8 +121,15 @@ class ProgramMaster:
 
     # Initializes the connection to the defined LSL-stream
     def connectToLSLStream(self, streams):
+        threading.Thread(target=pub.subscribe, args=(self.handleLSLConnect, "streamConnect")).start()
         self.streamManager.connectStreams(streams)
-        self.setProgramPaused()
+
+    def resetStream(self):
+        self.streamManager.resetStream()
+
+    def handleLSLConnect(self, msg, settingsChannels, streamChannels):
+        if msg == "CHANNELS_OKAY":
+            self.setProgramPaused()
 
     # Starts the calibrationManager, in a thread, for saving the data of the calibration
     def startCalibration(self):

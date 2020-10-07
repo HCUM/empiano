@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 ###########################################################################
-## Python code generated with wxFormBuilder (version 3.9.0 Jul 27 2020)
-## http://www.wxformbuilder.org/
+# Python code generated with wxFormBuilder (version 3.9.0 Jul 27 2020)
+# http://www.wxformbuilder.org/
 ###########################################################################
 
 import wx
@@ -16,14 +16,18 @@ from pubsub import pub
 from threading import Thread
 from wx.lib.intctrl import IntCtrl
 from wx.media import MediaCtrl
-import storage.Constants as constants
+import storage.Constants as Constants
 
 frameSize = wx.Size(1000, 600)
 backgroundColorWindows = wx.Colour(0xE6, 0xE6, 0xE6)
+Continue = 0
+Go_to_settings = 1
+Back_to_streams = 2
+
 
 class MyFrame(wx.Frame):
     def __init__(self, controller):
-        wx.Frame.__init__(self, None, wx.ID_ANY, title= u"EMPiano",  size = frameSize)
+        wx.Frame.__init__(self, None, wx.ID_ANY, title=u"EMPiano", size=frameSize)
         self.controller = controller
         self.platform = platform.platform()
         self.isWindows = self.platform.startswith("Windows")
@@ -55,45 +59,44 @@ class MyFrame(wx.Frame):
 
 
 ###########################################################################
-## Class StartPanel
+# Class StartPanel
 ###########################################################################
 
-class StartPanel ( wx.Panel ):
+class StartPanel(wx.Panel):
 
-    def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
-        wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
+                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
+        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
 
         self.controller = controller
         if parent.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
 
-        verticalBoxes = wx.BoxSizer( wx.VERTICAL )
+        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
-        self.empianoLabel = wx.StaticText( self, wx.ID_ANY, u"EMPiano", wx.DefaultPosition,
-                                           wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL )
-        self.empianoLabel.Wrap( -1 )
-        self.empianoLabel.SetFont( wx.Font( 60, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                                            wx.FONTWEIGHT_BOLD, False, "Arial Black" ) )
-        self.empianoLabel.SetForegroundColour( wx.Colour( 17, 133, 49 ) )
+        self.empianoLabel = wx.StaticText(self, wx.ID_ANY, u"EMPiano", wx.DefaultPosition,
+                                          wx.DefaultSize, wx.ALIGN_CENTER_HORIZONTAL)
+        self.empianoLabel.Wrap(-1)
+        self.empianoLabel.SetFont(wx.Font(60, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                                          wx.FONTWEIGHT_BOLD, False, "Arial Black"))
+        self.empianoLabel.SetForegroundColour(wx.Colour(17, 133, 49))
 
-        verticalBoxes.Add( self.empianoLabel, 0, wx.ALL|wx.EXPAND, 5 )
-        verticalBoxes.Add( ( 0, 70), 0, wx.EXPAND, 5 )
+        verticalBoxes.Add(self.empianoLabel, 0, wx.ALL | wx.EXPAND, 5)
+        verticalBoxes.Add((0, 70), 0, wx.EXPAND, 5)
 
-        self.startButton = wx.Button( self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0 )
-        verticalBoxes.Add( self.startButton, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
-        verticalBoxes.Add( ( 0, 20), 0, wx.EXPAND, 5 )
+        self.startButton = wx.Button(self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
+        verticalBoxes.Add(self.startButton, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
+        verticalBoxes.Add((0, 20), 0, wx.EXPAND, 5)
 
-        self.settingsButton = wx.Button( self, wx.ID_ANY, u"Settings", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.settingsButton = wx.Button(self, wx.ID_ANY, u"Settings", wx.DefaultPosition, wx.DefaultSize, 0)
 
-        verticalBoxes.Add( self.settingsButton, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+        verticalBoxes.Add(self.settingsButton, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
         self.startButton.Bind(wx.EVT_BUTTON, self.showLSLPanel)
         self.settingsButton.Bind(wx.EVT_BUTTON, self.showSettingsPanel)
 
-        self.SetSizer( verticalBoxes )
+        self.SetSizer(verticalBoxes)
         self.Layout()
-
 
     def showLSLPanel(self, event):
         self.controller.showPanel(self, StreamOverviewPanel)
@@ -109,7 +112,7 @@ class StartPanel ( wx.Panel ):
 ## Class SettingsPanel
 ###########################################################################
 
-class SettingsPanel ( wx.Panel ):
+class SettingsPanel(wx.Panel):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize,
                  style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
@@ -140,7 +143,7 @@ class SettingsPanel ( wx.Panel ):
         self.amtChannelsLabel.Wrap(-1)
         flexGridDataAcquisition.Add(self.amtChannelsLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.amtElectrodesInput = IntCtrl(self, wx.ID_ANY, constants.numberOfChannels, wx.DefaultPosition,
+        self.amtElectrodesInput = IntCtrl(self, wx.ID_ANY, Constants.numberOfChannels, wx.DefaultPosition,
                                           wx.DefaultSize, wx.TE_RIGHT, min=1)
         flexGridDataAcquisition.Add(self.amtElectrodesInput, 0, wx.ALL, 5)
 
@@ -167,19 +170,19 @@ class SettingsPanel ( wx.Panel ):
 
         flexGridPreprocessing.Add(self.lowCutoffBandpassLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.lowBandpassInput = wx.TextCtrl(self, wx.ID_ANY, str(constants.lowerBoundCutOutFreq), wx.DefaultPosition,
-                                            wx.DefaultSize,  wx.TE_READONLY | wx.TE_RIGHT)
+        self.lowBandpassInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.lowerBoundCutOutFreq), wx.DefaultPosition,
+                                            wx.DefaultSize, wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.lowBandpassInput, 0, wx.ALL | wx.LEFT, 5)
 
         self.highCutoffBandpassLabel = wx.StaticText(self, wx.ID_ANY,
-                                                        u"High Cutoff Frequency for Bandpass Filter:\n",
+                                                     u"High Cutoff Frequency for Bandpass Filter:\n",
                                                      wx.DefaultPosition, wx.DefaultSize, 0)
         self.highCutoffBandpassLabel.Wrap(-1)
 
         flexGridPreprocessing.Add(self.highCutoffBandpassLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.highBandpassInput = wx.TextCtrl(self, wx.ID_ANY, str(constants.upperBoundCutOutFreq), wx.DefaultPosition,
-                                             wx.DefaultSize,  wx.TE_READONLY | wx.TE_RIGHT)
+        self.highBandpassInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.upperBoundCutOutFreq), wx.DefaultPosition,
+                                             wx.DefaultSize, wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.highBandpassInput, 0, wx.ALL, 5)
 
         self.lowCutoffBandstopLabel = wx.StaticText(self, wx.ID_ANY, u"Low Cutoff Frequency for Bandstop Filter:",
@@ -188,7 +191,8 @@ class SettingsPanel ( wx.Panel ):
 
         flexGridPreprocessing.Add(self.lowCutoffBandstopLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.lowBandstopInput = wx.TextCtrl(self, wx.ID_ANY, str(constants.lowBandStopFreq), wx.DefaultPosition, wx.DefaultSize,
+        self.lowBandstopInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.lowBandStopFreq), wx.DefaultPosition,
+                                            wx.DefaultSize,
                                             wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.lowBandstopInput, 0, wx.ALL, 5)
 
@@ -198,7 +202,8 @@ class SettingsPanel ( wx.Panel ):
 
         flexGridPreprocessing.Add(self.highCutoffBandstopLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.high_bandstop_input = wx.TextCtrl(self, wx.ID_ANY, str(constants.highBandStopFreq), wx.DefaultPosition, wx.DefaultSize,
+        self.high_bandstop_input = wx.TextCtrl(self, wx.ID_ANY, str(Constants.highBandStopFreq), wx.DefaultPosition,
+                                               wx.DefaultSize,
                                                wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.high_bandstop_input, 0, wx.ALL, 5)
 
@@ -230,24 +235,26 @@ class SettingsPanel ( wx.Panel ):
         self.dataValCorrectionLabel.Wrap(-1)
         verticalBoxSizerSVMLeft.Add(self.dataValCorrectionLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-
         flexGridSVMSettings.Add(verticalBoxSizerSVMLeft, 1, wx.EXPAND, 5)
 
         verticalBoxSizerSVMRight = wx.BoxSizer(wx.VERTICAL)
 
-        self.windowSizeInput = wx.TextCtrl(self, wx.ID_ANY, str(constants.windowSize), wx.DefaultPosition, wx.DefaultSize,
+        self.windowSizeInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.windowSize), wx.DefaultPosition,
+                                           wx.DefaultSize,
                                            wx.TE_READONLY | wx.TE_RIGHT)
         verticalBoxSizerSVMRight.Add(self.windowSizeInput, 0, wx.ALL, 5)
 
-        self.dataValCorrectionInput = wx.TextCtrl(self, wx.ID_ANY, str(constants.dataSampleCorrection), wx.DefaultPosition,
+        self.dataValCorrectionInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.dataSampleCorrection),
+                                                  wx.DefaultPosition,
                                                   wx.DefaultSize, wx.TE_READONLY | wx.TE_RIGHT)
         verticalBoxSizerSVMRight.Add(self.dataValCorrectionInput, 0, wx.ALL, 5)
         flexGridSVMSettings.Add(verticalBoxSizerSVMRight, 1, wx.EXPAND, 5)
 
         verticalBoxes.Add(flexGridSVMSettings, 0, wx.ALL | wx.EXPAND, 5)
 
-        #MIDI Settings
-        self.midiSettingsLabel = wx.StaticText(self, wx.ID_ANY, u"MIDI - Settings", wx.DefaultPosition, wx.DefaultSize, 0)
+        # MIDI Settings
+        self.midiSettingsLabel = wx.StaticText(self, wx.ID_ANY, u"MIDI - Settings", wx.DefaultPosition, wx.DefaultSize,
+                                               0)
         self.midiSettingsLabel.Wrap(-1)
         self.midiSettingsLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Lucida Grande"))
@@ -264,7 +271,8 @@ class SettingsPanel ( wx.Panel ):
         self.midiCableName.Wrap(-1)
         flexGridMidiSettings.Add(self.midiCableName, 0, wx.ALL, 5)
 
-        self.midiCableNameInput = wx.TextCtrl(self, wx.ID_ANY, constants.virtualMIDICable, wx.DefaultPosition, wx.Size(136, -1),
+        self.midiCableNameInput = wx.TextCtrl(self, wx.ID_ANY, Constants.virtualMIDICable, wx.DefaultPosition,
+                                              wx.Size(136, -1),
                                               wx.TE_RIGHT)
         flexGridMidiSettings.Add(self.midiCableNameInput, 0, wx.ALL, 5)
         verticalBoxes.Add(flexGridMidiSettings, 0, wx.EXPAND | wx.ALL, 5)
@@ -283,7 +291,7 @@ class SettingsPanel ( wx.Panel ):
 
         self.createMidiCableCheckbox = wx.CheckBox(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
                                                    0)
-        self.createMidiCableCheckbox.SetValue(constants.createMIDICable)
+        self.createMidiCableCheckbox.SetValue(Constants.createMIDICable)
         flexGridCreateCable.Add(self.createMidiCableCheckbox, 0, wx.ALL, 5)
 
         verticalBoxes.Add(flexGridCreateCable, 0, wx.EXPAND | wx.ALL, 5)
@@ -296,8 +304,7 @@ class SettingsPanel ( wx.Panel ):
         self.Layout()
 
         # Connect Events
-        self.setSettingsButton.Bind( wx.EVT_BUTTON, self.updateSettings )
-
+        self.setSettingsButton.Bind(wx.EVT_BUTTON, self.updateSettings)
 
     def updateSettings(self, event):
         name = self.midiCableNameInput.GetValue()
@@ -308,35 +315,33 @@ class SettingsPanel ( wx.Panel ):
 
         else:
             if not self.createMidiCableCheckbox.GetValue():
-                success, name =self.controller.checkIfMidiCableCanBeFound(name)
+                success, name = self.controller.checkIfMidiCableCanBeFound(name)
                 if not success:
                     dial = wx.MessageDialog(None, 'The entered name of the virtual midi-cable does not exist!',
                                             'Error', wx.OK | wx.ICON_ERROR)
                     dial.ShowModal()
                     return
             self.controller.updateSettings(self.amtElectrodesInput.GetValue(),
-                                       name,
-                                       self.createMidiCableCheckbox.GetValue())
+                                           name,
+                                           self.createMidiCableCheckbox.GetValue())
             self.controller.showPanel(self, StartPanel)
 
 
 ###########################################################################
-## Class LiveSystemPanel
+# Class LiveSystemPanel
 ###########################################################################
 
-class LiveSystemPanel (wx.Panel):
-    def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
-        wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+class LiveSystemPanel(wx.Panel):
+    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
+                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
+        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
 
         self.controller = controller
         if parent.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
-        threading.Thread(target=pub.subscribe, args=(self.infoListener,"liveSystemPanelListener")).start()
-        #pub.subscribe(self.infoListener, "liveSystemPanelListener")
+        threading.Thread(target=pub.subscribe, args=(self.infoListener, "liveSystemPanelListener")).start()
 
         self.verticalBoxes = wx.BoxSizer(wx.VERTICAL)
-
 
         self.verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
@@ -349,10 +354,10 @@ class LiveSystemPanel (wx.Panel):
         self.verticalBoxes.Add(self.livesystemLabel, 0, wx.EXPAND | wx.ALL, 5)
 
         self.infoLabel = wx.StaticText(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
-                                             wx.ALIGN_CENTER_HORIZONTAL)
+                                       wx.ALIGN_CENTER_HORIZONTAL)
         self.infoLabel.Wrap(-1)
         self.infoLabel.SetLabel("Cross-Validation (Calibration): ")
-        self.verticalBoxes.Add(self.infoLabel, 0, wx.EXPAND| wx.ALL, 30)
+        self.verticalBoxes.Add(self.infoLabel, 0, wx.EXPAND | wx.ALL, 30)
 
         self.startLiveSystemButton = wx.Button(self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
         self.verticalBoxes.Add(self.startLiveSystemButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
@@ -373,7 +378,7 @@ class LiveSystemPanel (wx.Panel):
 
     def infoListener(self, msg, arg):
         print("in info listener")
-        print("current thread calling infoListener: ", threading.current_thread())
+        print("current active threads: ", threading.active_count())
         if msg == "CROSS_VAL_SET":
             stringToShow = "Cross-Validation (Calibration):\n" + str(arg)
             wx.CallAfter(self.setInfoLable, stringToShow)
@@ -397,8 +402,7 @@ class LiveSystemPanel (wx.Panel):
                 self.Centre()
                 self.Layout()
                 midiEffect = current
-            time.sleep(1/(constants.samplingRate/2))
-
+            time.sleep(1 / (Constants.samplingRate / 2))
 
     def startButtonPressed(self, event):
         if self.startLiveSystemButton.GetLabel() == "Start":
@@ -414,14 +418,15 @@ class LiveSystemPanel (wx.Panel):
     def quitButtonPressed(self, event):
         self.controller.quit()
 
+
 ###########################################################################
-## Class ChooseCalibrationPanel
+# Class ChooseCalibrationPanel
 ###########################################################################
 
-class ChooseCalibrationPanel ( wx.Panel ):
-    def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
-        wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+class ChooseCalibrationPanel(wx.Panel):
+    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
+                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
+        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
 
         self.controller = controller
         if parent.isWindows:
@@ -461,14 +466,15 @@ class ChooseCalibrationPanel ( wx.Panel ):
     def inbuiltCaliPressed(self, event):
         self.controller.showPanel(self, InbuiltCalibrationPanel)
 
+
 ###########################################################################
-## Class CustomCalibrationPanel
+# Class CustomCalibrationPanel
 ###########################################################################
 
-class CustomCalibrationPanel (wx.Panel):
-    def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
-        wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+class CustomCalibrationPanel(wx.Panel):
+    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
+                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
+        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
 
         self.controller = controller
         if parent.isWindows:
@@ -509,7 +515,6 @@ class CustomCalibrationPanel (wx.Panel):
         self.Centre()
         self.Layout()
 
-
     # using the button, the beginning and end of the modulation can be tracked
     def trackModulation(self, event):
         if self.modon:
@@ -548,17 +553,18 @@ class CustomCalibrationPanel (wx.Panel):
 ## Class InbuiltCalibrationPanel
 ###########################################################################
 
-class InbuiltCalibrationPanel ( wx.Panel ):
-    def __init__( self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
-        wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+class InbuiltCalibrationPanel(wx.Panel):
+    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
+                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
+        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
 
         self.controller = controller
         if parent.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
         self.modTimes = [6000, 8000, 14000, 16000, 22000, 24000, 30000, 32000,
                          38000, 40000, 46000, 48000, 54000, 56000, 62000, 64000]
-        self.caliThread : threading.Thread
+        self.caliThread: threading.Thread
+        self.isMediaLoaded = False
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
@@ -570,9 +576,15 @@ class InbuiltCalibrationPanel ( wx.Panel ):
         self.calibrationLabel.SetForegroundColour(wx.Colour(17, 133, 49))
         verticalBoxes.Add(self.calibrationLabel, 0, wx.EXPAND | wx.ALL, 5)
 
-        filename = os.path.normpath(os.path.join(os.getcwd(), '..','pics/empiano_song.mp4'))
-        self.video = MediaCtrl(self, size=(800,500))
+        filename = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_song.mp4'))
+        try:
+            self.video = MediaCtrl(self, size=(800, 500))
+        except NotImplementedError:
+            print("media control not found")
+
         self.video.Load(filename)
+        self.Bind(wx.media.EVT_MEDIA_LOADED, self.mediaLoaded)
+        self.video.SetFocus()
 
         verticalBoxes.Add(self.video, 0, wx.EXPAND, 5)
 
@@ -599,7 +611,16 @@ class InbuiltCalibrationPanel ( wx.Panel ):
         self.Centre()
         self.Layout()
 
+    def mediaLoaded(self):
+        self.isMediaLoaded = True
+
     def startButtonPressed(self, event):
+        if not self.isMediaLoaded:
+            dial = wx.MessageDialog(self, "Sorry, the media did not load, "
+                                          "check if the video file exists in the pics folder.",
+                                    "Error", wx.OK | wx.STAY_ON_TOP | wx.CENTRE)
+            dial.ShowModal()
+            return
         self.startButton.Enable(False)
         self.resetButton.Enable(True)
         self.controller.startCalibration()
@@ -622,6 +643,9 @@ class InbuiltCalibrationPanel ( wx.Panel ):
                 if index == len(self.modTimes):
                     break
                 print("ein Durchlauf beendet, neuer Index: ", index)
+        self.Bind(wx.EVT_MEDIA_STOP, self.enableFinishButton)
+
+    def enableFinishButton(self):
         wx.CallAfter(self.finishButton.Enable, True)
 
     def resetButtonPressed(self, event):
@@ -633,11 +657,10 @@ class InbuiltCalibrationPanel ( wx.Panel ):
         self.resetButton.Enable(False)
 
     def finishButtonPressed(self, event):
-        self.video.Stop()
+        #self.video.Stop()
         self.caliThread.join()
         self.controller.endCalibration()
         self.controller.showPanel(self, LiveSystemPanel)
-
 
 
 ###########################################################################
@@ -645,10 +668,11 @@ class InbuiltCalibrationPanel ( wx.Panel ):
 ###########################################################################
 headers = ["Stream", "Type", "#Channels", "SampleRate", "Format", "hosted on", "source id"]
 
+
 class StreamOverviewPanel(wx.Panel):
-    def __init__(self, parent, controller, id = wx.ID_ANY, pos = wx.DefaultPosition,
-                  size = wx.DefaultSize, style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
-        super(StreamOverviewPanel, self).__init__(parent, id = id, pos = pos, size = size, style = style, name = name )
+    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
+                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
+        super(StreamOverviewPanel, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
         self.parent = parent
 
@@ -657,9 +681,9 @@ class StreamOverviewPanel(wx.Panel):
             self.SetBackgroundColour(backgroundColorWindows)
 
         self.vbox = wx.BoxSizer(wx.VERTICAL)
-        self.grid = wx.grid.Grid(self, size=(800,500))
+        self.grid = wx.grid.Grid(self, size=(800, 500))
         self.grid.EnableEditing(True)
-        self.grid.CreateGrid(0,len(headers))
+        self.grid.CreateGrid(0, len(headers))
         for i in range(0, len(headers)):
             self.grid.SetColLabelValue(i, headers[i])
         self.grid.SetColFormatNumber(3)
@@ -684,7 +708,7 @@ class StreamOverviewPanel(wx.Panel):
 
         self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
         self.checkStreamsButton.Bind(wx.EVT_BUTTON, self.onUpdateStreams)
-        self.connectButton.Bind(wx.EVT_BUTTON, self.onConnectStreams)
+        self.connectButton.Bind(wx.EVT_BUTTON, self.connectToStreams)
 
         self.Centre()
         self.Layout()
@@ -706,31 +730,59 @@ class StreamOverviewPanel(wx.Panel):
         self.grid.AutoSize()
         self.grid.AutoSizeRows()
 
-    def connectToStreams(self):
+    def connectToStreams(self, event):
         streams = []
         for i in self.grid.GetSelectedRows():
-            streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3))))
-        self.controller.connectToLSLStream(streams)
-        #TODO Fehlerbehandlung, falls stream connect fehl schlägt
-        self.controller.showPanel(self, ChooseCalibrationPanel)
+            streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3)),
+                            int(self.grid.GetCellValue(i, 2))))
+        if streams != []:
+            threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
+            self.controller.connectToLSLStream(streams)
+
+    def checkIfSuccessful(self, msg, settingsChannels, streamChannels):
+        if msg == "CHANNELS_OKAY":
+            self.controller.showPanel(self, ChooseCalibrationPanel)
+        elif msg == "CHANNELS_TOO_MANY":
+            string = "The amount of channels found in the settings  (" + str(settingsChannels) \
+                     + ")\n are higher than the channels found in the stream (" \
+                     + str(streamChannels) \
+                     + ").\n Please correct the settings (channels should be lower or " \
+                       "equal to the amount found in the stream)."
+            wx.CallAfter(self.showPopup, string, Go_to_settings)
+        elif msg == "CHANNELS_TOO_FEW":
+            string = "The amount of channels found in the settings  (" + str(settingsChannels) \
+                     + ")\n are smaller than the channels found in the stream (" \
+                     + str(streamChannels) \
+                     + ").\n If that is intended, please continue, otherwise go back to " \
+                       "change the settings."
+            wx.CallAfter(self.showPopup, string, Continue)
+        elif msg == "CONNECT_FAILED":
+            string = "The connection to your chosen stream failed, please check if it is still" \
+                     " running. Try restarting it, after that you have to click \"Find Streams\" again."
+            wx.CallAfter(self.showPopup, string, Back_to_streams)
+
+    def showPopup(self, string, continuePossible):
+        if continuePossible == Continue:
+            dial = wx.MessageDialog(self, string, "Error", wx.YES_NO | wx.STAY_ON_TOP | wx.CENTRE)
+        else:
+            dial = wx.MessageDialog(self, string, "Error", wx.OK | wx.STAY_ON_TOP | wx.CENTRE)
+        result = dial.ShowModal()
+        if result == wx.ID_YES:
+            self.onContinue()
+        else:
+            if continuePossible == Go_to_settings:
+                self.onBackPopUp()
 
     def onUpdateStreams(self, event):
         self.updateStreams()
 
-    def onConnectStreams(self, event):
-        ConnectStreamsTask(self)
-
     def onBack(self, event):
         self.controller.showPanel(self, StartPanel)
 
+    def onBackPopUp(self):
+        self.controller.resetStream()
+        self.controller.showPanel(self, SettingsPanel)
 
-class ConnectStreamsTask(Thread):
-    def __init__(self, panel):
-        Thread.__init__(self)
-        self.panel = panel
-        self.start()
-
-    def run(self):
-        self.panel.connectToStreams()
-        wx.CallAfter(pub.sendMessage, "streamManager", msg="CONNECT_SUCCESS")
-
+    def onContinue(self):
+        self.controller.setProgramPaused()
+        self.controller.showPanel(self, ChooseCalibrationPanel)

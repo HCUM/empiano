@@ -28,6 +28,9 @@ class guiController:
     def connectToLSLStream(self, streams):
         self.programMaster.connectToLSLStream(streams)
 
+    def resetStream(self):
+        self.programMaster.resetStream()
+
     # calls the method starting the calibration
     def startCalibration(self):
         self.programMaster.startCalibration()
@@ -71,6 +74,10 @@ class guiController:
     # calls the method stopping the livesystem
     def stopLiveSystem(self):
         self.programMaster.stopLiveSystem()
+
+    # calls the method pausing the program
+    def setProgramPaused(self):
+        self.programMaster.setProgramPaused()
 
     # quitting the system and destroying the window
     def quit(self):
