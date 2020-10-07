@@ -137,7 +137,7 @@ class ProgramMaster:
         self.calibrationManager = Calibration.CalibrationManager(self)
         self.setCalibrationOn(True)
         self.calibrationThread = threading.Thread(target=self.calibrationManager.startCalibration,
-                                                  args=(self.streamManager.stream,))
+                                                  args=(self.streamManager.streamInlet,))
         self.calibrationThread.start()
 
     def stopCalibration(self):

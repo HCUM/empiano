@@ -15,7 +15,7 @@ import threading
 from pubsub import pub
 from threading import Thread
 from wx.lib.intctrl import IntCtrl
-from wx.media import MediaCtrl
+from wx.media import MediaCtrl, EVT_MEDIA_STOP
 import storage.Constants as Constants
 
 frameSize = wx.Size(1000, 600)
@@ -611,7 +611,8 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.Centre()
         self.Layout()
 
-    def mediaLoaded(self):
+    def mediaLoaded(self, event):
+        print("in media is loaded")
         self.isMediaLoaded = True
 
     def startButtonPressed(self, event):
@@ -643,9 +644,10 @@ class InbuiltCalibrationPanel(wx.Panel):
                 if index == len(self.modTimes):
                     break
                 print("ein Durchlauf beendet, neuer Index: ", index)
-        self.Bind(wx.EVT_MEDIA_STOP, self.enableFinishButton)
+        self.Bind(EVT_MEDIA_STOP, self.enableFinishButton)
 
-    def enableFinishButton(self):
+    def enableFinishButton(self, event):
+        print("in enable finish button")
         wx.CallAfter(self.finishButton.Enable, True)
 
     def resetButtonPressed(self, event):
@@ -682,7 +684,7 @@ class StreamOverviewPanel(wx.Panel):
 
         self.vbox = wx.BoxSizer(wx.VERTICAL)
         self.grid = wx.grid.Grid(self, size=(800, 500))
-        self.grid.EnableEditing(True)
+        self.grid.EnableEditing(False)
         self.grid.CreateGrid(0, len(headers))
         for i in range(0, len(headers)):
             self.grid.SetColLabelValue(i, headers[i])
@@ -691,6 +693,7 @@ class StreamOverviewPanel(wx.Panel):
         self.grid.SetColFormatNumber(5)
         self.grid.Centre()
         self.vbox.Add(self.grid, 0, wx.EXPAND)
+        self.grid.Bind(wx.grid.EVT_GRID_SELECT_CELL, self.checkSelectedCell)
 
         hButtonsBox = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -712,6 +715,16 @@ class StreamOverviewPanel(wx.Panel):
 
         self.Centre()
         self.Layout()
+
+    def checkSelectedCell(self, event):
+        row = event.GetRow()
+        selected = self.grid.GetSelectedRows()
+        if len(selected) > 1:
+            for _row in selected:
+                if not row or _row != row:
+                    self.grid.DeselectRow(_row)
+        self.grid.SelectRow(row)
+
 
     def updateStreams(self):
         self.grid.ClearGrid()
@@ -735,7 +748,7 @@ class StreamOverviewPanel(wx.Panel):
         for i in self.grid.GetSelectedRows():
             streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3)),
                             int(self.grid.GetCellValue(i, 2))))
-        if streams != []:
+        if streams:
             threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
             self.controller.connectToLSLStream(streams)
 
