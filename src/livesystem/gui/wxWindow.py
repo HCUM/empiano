@@ -608,14 +608,14 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.calibrationLabel.SetForegroundColour(wx.Colour(17, 133, 49))
         verticalBoxes.Add(self.calibrationLabel, 0, wx.EXPAND | wx.ALL, 5)
 
-        filename = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_song.mp4'))
         try:
             self.video = MediaCtrl(self, size=(800, 500))
         except NotImplementedError:
             print("media control not found")
 
-        self.video.Load(filename)
         self.Bind(wx.media.EVT_MEDIA_LOADED, self.mediaLoaded)
+        filename = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_song.mp4'))
+        self.video.Load(filename)
         self.video.SetFocus()
 
         verticalBoxes.Add(self.video, 0, wx.EXPAND, 5)
