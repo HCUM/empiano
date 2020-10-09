@@ -155,7 +155,11 @@ class ProgramMaster:
     # the SVM training
     def endCalibration(self):
         self.stopCalibration()
+        if not self.modsTimestamp:
+            self.resetCalibration()
+            return False
         self.calibrationManager.startTraining()
+        return True
 
     # gets the scores of the cross-validation of the SVM (after calibration)
     def getCrossValScores(self):

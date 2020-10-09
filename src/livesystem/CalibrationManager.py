@@ -65,8 +65,6 @@ class CalibrationManager:
         X_train, y_train = mlDataManager.createMLData(augData, nonAugData)
         self.trainSVM(X_train, y_train)
 
-        return augData, nonAugData, X_train, y_train
-
     # Performs a 10-fold cross validation and trains the SVM
     def trainSVM(self, X_train, y_train):
         self.svm = svm.SVC()

@@ -63,6 +63,7 @@ class MyFrame(wx.Frame):
 # Class StartPanel
 ###########################################################################
 
+
 class StartPanel(wx.Panel):
 
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
@@ -115,7 +116,6 @@ class StartPanel(wx.Panel):
 ###########################################################################
 # Class SettingsPanel
 ###########################################################################
-
 class SettingsPanel(wx.Panel):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize,
                  style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
@@ -342,7 +342,6 @@ class SettingsPanel(wx.Panel):
 ###########################################################################
 # Class LiveSystemPanel
 ###########################################################################
-
 class LiveSystemPanel(wx.Panel):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
@@ -444,7 +443,6 @@ class LiveSystemPanel(wx.Panel):
 ###########################################################################
 # Class ChooseCalibrationPanel
 ###########################################################################
-
 class ChooseCalibrationPanel(wx.Panel):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
@@ -494,7 +492,6 @@ class ChooseCalibrationPanel(wx.Panel):
 ###########################################################################
 # Class CustomCalibrationPanel
 ###########################################################################
-
 class CustomCalibrationPanel(wx.Panel):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
@@ -583,7 +580,6 @@ class CustomCalibrationPanel(wx.Panel):
 ###########################################################################
 # Class InbuiltCalibrationPanel
 ###########################################################################
-
 class InbuiltCalibrationPanel(wx.Panel):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
@@ -697,16 +693,21 @@ class InbuiltCalibrationPanel(wx.Panel):
     def finishButtonPressed(self, event):
         event.Skip()
         self.caliThread.join()
-        self.controller.endCalibration()
-        self.controller.showPanel(self, LiveSystemPanel, True)
-        self.resetPanel()
+        if self.controller.endCalibration():
+            self.controller.showPanel(self, LiveSystemPanel, True)
+            self.resetPanel()
+        else:
+            dial = wx.MessageDialog(self, "Calibration failed.",
+                                    "Error", wx.OK | wx.STAY_ON_TOP | wx.CENTRE)
+            dial.ShowModal()
+            self.resetPanel()
+            self.controller.showPanel(self, ChooseCalibrationPanel)
 
     def resetPanel(self):
         self.video.Stop()
         self.finishButton.Enable(False)
         self.resetButton.Enable(False)
         self.startButton.Enable(True)
-
 
 
 ###########################################################################

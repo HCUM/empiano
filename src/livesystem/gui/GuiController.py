@@ -38,7 +38,7 @@ class guiController:
 
     # calls the method ending the calibration
     def endCalibration(self):
-        self.programMaster.endCalibration()
+        return self.programMaster.endCalibration()
 
     def stopCalibration(self):
         self.programMaster.stopCalibration()
