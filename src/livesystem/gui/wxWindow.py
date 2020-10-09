@@ -693,7 +693,7 @@ class InbuiltCalibrationPanel(wx.Panel):
     def finishButtonPressed(self, event):
         event.Skip()
         self.caliThread.join()
-        if self.controller.endCalibration():
+        if self.controller.endCalibration(lengthMods=(len(self.modTimes)/2)):
             self.controller.showPanel(self, LiveSystemPanel, True)
             self.resetPanel()
         else:

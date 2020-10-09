@@ -37,18 +37,14 @@ class guiController:
         self.programMaster.startCalibration()
 
     # calls the method ending the calibration
-    def endCalibration(self):
-        return self.programMaster.endCalibration()
+    def endCalibration(self, lengthMods=None):
+        return self.programMaster.endCalibration(lengthMods)
 
     def stopCalibration(self):
         self.programMaster.stopCalibration()
 
     def resetCalibration(self):
         self.programMaster.resetCalibration()
-
-    def updateView(self, prediction):
-        #self.
-        pass
 
     def getPredictionFromMaster(self):
         return self.programMaster.getCurrentPrediction()

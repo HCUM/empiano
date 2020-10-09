@@ -153,9 +153,9 @@ class ProgramMaster:
 
     # Waits for the calibration-thread to join and calls the method handling
     # the SVM training
-    def endCalibration(self):
+    def endCalibration(self, lengthMods=None):
         self.stopCalibration()
-        if not self.modsTimestamp:
+        if not self.modsTimestamp or (lengthMods and lengthMods != len(self.modsTimestamp)):
             self.resetCalibration()
             return False
         self.calibrationManager.startTraining()
