@@ -34,6 +34,7 @@ class CalibrationManager:
         (data, timestamp) = sample
         self.streamData.append(
             (np.asarray(data) * Constants.dataSampleCorrection, timestamp + self.eegStreamTimeOffset))
+        #print("saved sample: ", sample)
 
     # Calculates the corresponding indices for the timestamps marking modulation on and off
     # Resaves the stream data, so it matches [ [data channel 1][data channel 2]...[data channel n] ]

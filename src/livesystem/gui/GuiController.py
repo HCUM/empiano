@@ -5,12 +5,13 @@ class guiController:
 
     def __init__(self, programMaster):
         self.programMaster = programMaster
-        self.app: wx.App
+        self.app = None
+        self.mainFrame = None
 
     def launchWindow(self):
         self.app = wx.App(False)
-        frame = wxwindow.MyFrame(self)
-        frame.Show()
+        self.mainFrame = wxwindow.MyFrame(self)
+        self.mainFrame.Show()
         self.app.MainLoop()
 
 
@@ -85,7 +86,13 @@ class guiController:
         self.programMaster.quit()
 
     # used for changing the panel displayed in the window
-    def showPanel(self, current, next):
-        current.Hide()
-        panel = current.Parent.panels[next]
+    def showPanel(self, currentPanel, nextPanel, refresh=False):
+        currentPanel.Hide()
+        panel = currentPanel.Parent.panels[nextPanel]
         panel.Show()
+        if refresh:
+            print("about to refresh the frame")
+            self.mainFrame.Refresh()
+            panel.Update()
+            #self.mainFrame.Update()
+

@@ -13,7 +13,6 @@ import wx.grid
 import platform
 import threading
 from pubsub import pub
-from threading import Thread
 from wx.lib.intctrl import IntCtrl
 from wx.media import MediaCtrl, EVT_MEDIA_STOP
 import storage.Constants as Constants
@@ -33,6 +32,7 @@ class MyFrame(wx.Frame):
         self.isWindows = self.platform.startswith("Windows")
         if self.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
+        self.backToConnectPage = False
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.AddStretchSpacer(prop=1)
@@ -55,6 +55,7 @@ class MyFrame(wx.Frame):
         self.SetSizer(self.sizer)
 
     def quit(self, event):
+        event.Skip()
         self.controller.quit()
 
 
@@ -99,26 +100,29 @@ class StartPanel(wx.Panel):
         self.Layout()
 
     def showLSLPanel(self, event):
+        event.Skip()
         self.controller.showPanel(self, StreamOverviewPanel)
 
     def showSettingsPanel(self, event):
+        event.Skip()
         self.controller.showPanel(self, SettingsPanel)
 
     def quitButtonPressed(self, event):
+        event.Skip()
         self.controller.quit()
 
 
 ###########################################################################
-## Class SettingsPanel
+# Class SettingsPanel
 ###########################################################################
 
 class SettingsPanel(wx.Panel):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize,
                  style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
-
+        self.parent = parent
         self.controller = controller
-        if parent.isWindows:
+        if self.parent.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
@@ -144,8 +148,9 @@ class SettingsPanel(wx.Panel):
         flexGridDataAcquisition.Add(self.amtChannelsLabel, 0, wx.ALL | wx.EXPAND, 5)
 
         self.amtElectrodesInput = IntCtrl(self, wx.ID_ANY, Constants.numberOfChannels, wx.DefaultPosition,
-                                          wx.DefaultSize, wx.TE_RIGHT, min=1)
+                                          wx.DefaultSize, wx.TE_RIGHT, min=1, allow_none=False)
         flexGridDataAcquisition.Add(self.amtElectrodesInput, 0, wx.ALL, 5)
+        self.amtElectrodesInput.SetFocus()
 
         verticalBoxes.Add(flexGridDataAcquisition, 0, wx.ALL | wx.EXPAND, 5)
 
@@ -307,6 +312,7 @@ class SettingsPanel(wx.Panel):
         self.setSettingsButton.Bind(wx.EVT_BUTTON, self.updateSettings)
 
     def updateSettings(self, event):
+        event.Skip()
         name = self.midiCableNameInput.GetValue()
         if name == "":
             dial = wx.MessageDialog(None, 'Please enter the name of the desired virtual midi-cable!',
@@ -324,7 +330,13 @@ class SettingsPanel(wx.Panel):
             self.controller.updateSettings(self.amtElectrodesInput.GetValue(),
                                            name,
                                            self.createMidiCableCheckbox.GetValue())
-            self.controller.showPanel(self, StartPanel)
+            print("settings updated")
+            if not self.parent.backToConnectPage:
+                print("in if not backToConnectPage")
+                self.controller.showPanel(self, StartPanel)
+            else:
+                self.controller.showPanel(self, StreamOverviewPanel)
+                self.parent.backToConnectPage = False
 
 
 ###########################################################################
@@ -362,9 +374,13 @@ class LiveSystemPanel(wx.Panel):
         self.startLiveSystemButton = wx.Button(self, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0)
         self.verticalBoxes.Add(self.startLiveSystemButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
+        self.backButton = wx.Button(self, wx.ID_ANY, u"Back", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.verticalBoxes.Add(self.backButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+
         self.verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.startLiveSystemButton.Bind(wx.EVT_BUTTON, self.startButtonPressed)
+        self.backButton.Bind(wx.EVT_BUTTON, self.backButtonPressed)
 
         self.SetSizerAndFit(self.verticalBoxes)
         self.Centre()
@@ -390,12 +406,9 @@ class LiveSystemPanel(wx.Panel):
 
     def updatePredictionInfo(self):
         midiEffect = self.controller.programMaster.midiEffectOn
-        print("last midieffect: ", midiEffect)
         while self.controller.getLiveSysFromMaster():
             current = self.controller.programMaster.midiEffectOn
-            print("in while: current: ", current)
             if midiEffect != current:
-                print("in if")
                 stringToShow = "Currently Modulating:\n" + str(current)
                 self.infoLabel.SetLabel(stringToShow)
                 self.SetSizerAndFit(self.verticalBoxes)
@@ -405,17 +418,26 @@ class LiveSystemPanel(wx.Panel):
             time.sleep(1 / (Constants.samplingRate / 2))
 
     def startButtonPressed(self, event):
+        event.Skip()
         if self.startLiveSystemButton.GetLabel() == "Start":
             self.controller.startLiveSystem()
             self.startLiveSystemButton.SetLabel("Stop")
+            self.backButton.Enable(False)
         else:
             self.stopLiveSystem()
             self.startLiveSystemButton.SetLabel("Start")
+            self.backButton.Enable(True)
+
+    def backButtonPressed(self, event):
+        event.Skip()
+        self.controller.resetCalibration()
+        self.controller.showPanel(self, ChooseCalibrationPanel)
 
     def stopLiveSystem(self):
         self.controller.stopLiveSystem()
 
     def quitButtonPressed(self, event):
+        event.Skip()
         self.controller.quit()
 
 
@@ -461,10 +483,12 @@ class ChooseCalibrationPanel(wx.Panel):
         self.Layout()
 
     def customCaliPressed(self, event):
-        self.controller.showPanel(self, CustomCalibrationPanel)
+        event.Skip()
+        self.controller.showPanel(self, CustomCalibrationPanel, True)
 
     def inbuiltCaliPressed(self, event):
-        self.controller.showPanel(self, InbuiltCalibrationPanel)
+        event.Skip()
+        self.controller.showPanel(self, InbuiltCalibrationPanel, True)
 
 
 ###########################################################################
@@ -517,6 +541,7 @@ class CustomCalibrationPanel(wx.Panel):
 
     # using the button, the beginning and end of the modulation can be tracked
     def trackModulation(self, event):
+        event.Skip()
         if self.modon:
             self.controller.endModulation()
             self.modTrackButton.SetLabel("Mod:On")
@@ -529,6 +554,7 @@ class CustomCalibrationPanel(wx.Panel):
             self.calibrationButton.Enable(False)
 
     def calibrationButtonPressed(self, event):
+        event.Skip()
         if self.calibrationButton.GetLabel() == "Start":
             self.controller.startCalibration()
             self.calibrationButton.SetLabel("Stop")
@@ -537,9 +563,14 @@ class CustomCalibrationPanel(wx.Panel):
             self.modTrackButton.Enable(True)
         else:
             self.controller.endCalibration()
-            self.controller.showPanel(self, LiveSystemPanel)
+            self.controller.showPanel(self, LiveSystemPanel, True)
+            self.calibrationButton.SetLabel("Start")
+            self.calibrationButton.Enable(True)
+            self.resetButton.Enable(False)
+            self.modTrackButton.Enable(False)
 
     def resetCalibration(self, event):
+        event.Skip()
         self.controller.resetCalibration()
         self.calibrationButton.SetLabel("Start")
         self.calibrationButton.Enable(True)
@@ -550,7 +581,7 @@ class CustomCalibrationPanel(wx.Panel):
 
 
 ###########################################################################
-## Class InbuiltCalibrationPanel
+# Class InbuiltCalibrationPanel
 ###########################################################################
 
 class InbuiltCalibrationPanel(wx.Panel):
@@ -563,8 +594,9 @@ class InbuiltCalibrationPanel(wx.Panel):
             self.SetBackgroundColour(backgroundColorWindows)
         self.modTimes = [6000, 8000, 14000, 16000, 22000, 24000, 30000, 32000,
                          38000, 40000, 46000, 48000, 54000, 56000, 62000, 64000]
-        self.caliThread: threading.Thread
+        self.caliThread = None
         self.isMediaLoaded = False
+        self.isVideoPlaying = False
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
@@ -612,11 +644,11 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.Layout()
 
     def mediaLoaded(self, event):
-        print("in media is loaded")
+        event.Skip()
         self.isMediaLoaded = True
-        self.video.Seek(1)
 
     def startButtonPressed(self, event):
+        event.Skip()
         if not self.isMediaLoaded:
             dial = wx.MessageDialog(self, "Sorry, the media did not load, "
                                           "check if the video file exists in the pics folder.",
@@ -626,15 +658,21 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.startButton.Enable(False)
         self.resetButton.Enable(True)
         self.controller.startCalibration()
-        self.video.Play()
+        self.startVideo()
         self.caliThread = threading.Thread(target=self.trackCalibration)
         self.caliThread.start()
 
+    def startVideo(self):
+        self.video.Play()
+        self.isVideoPlaying = True
+
     def trackCalibration(self):
+        print("in track Calibration")
         index = 0
-        while self.video.GetState() == wx.media.MEDIASTATE_PLAYING:
+        self.Bind(EVT_MEDIA_STOP, self.enableFinishButton)
+        while self.isVideoPlaying:
             currentSecond = self.video.Tell()
-            if currentSecond == self.modTimes[index]:
+            if abs(currentSecond - self.modTimes[index]) <= 50:
                 if index % 2 == 0:
                     self.controller.startModulation()
                     print("modulation started: ", currentSecond)
@@ -645,13 +683,15 @@ class InbuiltCalibrationPanel(wx.Panel):
                 if index == len(self.modTimes):
                     break
                 print("ein Durchlauf beendet, neuer Index: ", index)
-        self.Bind(EVT_MEDIA_STOP, self.enableFinishButton)
 
     def enableFinishButton(self, event):
-        print("in enable finish button")
+        event.Skip()
         wx.CallAfter(self.finishButton.Enable, True)
+        self.isVideoPlaying = False
 
     def resetButtonPressed(self, event):
+        event.Skip()
+        self.isVideoPlaying = False
         self.video.Stop()
         self.caliThread.join()
         self.controller.resetCalibration()
@@ -660,14 +700,22 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.resetButton.Enable(False)
 
     def finishButtonPressed(self, event):
-        #self.video.Stop()
+        event.Skip()
         self.caliThread.join()
         self.controller.endCalibration()
-        self.controller.showPanel(self, LiveSystemPanel)
+        self.controller.showPanel(self, LiveSystemPanel, True)
+        self.resetPanel()
+
+    def resetPanel(self):
+        self.video.Stop()
+        self.finishButton.Enable(False)
+        self.resetButton.Enable(False)
+        self.startButton.Enable(True)
+
 
 
 ###########################################################################
-## Class StreamOverviewPanel
+# Class StreamOverviewPanel
 ###########################################################################
 headers = ["Stream", "Type", "#Channels", "SampleRate", "Format", "hosted on", "source id"]
 
@@ -718,6 +766,7 @@ class StreamOverviewPanel(wx.Panel):
         self.Layout()
 
     def checkSelectedCell(self, event):
+        event.Skip()
         row = event.GetRow()
         selected = self.grid.GetSelectedRows()
         if len(selected) > 1:
@@ -725,7 +774,6 @@ class StreamOverviewPanel(wx.Panel):
                 if not row or _row != row:
                     self.grid.DeselectRow(_row)
         self.grid.SelectRow(row)
-
 
     def updateStreams(self):
         self.grid.ClearGrid()
@@ -745,6 +793,7 @@ class StreamOverviewPanel(wx.Panel):
         self.grid.AutoSizeRows()
 
     def connectToStreams(self, event):
+        event.Skip()
         streams = []
         for i in self.grid.GetSelectedRows():
             streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3)),
@@ -778,6 +827,7 @@ class StreamOverviewPanel(wx.Panel):
     def showPopup(self, string, continuePossible):
         if continuePossible == Continue:
             dial = wx.MessageDialog(self, string, "Error", wx.YES_NO | wx.STAY_ON_TOP | wx.CENTRE)
+            dial.SetYesNoLabels("&Continue", "&Back")
         else:
             dial = wx.MessageDialog(self, string, "Error", wx.OK | wx.STAY_ON_TOP | wx.CENTRE)
         result = dial.ShowModal()
@@ -788,13 +838,16 @@ class StreamOverviewPanel(wx.Panel):
                 self.onBackPopUp()
 
     def onUpdateStreams(self, event):
+        event.Skip()
         self.updateStreams()
 
     def onBack(self, event):
+        event.Skip()
         self.controller.showPanel(self, StartPanel)
 
     def onBackPopUp(self):
         self.controller.resetStream()
+        self.parent.backToConnectPage = True
         self.controller.showPanel(self, SettingsPanel)
 
     def onContinue(self):
