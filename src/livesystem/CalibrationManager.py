@@ -49,21 +49,33 @@ class CalibrationManager:
                 matchesOff.append(time)
 
             self.mods.append((len(self.streamData) - len(matchesOn), len(matchesOff) - 1))
+        if len(self.mods) != len(self.programMaster.modsTimestamp):
+            return "Converting modulation timestamps to array indices failed."
 
         for (sample, timestamp) in self.streamData:
             for i in range(Constants.numberOfChannels):
                 self.resavedStreamData[i].append(sample[i])
+        if len(self.resavedStreamData) != Constants.numberOfChannels:
+            return "Resaving stream data failed."
+        return None
 
     # Calls all the functions needed for training the SVM:
     # data preparation, preprocessing, splitting the data, feature calculation
     def startTraining(self):
-        self.prepareData()
+        errorStr = self.prepareData()
+        if errorStr:
+            return errorStr
 
         preprocessedStreamData = Preprocessor.performPreprocessing(self.resavedStreamData)
+        if not preprocessedStreamData:
+            return "Preprocessing failed."
 
         augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedStreamData, self.mods)
         X_train, y_train = mlDataManager.createMLData(augData, nonAugData)
-        self.trainSVM(X_train, y_train)
+        result = self.trainSVM(X_train, y_train)
+        if result:
+            return result
+        return None
 
     # Performs a 10-fold cross validation and trains the SVM
     def trainSVM(self, X_train, y_train):
@@ -71,4 +83,12 @@ class CalibrationManager:
         cv = ShuffleSplit(n_splits=10, test_size=0.3, random_state=0)
         self.crossValScores = cross_val_score(self.svm, X_train, y_train, cv=cv)
         pub.sendMessage("liveSystemPanelListener", msg="CROSS_VAL_SET", arg=self.crossValScores.round(2))
-        self.svm.fit(X_train, y_train)
+        try:
+            self.svm.fit(X_train, y_train)
+        except ValueError as e:
+            return e
+        except TypeError as e:
+            return e
+        return None
+
+

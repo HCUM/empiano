@@ -24,5 +24,4 @@ def performPreprocessing(rawData):
 
         bandStopData.append(butter_bandstop_filter(bandChannelData, Constants.lowBandStopFreq,
                                                    Constants.highBandStopFreq, Constants.samplingRate * 0.5))
-
     return bandStopData

@@ -157,9 +157,11 @@ class ProgramMaster:
         self.stopCalibration()
         if not self.modsTimestamp or (lengthMods and lengthMods != len(self.modsTimestamp)):
             self.resetCalibration()
-            return False
-        self.calibrationManager.startTraining()
-        return True
+            return "Tracking of the modulations failed."
+        result = self.calibrationManager.startTraining()
+        if result:
+            return result
+        return None
 
     # gets the scores of the cross-validation of the SVM (after calibration)
     def getCrossValScores(self):

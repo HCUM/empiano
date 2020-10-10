@@ -693,11 +693,12 @@ class InbuiltCalibrationPanel(wx.Panel):
     def finishButtonPressed(self, event):
         event.Skip()
         self.caliThread.join()
-        if self.controller.endCalibration(lengthMods=(len(self.modTimes)/2)):
+        result = self.controller.endCalibration(lengthMods=(len(self.modTimes)/2))
+        if not result:
             self.controller.showPanel(self, LiveSystemPanel, True)
             self.resetPanel()
         else:
-            dial = wx.MessageDialog(self, "Calibration failed.",
+            dial = wx.MessageDialog(self, str(result),
                                     "Error", wx.OK | wx.STAY_ON_TOP | wx.CENTRE)
             dial.ShowModal()
             self.resetPanel()
