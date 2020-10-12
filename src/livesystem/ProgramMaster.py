@@ -214,6 +214,7 @@ class ProgramMaster:
         self.firstLiveRoundDone = True
         self.liveSystemThread.join()
         self.programPaused = True
+        self.midiManager.sendPitchWheelStopMsg()
         threading.Thread(target=self.keepPullingSamplesFromInlet).start()
 
     def quit(self):

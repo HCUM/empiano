@@ -831,8 +831,7 @@ class StreamOverviewPanel(wx.Panel):
         if result == wx.ID_YES:
             self.onContinue()
         else:
-            if continuePossible == Go_to_settings:
-                self.onBackPopUp()
+            self.onBackPopUp()
 
     def onUpdateStreams(self, event):
         event.Skip()
