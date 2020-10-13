@@ -486,7 +486,7 @@ class ChooseCalibrationPanel(wx.Panel):
 
     def inbuiltCaliPressed(self, event):
         event.Skip()
-        self.controller.showPanel(self, InbuiltCalibrationPanel, True)
+        self.controller.showPanel(self, InbuiltCalibrationPanel, True, True)
 
 
 ###########################################################################
@@ -591,7 +591,7 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.modTimes = [6000, 8000, 14000, 16000, 22000, 24000, 30000, 32000,
                          38000, 40000, 46000, 48000, 54000, 56000, 62000, 64000]
         self.caliThread = None
-        self.isMediaLoaded = False
+        #self.isMediaLoaded = False
         self.isVideoPlaying = False
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
@@ -609,10 +609,8 @@ class InbuiltCalibrationPanel(wx.Panel):
         except NotImplementedError:
             print("media control not found")
 
-        filename = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_song.mp4'))
-        self.isMediaLoaded = self.video.Load(filename)
-        self.video.SetFocus()
-
+        previewFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_preview.mp4'))
+        self.video.Load(previewFile)
         verticalBoxes.Add(self.video, 0, wx.EXPAND, 5)
 
         hButtonsBox = wx.BoxSizer(wx.HORIZONTAL)
@@ -639,8 +637,9 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.Layout()
 
     def startButtonPressed(self, event):
+        videoFile =  os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_song.mp4'))
         event.Skip()
-        if not self.isMediaLoaded:
+        if not self.video.Load(videoFile):
             dial = wx.MessageDialog(self, "Sorry, the media did not load, "
                                           "check if the video file exists in the pics folder.",
                                     "Error", wx.OK | wx.STAY_ON_TOP | wx.CENTRE)
@@ -658,7 +657,6 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.isVideoPlaying = True
 
     def trackCalibration(self):
-        print("in track Calibration")
         index = 0
         self.Bind(EVT_MEDIA_STOP, self.enableFinishButton)
         while self.isVideoPlaying:
@@ -666,19 +664,16 @@ class InbuiltCalibrationPanel(wx.Panel):
             if abs(currentSecond - self.modTimes[index]) <= 50:
                 if index % 2 == 0:
                     self.controller.startModulation()
-                    print("modulation started: ", currentSecond)
                 else:
                     self.controller.endModulation()
-                    print("modulation ended: ", currentSecond)
                 index = index + 1
                 if index == len(self.modTimes):
                     break
-                print("ein Durchlauf beendet, neuer Index: ", index)
 
     def enableFinishButton(self, event):
         event.Skip()
-        wx.CallAfter(self.finishButton.Enable, True)
         self.isVideoPlaying = False
+        wx.CallAfter(self.finishButton.Enable, True)
 
     def resetButtonPressed(self, event):
         event.Skip()

@@ -82,7 +82,7 @@ class guiController:
         self.programMaster.quit()
 
     # used for changing the panel displayed in the window
-    def showPanel(self, currentPanel, nextPanel, refresh=False):
+    def showPanel(self, currentPanel, nextPanel, refresh=False, inbuiltCali=False):
         currentPanel.Hide()
         panel = currentPanel.Parent.panels[nextPanel]
         panel.Show()
@@ -90,5 +90,6 @@ class guiController:
             print("about to refresh the frame")
             self.mainFrame.Refresh()
             panel.Update()
-            #self.mainFrame.Update()
+        if inbuiltCali:
+            panel.video.Play()
 

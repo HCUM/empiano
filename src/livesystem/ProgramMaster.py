@@ -21,6 +21,7 @@ class ProgramMaster:
         self.streamManager = StreamManager.StreamManager()
 
         self.programPauseThread = None
+        self.programPaused = False
 
         self.calibrationSem = threading.Semaphore()
         self.calibrationOn = False
@@ -46,7 +47,6 @@ class ProgramMaster:
 
         self.modOnTimestamp = -1
         self.modsTimestamp = []  # saves all the timestamp pairs of the modulations: [(begin, end), ...]
-        self.programPaused = False
 
     # run gui for the live-system
     def startWindow(self):
@@ -143,13 +143,16 @@ class ProgramMaster:
     def stopCalibration(self):
         self.setCalibrationOn(False)
         self.calibrationThread.join()
-        self.setProgramPaused()
+        if not self.programPaused:
+            self.setProgramPaused()
         print("mods: ", self.modsTimestamp)
 
     def resetCalibration(self):
         self.stopCalibration()
         self.modsTimestamp = []
         self.modOnTimestamp = -1
+        self.firstLiveRoundDone = False
+        self.setInLiveSystem(False)
 
     # Waits for the calibration-thread to join and calls the method handling
     # the SVM training
@@ -213,9 +216,8 @@ class ProgramMaster:
         self.setInLiveSystem(False)
         self.firstLiveRoundDone = True
         self.liveSystemThread.join()
-        self.programPaused = True
+        self.setProgramPaused()
         self.midiManager.sendPitchWheelStopMsg()
-        threading.Thread(target=self.keepPullingSamplesFromInlet).start()
 
     def quit(self):
         self.programPaused = False
