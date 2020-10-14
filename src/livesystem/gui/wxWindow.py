@@ -330,9 +330,7 @@ class SettingsPanel(wx.Panel):
             self.controller.updateSettings(self.amtElectrodesInput.GetValue(),
                                            name,
                                            self.createMidiCableCheckbox.GetValue())
-            print("settings updated")
             if not self.parent.backToConnectPage:
-                print("in if not backToConnectPage")
                 self.controller.showPanel(self, StartPanel)
             else:
                 self.controller.showPanel(self, StreamOverviewPanel)
@@ -392,8 +390,6 @@ class LiveSystemPanel(wx.Panel):
         self.Layout()
 
     def infoListener(self, msg, arg):
-        print("in info listener")
-        print("current active threads: ", threading.active_count())
         if msg == "CROSS_VAL_SET":
             stringToShow = "Cross-Validation (Calibration):\n" + str(arg)
             wx.CallAfter(self.setInfoLable, stringToShow)

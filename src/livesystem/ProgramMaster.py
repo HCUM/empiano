@@ -149,7 +149,6 @@ class ProgramMaster:
         self.calibrationThread.join()
         if not self.programPaused:
             self.setProgramPaused()
-        print("mods: ", self.modsTimestamp)
 
     # Resets the calibration and all the variables
     def resetCalibration(self):
@@ -201,10 +200,6 @@ class ProgramMaster:
         self.modsTimestamp = []
         self.modOnTimestamp = -1
 
-        if not self.calibrationManager.svm:
-            print("ERROR: Program-Manager: YOU CANNOT START the system WITHOUT calibration!")
-            return
-
         if not self.firstLiveRoundDone:
             self.midiManager.createMIDIOutport()
         self.liveSystemManager = Live.LiveSystemManager(self, self.calibrationManager.svm)
@@ -231,5 +226,4 @@ class ProgramMaster:
 
 def main():
     programMaster = ProgramMaster()
-    print("thread in main: ", threading.current_thread())
     programMaster.startWindow()
