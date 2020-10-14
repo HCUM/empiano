@@ -2,7 +2,7 @@
 
 This repository contains a system that, in combination with the correct hard- and softwares, offers sound modulation via muscular activity, captured by an electromyography device.
 
-In short: the system is trained to recognize a performed finger gesture and adds a pitch vibrato to the sound output.
+In short: the system is trained to recognize a performed finger gesture (wiggle motion of the thumb) and adds a pitch vibrato to the sound output.
 
 <p align="center">
     <img src="./pics/figures_teaser_new.png" alt="system_teaser" width="600"/>
@@ -48,28 +48,39 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
 3. Impedance check of the electrodes
 4. Start LSL stream
 5. Start this python program
-6. Connect this program to the LSL stream in the local network
+6. Connect this program to the LSL-stream in the local network
 7. Open music program (check MIDI inputs)
 8. Perform Calibration
 9. Ready to go!
+
+## Calibration
+Our system offers two different types of calibration.
+1. **Video Calibration**:
+You are expected to play the shown song in the speed of the blue marker. Whenever this marker hits a note marked in red, you are expected to perform a back-and-forth wiggle motion, using the thumb, for as long as this red note is playing.  
+It is possible to reset and restart the video calibration, in case of a mistake.
+2. **Custom Calibration**:
+You are free to calibrate yourself, by playing whatever and tracking your performance of the back-and-forth wiggle motion by the thumb using the "Mod:on" and "Mod:off" button. With starting the wiggle motion press "Mod:on" and with ending it press "Mod:off" (it is the same button that changes the label after being pressed).  
+Here it is also possible to reset and restart the custom calibration, in case of a mistake.
+![](./pics/demo_wiggle_motion.mp4) 
 
 
 ## Additional Information
 - Our system requires the data-samples sent through the LSL stream to have the following format:  
 ([channel 1, channel 2, ...], timestamp)
 - For sending the sound-modulation MIDI messages to the music software, a virtual MIDI cable is required:
-    - On **Windows**: Sometimes have an inbuilt **virtual MIDI cable** available,  
+    - On **Windows**: Sometimes an inbuilt **virtual MIDI cable** is available,  
     otherwise: use **loopMIDI** to create one yourself (http://www.tobias-erichsen.de/software/loopmidi.html).
     - On **MacOS**: usually there is an inbuilt virtual MIDI cable available: IAC driver
     - Most of the times the library mido itself can be used to create a virtual MIDI cable, but it does not work when using Windows MultiMedia API.  
     To open an outport check the corresponding box in the Settings. 
     - The name of your virtual MIDI cable can be changed in the Settings
+- The **finger motion** that works best for our system is a back-and-forth wiggle motion of the thumb. Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well as the one described first.
 
 
 
 ## Citing "Hit the Thumb Jack!"
 
-Below are the BibTex entries to cite Hit the Thumb Jack!
+Below is the BibTex entry to cite Hit the Thumb Jack!
 
 ```
 @inproceedings{10.1145/3357236.3395500,
