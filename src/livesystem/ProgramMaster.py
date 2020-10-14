@@ -126,7 +126,7 @@ class ProgramMaster:
 
     # If the connection to the LSL-stream was successful, the program is paused so it pulls the incoming samples
     # Pub-message sent in StreamManager.connectStreams
-    def handleLSLConnect(self, msg):
+    def handleLSLConnect(self, msg, settingsChannels, streamChannels):
         if msg == "CHANNELS_OKAY":
             self.setProgramPaused()
 

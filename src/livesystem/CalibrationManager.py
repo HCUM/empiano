@@ -14,7 +14,7 @@ from sklearn.model_selection import cross_val_score, ShuffleSplit
 class CalibrationManager:
     def __init__(self, programMaster):
         self.programMaster = programMaster
-        self.resavedStreamData = [[] for _ in range(Constants.numberOfChannels)]
+        self.restoredStreamData = [[] for _ in range(Constants.numberOfChannels)]
         self.streamData = []
         self.mods = []
         self.eegStreamTimeOffset = -1
@@ -34,10 +34,9 @@ class CalibrationManager:
         (data, timestamp) = sample
         self.streamData.append(
             (np.asarray(data) * Constants.dataSampleCorrection, timestamp + self.eegStreamTimeOffset))
-        #print("saved sample: ", sample)
 
     # Calculates the corresponding indices for the timestamps marking modulation on and off
-    # Resaves the stream data, so it matches [ [data channel 1][data channel 2]...[data channel n] ]
+    # Restores the stream data, so it matches [ [data channel 1][data channel 2]...[data channel n] ]
     def prepareData(self):
         for (modon, modoff) in self.programMaster.modsTimestamp:
             matchesOn = [tmstmp for (smp, tmstmp) in self.streamData if tmstmp >= modon]
@@ -54,21 +53,21 @@ class CalibrationManager:
 
         for (sample, timestamp) in self.streamData:
             for i in range(Constants.numberOfChannels):
-                self.resavedStreamData[i].append(sample[i])
-        if len(self.resavedStreamData) != Constants.numberOfChannels:
-            return "Resaving stream data failed."
+                self.restoredStreamData[i].append(sample[i])
+        if len(self.restoredStreamData) != Constants.numberOfChannels:
+            return "Restoring the stream data failed."
         return None
 
     # Calls all the functions needed for training the SVM:
-    # data preparation, preprocessing, splitting the data, feature calculation
+    # data preparation, pre-processing, splitting the data, feature calculation
     def startTraining(self):
         errorStr = self.prepareData()
         if errorStr:
             return errorStr
 
-        preprocessedStreamData = Preprocessor.performPreprocessing(self.resavedStreamData)
+        preprocessedStreamData = Preprocessor.performPreprocessing(self.restoredStreamData)
         if not preprocessedStreamData:
-            return "Preprocessing failed."
+            return "Pre-processing failed."
 
         augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedStreamData, self.mods)
         X_train, y_train = mlDataManager.createMLData(augData, nonAugData)

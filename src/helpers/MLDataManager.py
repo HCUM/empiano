@@ -1,6 +1,6 @@
 import copy
 import numpy as np
-from storage import Constants as constants
+from storage import Constants as Constants
 from helpers.FeatureCalculator import calculateFeatureForWindow
 
 
@@ -14,36 +14,36 @@ from helpers.FeatureCalculator import calculateFeatureForWindow
 # returns two of those fields: 1. augmented data, 2. not-augmented data
 def splitRecordedSample(emgData, mods):
     splitAugData = []
-    splitNonAugData = []
+    splitNoAugData = []
 
     for mod in mods:
         oneAugPart = []
         for channel in emgData:
             oneAugPart.append(np.array(channel[mod[0]: mod[1]]))
-        if len(oneAugPart[0]) >= (constants.samplesPerWindow + constants.windowShift):
+        if len(oneAugPart[0]) >= (Constants.samplesPerWindow + Constants.windowShift):
             splitAugData.append(oneAugPart)
 
-    smallestNonAugIndex = 0
+    smallestNoAugIndex = 0
     emgData = np.asarray(emgData)
     for mod in mods:
-        if (smallestNonAugIndex < len(emgData[0])) and \
-                (len(emgData[0, smallestNonAugIndex:(mod[0] + 1)]) >=
-                 (constants.samplesPerWindow + constants.windowShift)):
-            dataSlice = emgData[:, smallestNonAugIndex:(mod[0] + 1)]
-            splitNonAugData.append(dataSlice)
-        smallestNonAugIndex = mod[1]
+        if (smallestNoAugIndex < len(emgData[0])) and \
+                (len(emgData[0, smallestNoAugIndex:(mod[0] + 1)]) >=
+                 (Constants.samplesPerWindow + Constants.windowShift)):
+            dataSlice = emgData[:, smallestNoAugIndex:(mod[0] + 1)]
+            splitNoAugData.append(dataSlice)
+        smallestNoAugIndex = mod[1]
     # rest behind last mod part
-    if (smallestNonAugIndex < len(emgData[0])) and \
-            (len(emgData[0, smallestNonAugIndex:]) >=
-             (constants.samplesPerWindow + constants.windowShift)):
-        splitNonAugData.append(emgData[:, smallestNonAugIndex:])
+    if (smallestNoAugIndex < len(emgData[0])) and \
+            (len(emgData[0, smallestNoAugIndex:]) >=
+             (Constants.samplesPerWindow + Constants.windowShift)):
+        splitNoAugData.append(emgData[:, smallestNoAugIndex:])
 
-    return splitAugData, splitNonAugData
+    return splitAugData, splitNoAugData
 
 
 # Creates the data for training the SVM
 # param: augData    = storing the augmented data [[channels, data]]
-#        nonAugData = storing the data representing no augmentation [channels, data]
+#        noAugData  = storing the data representing no augmentation [channels, data]
 # Splits the data into windows, calls the feature vector calculation for that window,
 # adds the last two feature vectors to the current, to add some time aspect and
 # labels everything with 'augmentation' or 'no augmentation'
@@ -52,21 +52,21 @@ def splitRecordedSample(emgData, mods):
 
 def createMLData(augmentedData, noAugmentedData):
     X_train = []  # (n_samples, n_features)
-    y_train = []  # (n_samples)->holding the lables/targets/classes
+    y_train = []  # (n_samples)->holding the labels/targets/classes
 
     # create feature vectors for augmented data
     index = 2
     for singleAugData in augmentedData:
         singleAugData = np.asarray(singleAugData)
-        featureBeforeLast = calculateFeatureForWindow(singleAugData[:, 0:constants.samplesPerWindow])
+        featureBeforeLast = calculateFeatureForWindow(singleAugData[:, 0:Constants.samplesPerWindow])
         lastFeature = calculateFeatureForWindow(
-            singleAugData[:, constants.windowShift:constants.windowShift + constants.samplesPerWindow])
+            singleAugData[:, Constants.windowShift:Constants.windowShift + Constants.samplesPerWindow])
 
-        j = constants.windowShift * 2
+        j = Constants.windowShift * 2
 
-        while (j + constants.samplesPerWindow <= len(singleAugData[0]) &
-               len(singleAugData[0]) >= constants.samplesPerWindow):
-            currentFeature = calculateFeatureForWindow(singleAugData[:, j:j + constants.samplesPerWindow])
+        while (j + Constants.samplesPerWindow <= len(singleAugData[0]) &
+               len(singleAugData[0]) >= Constants.samplesPerWindow):
+            currentFeature = calculateFeatureForWindow(singleAugData[:, j:j + Constants.samplesPerWindow])
             featureVector = currentFeature.tolist()
             featureVector.extend(copy.deepcopy(lastFeature))
             featureVector.extend(copy.deepcopy(featureBeforeLast))
@@ -77,31 +77,31 @@ def createMLData(augmentedData, noAugmentedData):
             X_train.append(np.asarray(featureVector))
             y_train.append("augmentation")
 
-            j += constants.windowShift
+            j += Constants.windowShift
 
         index += 2
 
-    # create feature vectors for not augmented data
+    # create feature vectors for no augmentation data
     index = 1
     for singleNoAugData in noAugmentedData:
-        nonAugFeatureBeforeLast = calculateFeatureForWindow(singleNoAugData[:, 0:constants.samplesPerWindow])
+        noAugFeatureBeforeLast = calculateFeatureForWindow(singleNoAugData[:, 0:Constants.samplesPerWindow])
         lastNoAugFeature = calculateFeatureForWindow(
-            singleNoAugData[:, constants.windowShift:constants.windowShift + constants.samplesPerWindow])
-        currentIndex = constants.windowShift * 2
+            singleNoAugData[:, Constants.windowShift:Constants.windowShift + Constants.samplesPerWindow])
+        currentIndex = Constants.windowShift * 2
 
-        while (currentIndex + constants.samplesPerWindow <= len(singleNoAugData[0])
-               & len(singleNoAugData[0]) >= constants.samplesPerWindow):
-            currentNonAugFeature = calculateFeatureForWindow(
-                singleNoAugData[:, currentIndex:currentIndex + constants.samplesPerWindow])
-            featureNoAugVector = currentNonAugFeature.tolist()
-            featureNoAugVector.extend(copy.deepcopy(nonAugFeatureBeforeLast))
+        while (currentIndex + Constants.samplesPerWindow <= len(singleNoAugData[0])
+               & len(singleNoAugData[0]) >= Constants.samplesPerWindow):
+            currentNoAugFeature = calculateFeatureForWindow(
+                singleNoAugData[:, currentIndex:currentIndex + Constants.samplesPerWindow])
+            featureNoAugVector = currentNoAugFeature.tolist()
+            featureNoAugVector.extend(copy.deepcopy(noAugFeatureBeforeLast))
             featureNoAugVector.extend(copy.deepcopy(lastNoAugFeature))
 
-            nonAugFeatureBeforeLast = copy.deepcopy(lastNoAugFeature)
-            lastNoAugFeature = copy.deepcopy(currentNonAugFeature)
+            noAugFeatureBeforeLast = copy.deepcopy(lastNoAugFeature)
+            lastNoAugFeature = copy.deepcopy(currentNoAugFeature)
             X_train.append(np.asarray(featureNoAugVector))
             y_train.append("no augmentation")
-            currentIndex += constants.windowShift
+            currentIndex += Constants.windowShift
 
         index += 2
 
