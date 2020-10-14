@@ -76,7 +76,7 @@ Here it is also possible to reset and restart the custom calibration, in case of
     - Most of the times the library mido itself can be used to create a virtual MIDI cable, but it does not work when using Windows MultiMedia API.  
     To open an outport check the corresponding box in the Settings. 
     - The name of your virtual MIDI cable can be changed in the Settings
-- The **finger motion** that works best for our system is a back-and-forth wiggle motion of the thumb. Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well as the one described first.
+- The **finger motion** that works best for our system is a back-and-forth wiggle motion of the thumb (cf. gif). Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well.
 
 
 
