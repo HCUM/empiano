@@ -62,7 +62,7 @@ It is possible to reset and restart the video calibration, in case of a mistake.
 You are free to calibrate yourself, by playing whatever and tracking your performance of the back-and-forth wiggle motion by the thumb using the "Mod:on" and "Mod:off" button. With starting the wiggle motion press "Mod:on" and with ending it press "Mod:off" (it is the same button that changes the label after being pressed).  
 Here it is also possible to reset and restart the custom calibration, in case of a mistake.
 
-<iframe  title="YouTube video player" width="480" height="390" src="./pics/demo_wiggle_motion.mp4" frameborder="0" allowfullscreen></iframe> 
+![Alt Text](./pics/wiggle_motion.gif) 
 
 
 ## Additional Information
