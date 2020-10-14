@@ -1,9 +1,11 @@
 import numpy as np
 from math import sqrt
 
+
 # Calculates the root-mean-square for the given data (data = 1-D array)
 def calculateRMS(data):
-    return sqrt(sum(n*n for n in data) / len(data))
+    return sqrt(sum(n * n for n in data) / len(data))
+
 
 # Calculates the pairwise ratios of the RMS values (one for each channel) for one window
 # (every channel with all the others)
@@ -20,7 +22,7 @@ def pairwiseRatio(rmsDataOneWindow):
 # param: windowData = [[channel 1]...[channel n]] (data for one window)
 # returns: featureVector = [rms_channel_1, ..., rms_channel_n, ratios]
 def calculateFeatureForWindow(windowData, ratio=True):
-    rmsData    = []
+    rmsData = []
     for channel in windowData:
         rmsData.append(calculateRMS(channel))
 

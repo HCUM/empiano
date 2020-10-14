@@ -486,7 +486,7 @@ class ChooseCalibrationPanel(wx.Panel):
 
     def inbuiltCaliPressed(self, event):
         event.Skip()
-        self.controller.showPanel(self, InbuiltCalibrationPanel, True, True)
+        self.controller.showPanel(self, InbuiltCalibrationPanel, True)
 
 
 ###########################################################################
@@ -591,7 +591,6 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.modTimes = [6000, 8000, 14000, 16000, 22000, 24000, 30000, 32000,
                          38000, 40000, 46000, 48000, 54000, 56000, 62000, 64000]
         self.caliThread = None
-        #self.isMediaLoaded = False
         self.isVideoPlaying = False
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
@@ -637,7 +636,7 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.Layout()
 
     def startButtonPressed(self, event):
-        videoFile =  os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_song.mp4'))
+        videoFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_song.mp4'))
         event.Skip()
         if not self.video.Load(videoFile):
             dial = wx.MessageDialog(self, "Sorry, the media did not load, "
@@ -784,6 +783,7 @@ class StreamOverviewPanel(wx.Panel):
         self.grid.AutoSize()
         self.grid.AutoSizeRows()
 
+    # Gets all the information of the selected rows and calls the connect method
     def connectToStreams(self, event):
         event.Skip()
         streams = []
@@ -794,6 +794,8 @@ class StreamOverviewPanel(wx.Panel):
             threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
             self.controller.connectToLSLStream(streams)
 
+    # Waits for the pub-message to see if the connection was successful
+    # Pub-message sent in StreamManager.connectStreams
     def checkIfSuccessful(self, msg, settingsChannels, streamChannels):
         if msg == "CHANNELS_OKAY":
             self.controller.showPanel(self, ChooseCalibrationPanel)
@@ -816,6 +818,7 @@ class StreamOverviewPanel(wx.Panel):
                      " running. Try restarting it, after that you have to click \"Find Streams\" again."
             wx.CallAfter(self.showPopup, string, Back_to_streams)
 
+    # Shows error popup window
     def showPopup(self, string, continuePossible):
         if continuePossible == Continue:
             dial = wx.MessageDialog(self, string, "Error", wx.YES_NO | wx.STAY_ON_TOP | wx.CENTRE)

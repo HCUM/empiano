@@ -14,6 +14,7 @@ class StreamManager:
         results = self.resolver.results()
         return results
 
+    # Resets the LSL-stream
     def resetStream(self):
         self.stream = ()
         self.streamInlet = None

@@ -48,11 +48,11 @@ class ProgramMaster:
         self.modOnTimestamp = -1
         self.modsTimestamp = []  # saves all the timestamp pairs of the modulations: [(begin, end), ...]
 
-    # run gui for the live-system
+    # Run gui for the live-system
     def startWindow(self):
         self.guiController.launchWindow()
 
-    # getters with semaphore
+    # Getters with semaphore
 
     def getCalibrationOn(self):
         self.calibrationSem.acquire()
@@ -66,7 +66,7 @@ class ProgramMaster:
         self.liveSystemSem.release()
         return res
 
-    # setters with semaphore
+    # Setters with semaphore
 
     def setCalibrationOn(self, boolean):
         self.calibrationSem.acquire()
@@ -79,7 +79,7 @@ class ProgramMaster:
         self.liveSystemSem.release()
 
     # param: augmentationOn = current prediction of the SVM whether an augmentation was performed or not;
-    # starts or ends the sound effect, when needed; updates the lastTwoPredictions field
+    # Starts or ends the sound effect, when needed; updates the lastTwoPredictions field
     def setCurrentPrediction(self, augmentationOn):
         if augmentationOn and not self.midiEffectThread.isAlive():
             self.startMidiEffect()
@@ -97,7 +97,7 @@ class ProgramMaster:
         self.programPauseThread = threading.Thread(target=self.keepPullingSamplesFromInlet)
         self.programPauseThread.start()
 
-    # updates the values changed in the settings
+    # Updates the values changed in the settings
     @staticmethod
     def updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable):
         Constants.numberOfChannels = amtElectrodes
@@ -115,7 +115,7 @@ class ProgramMaster:
         self.midiEffectOn = False
         self.midiEffectThread.join()
 
-    # checks whether the (in the settings) specified MIDI-cable can be found
+    # Checks whether the (in the settings) specified MIDI-cable can be found
     def checkIfMidiCableCanBeFound(self, midiCableName):
         return self.midiManager.findMidiCable(midiCableName)
 
@@ -124,12 +124,15 @@ class ProgramMaster:
         threading.Thread(target=pub.subscribe, args=(self.handleLSLConnect, "streamConnect")).start()
         self.streamManager.connectStreams(streams)
 
-    def resetStream(self):
-        self.streamManager.resetStream()
-
-    def handleLSLConnect(self, msg, settingsChannels, streamChannels):
+    # If the connection to the LSL-stream was successful, the program is paused so it pulls the incoming samples
+    # Pub-message sent in StreamManager.connectStreams
+    def handleLSLConnect(self, msg):
         if msg == "CHANNELS_OKAY":
             self.setProgramPaused()
+
+    # Calls the method to reset the LSL-stream
+    def resetStream(self):
+        self.streamManager.resetStream()
 
     # Starts the calibrationManager, in a thread, for saving the data of the calibration
     def startCalibration(self):
@@ -140,6 +143,7 @@ class ProgramMaster:
                                                   args=(self.streamManager.streamInlet,))
         self.calibrationThread.start()
 
+    # Stops the calibration and pauses the program, so it keeps pulling the samples from the LSL-stream
     def stopCalibration(self):
         self.setCalibrationOn(False)
         self.calibrationThread.join()
@@ -147,6 +151,7 @@ class ProgramMaster:
             self.setProgramPaused()
         print("mods: ", self.modsTimestamp)
 
+    # Resets the calibration and all the variables
     def resetCalibration(self):
         self.stopCalibration()
         self.modsTimestamp = []
@@ -166,31 +171,31 @@ class ProgramMaster:
             return result
         return None
 
-    # gets the scores of the cross-validation of the SVM (after calibration)
+    # Gets the scores of the cross-validation of the SVM (after calibration)
     def getCrossValScores(self):
         return self.calibrationManager.crossValScores
 
-    # saves the timestamp of the start of the modulation
-    # if in livesystem, the sound-effect is started
+    # Saves the timestamp of the start of the modulation
+    # If in livesystem, the sound-effect is started
     def startModulation(self):
         self.modOnTimestamp = pylsl.local_clock()
         if self.inLiveSystem:
             self.startMidiEffect()
 
-    # saves the timestamp of the end of the modulation, together with the start:
+    # Saves the timestamp of the end of the modulation, together with the start:
     # (timestamp start, timestamp end) to the array holding all the modulation windows
-    # if in livesystem, the sound-effect is ended
+    # If in livesystem, sound-effect is ended
     def endModulation(self):
         self.modsTimestamp.append((self.modOnTimestamp, pylsl.local_clock()))
         if self.inLiveSystem:
             self.endMidiEffect()
 
-    # calls the method which pulls samples from the LSL-stream, without saving them
+    # Calls the method which pulls samples from the LSL-stream, without saving them
     def keepPullingSamplesFromInlet(self):
         while self.programPaused:
             self.streamManager.keepPullingSamplesFromInlet()
 
-    # starts the manager for the livesystem in a new thread
+    # Starts the manager for the livesystem in a new thread and if necessary creates the MIDI outport
     def startLiveSystem(self):
         self.setInLiveSystem(True)
         self.modsTimestamp = []
@@ -211,7 +216,7 @@ class ProgramMaster:
                                                  args=(self.streamManager.streamInlet,))
         self.liveSystemThread.start()
 
-    # stops the livesystem and waits for the thread to join
+    # Stops the livesystem and waits for the thread to join
     def stopLiveSystem(self):
         self.setInLiveSystem(False)
         self.firstLiveRoundDone = True

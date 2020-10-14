@@ -14,7 +14,7 @@ def butter_bandpass_filter(data, cutoff_low, cutoff_high, nyq_freq, order=3):
     return y
 
 
-# applies a bandstop and bandpass filter to all the channels of the data
+# Applies a bandstop and bandpass filter to all the channels of the data
 def performPreprocessing(rawData):
     bandStopData = []
     for channel in rawData:

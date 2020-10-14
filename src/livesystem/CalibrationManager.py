@@ -21,7 +21,7 @@ class CalibrationManager:
         self.svm = None
         self.crossValScores = []
 
-    # starts to pull and save the data from the incoming LSL-stream
+    # Starts to pull and save the data from the incoming LSL-stream
     # input stream of the form: (rowid, inlet, time_correction)
     def startCalibration(self, inlet):
         self.eegStreamTimeOffset = inlet.time_correction()
@@ -29,7 +29,7 @@ class CalibrationManager:
         while self.programMaster.getCalibrationOn():
             self.saveSample(inlet.pull_sample())
 
-    # saves the received sample after correcting its timestamp
+    # Saves the received sample after correcting its timestamp
     def saveSample(self, sample):
         (data, timestamp) = sample
         self.streamData.append(
