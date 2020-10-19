@@ -95,6 +95,3 @@ class guiController:
             print("about to refresh the frame")
             self.mainFrame.Refresh()
             panel.Update()
-        if type(panel) == wxwindow.InbuiltCalibrationPanel:
-            panel.video.Play()
-            panel.video.Pause()

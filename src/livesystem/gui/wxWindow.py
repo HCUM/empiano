@@ -14,7 +14,7 @@ import platform
 import threading
 from pubsub import pub
 from wx.lib.intctrl import IntCtrl
-from wx.media import MediaCtrl, EVT_MEDIA_STOP
+from wx.media import MediaCtrl, EVT_MEDIA_STOP, EVT_MEDIA_LOADED
 import storage.Constants as Constants
 
 frameSize = wx.Size(1000, 600)
@@ -588,6 +588,7 @@ class InbuiltCalibrationPanel(wx.Panel):
                          38000, 40000, 46000, 48000, 54000, 56000, 62000, 64000]
         self.caliThread = None
         self.isVideoPlaying = False
+        self.isLoaded = False
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
@@ -599,14 +600,28 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.calibrationLabel.SetForegroundColour(wx.Colour(17, 133, 49))
         verticalBoxes.Add(self.calibrationLabel, 0, wx.EXPAND | wx.ALL, 5)
 
+        self.preview = wx.StaticBitmap(self, size=(800, 500))
+        previewFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_preview.jpg'))
+        self.previewImg = wx.Image(previewFile)
+        self.previewImg.Rescale(800, 500, wx.IMAGE_QUALITY_HIGH)
+        self.preview.SetScaleMode(wx.StaticBitmap.Scale_AspectFit)
+        self.preview.SetBitmap(wx.Bitmap(self.previewImg))
+
         try:
             self.video = MediaCtrl(self, size=(800, 500))
         except NotImplementedError:
-            print("media control not found")
+            print("wx.MediaCtrl not found")
+        videoFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_song.mp4'))
+        if not self.video.Load(videoFile):
+            dial = wx.MessageDialog(self, "Sorry, the media did not load,"
+                                          "check if the video file exists in the pics folder.",
+                                    "Error", wx.OK | wx.STAY_ON_TOP | wx.CENTRE)
+            dial.ShowModal()
+            return
 
-        previewFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_preview.mp4'))
-        self.video.Load(previewFile)
+        verticalBoxes.Add(self.preview, 0, wx.EXPAND, 5)
         verticalBoxes.Add(self.video, 0, wx.EXPAND, 5)
+        self.video.Hide()
 
         hButtonsBox = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -631,15 +646,20 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.Centre()
         self.Layout()
 
+    def showVideoPreview(self):
+        self.video.Stop()
+        self.video.Hide()
+        self.preview.Show()
+        self.Layout()
+
+    def showVideo(self):
+        self.preview.Hide()
+        self.video.Show()
+        self.Layout()
+
     def startButtonPressed(self, event):
-        videoFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/empiano_song.mp4'))
         event.Skip()
-        if not self.video.Load(videoFile):
-            dial = wx.MessageDialog(self, "Sorry, the media did not load, "
-                                          "check if the video file exists in the pics folder.",
-                                    "Error", wx.OK | wx.STAY_ON_TOP | wx.CENTRE)
-            dial.ShowModal()
-            return
+        self.showVideo()
         self.startButton.Enable(False)
         self.resetButton.Enable(True)
         self.controller.startCalibration()
@@ -679,6 +699,7 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.startButton.Enable(True)
         self.finishButton.Enable(False)
         self.resetButton.Enable(False)
+        self.showVideoPreview()
 
     def finishButtonPressed(self, event):
         event.Skip()
