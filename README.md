@@ -12,9 +12,10 @@ In short: the system is trained to recognize a performed finger gesture (wiggle 
 
 - **Electrodes** plus **Amplifier** to capture the muscle activity.  
 We used the LiveAmp EEG recorder from "Brain Products" (https://www.brainproducts.com/productdetails.php?id=63), to which eight plus one ground and one reference active surface electrodes were connected.  
-The recording software is only available on Windows for us.
+The recording software is only available on Windows for us.  
+Another electrode set we tested was the EMBody toolkit (https://github.com/HCUM/embody). We used it with two channels.
 - **Lab Streaming Layer (LSL) framework** (https://github.com/sccn/labstreaminglayer)  
-We used BrainVision RDA Connector to tap the BrainVision data.
+The RDA Connector can be used to tap the BrainVision data. 
 - **Music software**, which is able to receive and play back MIDI.  
 For example Waveform 11 (https://www.tracktion.com/products/waveform-free), together with the Piano-One instrument (https://neovst.com/piano-one/)
 - **Electric-Piano** 
