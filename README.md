@@ -13,7 +13,7 @@ In short: the system is trained to recognize a performed finger gesture (wiggle 
 - **Electrodes** plus **Amplifier** to capture the muscle activity.  
 We used the LiveAmp EEG recorder from "Brain Products" (https://www.brainproducts.com/productdetails.php?id=63), to which eight plus one ground and one reference active surface electrodes were connected.  
 The recording software is only available on Windows for us.  
-Another electrode set we tested was the EMBody toolkit (https://github.com/HCUM/embody). We used it with two channels.
+Another electrode set we tested was the **EMBody toolkit** (https://github.com/HCUM/embody). We used it with two channels.
 - **Lab Streaming Layer (LSL) framework** (https://github.com/sccn/labstreaminglayer)  
 The RDA Connector can be used to tap the BrainVision data. 
 - **Music software**, which is able to receive and play back MIDI.  
@@ -67,12 +67,12 @@ Here it is also possible to reset and restart the custom calibration, in case of
 </p>
 
 ## Additional Information
-- Our system requires the data-samples sent through the LSL-stream to be formatted as followed:  
+- Our system requires the data-samples, sent through the LSL-stream, to be formatted as followed:  
 ([channel 1, channel 2, ...], timestamp)
 - For sending the sound-modulation MIDI messages to the music software, a virtual MIDI cable is required:
     - On **Windows**: Sometimes an inbuilt **virtual MIDI cable** is available,  
     otherwise: use **loopMIDI** to create one yourself (http://www.tobias-erichsen.de/software/loopmidi.html).
-    - On **MacOS**: usually there is an inbuilt virtual MIDI cable available: IAC driver
+    - On **MacOS**: Usually there is an inbuilt virtual MIDI cable available: IAC driver
     - Most of the times the library mido itself can be used to create a virtual MIDI cable, but it does not work when using Windows MultiMedia API.  
     To open an outport check the corresponding box in the Settings. 
     - The name of your virtual MIDI cable can be changed in the Settings
