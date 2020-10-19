@@ -1,6 +1,6 @@
 # EMPiano: A System to Enable Expressive Pitch Control on the Piano Keyboard.
 
-This repository contains a system that, in combination with the correct hard- and softwares, offers sound modulation via muscular activity, captured by an electromyography device.
+This repository contains a system that, in combination with the correct hard- and software, offers sound modulation via muscular activity, captured by an electromyography device.
 
 In short: the system is trained to recognize a performed finger gesture (wiggle motion of the thumb) and adds a pitch vibrato to the sound output.
 
@@ -30,7 +30,8 @@ The source code itself can be found in the folder "src".
 ## Setup
 
 ### Electrode Setup
-The electrodes were placed in two rings around the upper right forearm. Each of the rings counted five electrodes and had to include either ground or reference electrode.
+The electrodes were placed in two rings around the upper right forearm. Each of the rings counted five electrodes and had to include either ground or reference electrode.  
+When using the EMBody toolkit, we attached the reference electrode close to the elbow and the two channels on opposite sides of the upper forearm.
 
 <p align="center">
     <img src="./pics/figures_electrode_ring.jpg" alt="electrode_ring" width="500"/>
@@ -45,14 +46,12 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
 
 ## Steps to Running the System
 1. Attach the electrodes to the piano player
-2. Run the program that comes with the electrodes
-3. Impedance check of the electrodes
-4. Start LSL stream
-5. Start this python program
-6. Connect this program to the LSL-stream in the local network
-7. Open music program (check MIDI inputs)
-8. Perform Calibration
-9. Ready to go!
+2. Start the LSL-stream
+3. Start this python program
+4. Connect this program to the LSL-stream in the local network
+5. Open the music program (set MIDI inputs)
+6. Perform the calibration
+7. Ready to go!
 
 ## Calibration
 Our system offers two different types of calibration.
@@ -68,7 +67,7 @@ Here it is also possible to reset and restart the custom calibration, in case of
 </p>
 
 ## Additional Information
-- Our system requires the data-samples sent through the LSL stream to have the following format:  
+- Our system requires the data-samples sent through the LSL-stream to be formatted as followed:  
 ([channel 1, channel 2, ...], timestamp)
 - For sending the sound-modulation MIDI messages to the music software, a virtual MIDI cable is required:
     - On **Windows**: Sometimes an inbuilt **virtual MIDI cable** is available,  
