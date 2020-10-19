@@ -1,34 +1,45 @@
-from pylsl import ContinuousResolver, StreamInlet, resolve_stream
-import storage.Constants as constants
+from pylsl import ContinuousResolver, StreamInlet, resolve_byprop
+import storage.Constants as Constants
+from pubsub import pub
 
 
 class StreamManager:
 
     def __init__(self):
         self.resolver = ContinuousResolver()
-        self.inlets = []
-        self.recordingThreads = []
-        self.pathname = "."
         self.stream = ()
-        self.streamInlet: StreamInlet
+        self.streamInlet = None
 
     def checkStreamAvailability(self):
         results = self.resolver.results()
         return results
 
+    # Resets the LSL-stream
+    def resetStream(self):
+        self.stream = ()
+        self.streamInlet = None
+
     # Initializes the connection to the defined LSL-stream
     def connectStreams(self, streams):
-        #disconnect all other streams
-        self.inlets = []
-        #connect to streams given their uids
-        for (rowid, uid, samplingRate) in streams:
-            streams = resolve_stream('uid', uid)
-            inlet = StreamInlet(streams[0])
-            self.inlets.append((rowid, inlet, inlet.time_correction(), samplingRate))
-        if self.inlets:
-            self.stream = self.inlets[0]
-            self.streamInlet = self.stream[1]
-            constants.samplingRate = self.stream[3]
+        # connect to streams given their uids
+        _, uid, samplingRate, amtChannels = streams[0]
+        stream = resolve_byprop('uid', uid, timeout=5)
+        if stream:
+            self.streamInlet = StreamInlet(stream[0])
+            if amtChannels == Constants.numberOfChannels:
+                Constants.samplingRate = samplingRate
+                pub.sendMessage("streamConnect", msg="CHANNELS_OKAY", settingsChannels=Constants.numberOfChannels,
+                                streamChannels=amtChannels)
+            elif amtChannels < Constants.numberOfChannels:
+                self.resetStream()
+                pub.sendMessage("streamConnect", msg="CHANNELS_TOO_MANY", settingsChannels=Constants.numberOfChannels,
+                                streamChannels=amtChannels)
+            else:
+                Constants.samplingRate = samplingRate
+                pub.sendMessage("streamConnect", msg="CHANNELS_TOO_FEW", settingsChannels=Constants.numberOfChannels,
+                                streamChannels=amtChannels)
+        else:
+            pub.sendMessage("streamConnect", msg="CONNECT_FAILED", settingsChannels=0, streamChannels=0)
 
     # Pulls samples from the LSL-stream, without saving them.
     # Needed for the times outside of the calibration and livesystem
