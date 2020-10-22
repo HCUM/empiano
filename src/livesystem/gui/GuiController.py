@@ -92,6 +92,5 @@ class guiController:
         panel = currentPanel.Parent.panels[nextPanel]
         panel.Show()
         if refresh:
-            print("about to refresh the frame")
             self.mainFrame.Refresh()
             panel.Update()

@@ -10,19 +10,19 @@ class MidiManager:
 
     def __init__(self, programMaster):
         self.programMaster = programMaster
-        self.outport:mido.ports
+        self.output = None
         self.pitchValues = [0, 250, 500, 1000, 500, 250,  0, -250, -500, -1000, -500, -250]
 
 
     #Creates either a virtual MIDI cable or builds a connection to an existing virtual MIDI cable
     def createMIDIOutport(self):
         if constants.createMIDICable:
-            self.outport = mido.open_output(constants.virtualMIDICable, virtual=True)
+            self.output = mido.open_output(constants.virtualMIDICable, virtual=True)
         else:
             names = mido.get_output_names()
             for name in names:
                 if name.startswith(constants.virtualMIDICable):
-                    self.outport = mido.open_output(name)
+                    self.output = mido.open_output(name)
 
     # Looks for the virtual midi-cable with the given name
     # This is needed, because sometimes the index of the virtual cable is added to the name,
@@ -53,4 +53,4 @@ class MidiManager:
         self.sendMidiMsg(mido.Message('pitchwheel', channel=0, pitch=0))
 
     def sendMidiMsg(self, msg):
-        self.outport.send(msg)
+        self.output.send(msg)

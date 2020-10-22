@@ -8,6 +8,7 @@ import storage.Constants as Constants
 import livesystem.LiveSystemManager as Live
 import livesystem.MidiManager as MidiManager
 import livesystem.StreamManager as StreamManager
+import helpers.SettingsManager as SettingsManager
 import livesystem.CalibrationManager as Calibration
 import livesystem.gui.GuiController as GuiController
 
@@ -100,9 +101,7 @@ class ProgramMaster:
     # Updates the values changed in the settings
     @staticmethod
     def updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable):
-        Constants.numberOfChannels = amtElectrodes
-        Constants.virtualMIDICable = midiCableName
-        Constants.createMIDICable = shouldCreateMidiCable
+        SettingsManager.updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable)
 
     # Starts the midiManager for sending the midi sound effect, in a thread
     def startMidiEffect(self):
@@ -156,6 +155,7 @@ class ProgramMaster:
         self.modsTimestamp = []
         self.modOnTimestamp = -1
         self.firstLiveRoundDone = False
+        self.midiManager.output = None
         self.setInLiveSystem(False)
 
     # Waits for the calibration-thread to join and calls the method handling
@@ -226,4 +226,5 @@ class ProgramMaster:
 
 def main():
     programMaster = ProgramMaster()
+    SettingsManager.readConfigFile()
     programMaster.startWindow()

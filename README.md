@@ -48,8 +48,8 @@ When using the EMBody toolkit, we attached the reference electrode close to the 
 1. Attach the electrodes to the piano player
 2. Start the LSL-stream
 3. Start this python program
-4. Connect this program to the LSL-stream in the local network
-5. Open the music program (set MIDI inputs)
+4. This program will find all available LSL-streams, from which you can choose one to connect to.
+5. Prepare music software
 6. Perform the calibration
 7. Ready to go!
 
@@ -74,7 +74,7 @@ Here it is also possible to reset and restart the custom calibration, in case of
     otherwise: use **loopMIDI** to create one yourself (http://www.tobias-erichsen.de/software/loopmidi.html).
     - On **MacOS**: Usually there is an inbuilt virtual MIDI cable available: IAC driver
     - Most of the times the library mido itself can be used to create a virtual MIDI cable, but it does not work when using Windows MultiMedia API.  
-    To open an outport check the corresponding box in the Settings. 
+    To open an output check the corresponding box in the Settings. 
     - The name of your virtual MIDI cable can be changed in the Settings
 - The **finger motion** that works best for our system is a back-and-forth wiggle motion of the thumb (cf. gif). Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well.
 
@@ -82,11 +82,11 @@ Here it is also possible to reset and restart the custom calibration, in case of
 
 ## Citing "Hit the Thumb Jack!"
 
-Below is the BibTex entry to cite Hit the Thumb Jack!
+Below are the BibTex entries to cite Hit the Thumb Jack!
 
 ```
 @inproceedings{10.1145/3357236.3395500,
-author = {Karolus, Jakob and Kilian, Annika and Kosch, Thomas and Schmidt, Albrecht and Wozniak, Pawe\l{} W.},
+author = {Karolus, Jakob and Kilian, Annika and Kosch, Thomas and Schmidt, Albrecht and Wo\'{z}niak, Pawe\l W.},
 title = {Hit the Thumb Jack! Using Electromyography to Augment the Piano Keyboard},
 year = {2020},
 isbn = {9781450369749},
@@ -100,5 +100,16 @@ numpages = {12},
 keywords = {creative support tool, motor tasks, electromyography, seamless integration, expressive piano play},
 location = {Eindhoven, Netherlands},
 series = {DIS ’20}
+}
+```
+
+```
+@misc{karolus:hitthethumb,
+  author = {Karolus, Jakob and Kilian, Annika and Kosch, Thomas and Schmidt, Albrecht and Wo\'{z}niak, Pawe\l W.},
+  title = {Hit the Thumb Jack!},
+  year = {2020},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/HCUM/empiano}}
 }
 ```

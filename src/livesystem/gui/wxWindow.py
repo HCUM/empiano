@@ -398,19 +398,19 @@ class LiveSystemPanel(wx.Panel):
             wx.CallAfter(self.setInfoLable, stringToShow)
         else:
             wx.CallAfter(self.setInfoLable, "Something went wrong!")
-
-    def updatePredictionInfo(self):
-        midiEffect = self.controller.programMaster.midiEffectOn
-        while self.controller.getLiveSysFromMaster():
-            current = self.controller.programMaster.midiEffectOn
-            if midiEffect != current:
-                stringToShow = "Currently Modulating:\n" + str(current)
-                self.infoLabel.SetLabel(stringToShow)
-                self.SetSizerAndFit(self.verticalBoxes)
-                self.Centre()
-                self.Layout()
-                midiEffect = current
-            time.sleep(1 / (Constants.samplingRate / 2))
+    #
+    # def updatePredictionInfo(self):
+    #     midiEffect = self.controller.programMaster.midiEffectOn
+    #     while self.controller.getLiveSysFromMaster():
+    #         current = self.controller.programMaster.midiEffectOn
+    #         if midiEffect != current:
+    #             stringToShow = "Currently Modulating:\n" + str(current)
+    #             self.infoLabel.SetLabel(stringToShow)
+    #             self.SetSizerAndFit(self.verticalBoxes)
+    #             self.Centre()
+    #             self.Layout()
+    #             midiEffect = current
+    #         time.sleep(1 / (Constants.samplingRate / 2))
 
     def startButtonPressed(self, event):
         event.Skip()
@@ -418,6 +418,7 @@ class LiveSystemPanel(wx.Panel):
             self.controller.startLiveSystem()
             self.startLiveSystemButton.SetLabel("Stop")
             self.backButton.Enable(False)
+            self.setInfoLable("Currently Modulating:\nno augmentation")
         else:
             self.stopLiveSystem()
             self.startLiveSystemButton.SetLabel("Start")
@@ -720,12 +721,14 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.finishButton.Enable(False)
         self.resetButton.Enable(False)
         self.startButton.Enable(True)
+        self.showVideoPreview()
 
 
 ###########################################################################
 # Class StreamOverviewPanel
 ###########################################################################
 headers = ["Stream", "Type", "#Channels", "SampleRate", "Format", "hosted on", "source id"]
+formatStrings = ["Undefined", "Float 32Bit", "Double 64Bit", "String", "Int 32Bit", "Int 16Bit", "Int 8Bit", "Int 64Bit"]
 
 
 class StreamOverviewPanel(wx.Panel):
@@ -794,7 +797,7 @@ class StreamOverviewPanel(wx.Panel):
             self.grid.SetCellValue(0, 1, streamInfo.type())
             self.grid.SetCellValue(0, 2, str(streamInfo.channel_count()))
             self.grid.SetCellValue(0, 3, str(streamInfo.nominal_srate()))
-            self.grid.SetCellValue(0, 4, str(streamInfo.channel_format()))
+            self.grid.SetCellValue(0, 4, formatStrings[streamInfo.channel_format()] )
             self.grid.SetCellValue(0, 5, streamInfo.hostname())
             self.grid.SetCellValue(0, 6, streamInfo.uid())
         self.grid.AutoSize()
