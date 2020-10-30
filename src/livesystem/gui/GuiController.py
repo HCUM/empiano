@@ -29,6 +29,9 @@ class guiController:
     def connectToLSLStream(self, streams):
         self.programMaster.connectToLSLStream(streams)
 
+    def getStreamInlet(self):
+        return self.programMaster.streamManager.streamInlet
+
     # Calls the method resetting the LSL-stream
     def resetStream(self):
         self.programMaster.resetStream()
@@ -77,6 +80,9 @@ class guiController:
     def stopLiveSystem(self):
         self.programMaster.stopLiveSystem()
 
+    def getLatencyInfo(self):
+        return self.programMaster.getLatencyInfo()
+
     # Calls the method pausing the program
     def setProgramPaused(self):
         self.programMaster.setProgramPaused()
@@ -94,3 +100,5 @@ class guiController:
         if refresh:
             self.mainFrame.Refresh()
             panel.Update()
+        if isinstance(panel, wxwindow.LiveSystemPanel):
+            panel.showStatusBar()

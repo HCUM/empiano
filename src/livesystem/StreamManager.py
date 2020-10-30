@@ -1,11 +1,13 @@
 from pylsl import ContinuousResolver, StreamInlet, resolve_byprop
 import storage.Constants as Constants
 from pubsub import pub
+import pylsl
 
 
 class StreamManager:
 
-    def __init__(self):
+    def __init__(self, programMaster):
+        self.programMaster = programMaster
         self.resolver = ContinuousResolver()
         self.stream = ()
         self.streamInlet = None
@@ -46,3 +48,4 @@ class StreamManager:
     # -> buffer needs to be kept empty
     def keepPullingSamplesFromInlet(self):
         self.streamInlet.pull_sample()
+        self.programMaster.setLastSampleTimestamp(pylsl.local_clock())

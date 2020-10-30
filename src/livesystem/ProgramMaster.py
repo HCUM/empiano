@@ -19,7 +19,7 @@ import livesystem.gui.GuiController as GuiController
 ###########################################################################
 class ProgramMaster:
     def __init__(self):
-        self.streamManager = StreamManager.StreamManager()
+        self.streamManager = StreamManager.StreamManager(self)
 
         self.programPauseThread = None
         self.programPaused = False
@@ -46,6 +46,10 @@ class ProgramMaster:
         self.midiEffectThread = threading.Thread(target=self.midiManager.sendEffect)
         self.midiThread = None
 
+        self.tmsmtpSem = threading.Semaphore()
+        self.tmstmpLastPrediction = None
+        self.tmstmpLastTwoSamples = deque([None, None])
+
         self.modOnTimestamp = -1
         self.modsTimestamp = []  # saves all the timestamp pairs of the modulations: [(begin, end), ...]
 
@@ -65,6 +69,12 @@ class ProgramMaster:
         self.liveSystemSem.acquire()
         res = copy.deepcopy(self.inLiveSystem)
         self.liveSystemSem.release()
+        return res
+
+    def getLatencyInfo(self):
+        self.tmsmtpSem.acquire()
+        res = copy.deepcopy(self.tmstmpLastTwoSamples)
+        self.tmsmtpSem.release()
         return res
 
     # Setters with semaphore
@@ -97,6 +107,12 @@ class ProgramMaster:
         self.programPaused = pause
         self.programPauseThread = threading.Thread(target=self.keepPullingSamplesFromInlet)
         self.programPauseThread.start()
+
+    def setLastSampleTimestamp(self, tmstmp):
+        self.tmsmtpSem.acquire()
+        self.tmstmpLastTwoSamples.popleft()
+        self.tmstmpLastTwoSamples.append(tmstmp)
+        self.tmsmtpSem.release()
 
     # Updates the values changed in the settings
     @staticmethod
@@ -131,6 +147,8 @@ class ProgramMaster:
 
     # Calls the method to reset the LSL-stream
     def resetStream(self):
+        if self.programPaused:
+            self.programPaused = False
         self.streamManager.resetStream()
 
     # Starts the calibrationManager, in a thread, for saving the data of the calibration

@@ -1,4 +1,5 @@
 import copy
+import pylsl
 import threading
 import numpy as np
 from pubsub import pub
@@ -52,6 +53,8 @@ class LiveSystemManager:
         # add the latest
         usefulSample = self.makeSampleDataUseful(data)
         self.ringBuffer.append(usefulSample)
+        #self.programMaster.tmstmpLastSample = pylsl.local_clock()
+        self.programMaster.setLastSampleTimestamp(pylsl.local_clock())
 
     # Returns only the necessary data portion of a sample
     @staticmethod
@@ -91,6 +94,7 @@ class LiveSystemManager:
             oldPrediction = self.programMaster.lastTwoPredictions[1]
             boolPrediction = (newPrediction[0] == "augmentation")
             self.programMaster.setCurrentPrediction(boolPrediction)
+            #self.programMaster.tmstmpLastPrediction = pylsl.local_clock()
             if boolPrediction != oldPrediction:
                 pub.sendMessage("liveSystemPanelListener", msg="PREDICTION_CHANGED", arg=newPrediction)
 

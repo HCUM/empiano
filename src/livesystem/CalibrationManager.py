@@ -1,3 +1,4 @@
+import pylsl
 import numpy as np
 from pubsub import pub
 from sklearn import svm
@@ -34,6 +35,7 @@ class CalibrationManager:
         (data, timestamp) = sample
         self.streamData.append(
             (np.asarray(data) * Constants.dataSampleCorrection, timestamp + self.eegStreamTimeOffset))
+        self.programMaster.setLastSampleTimestamp(pylsl.local_clock())
 
     # Calculates the corresponding indices for the timestamps marking modulation on and off
     # Restores the stream data, so it matches [ [data channel 1][data channel 2]...[data channel n] ]

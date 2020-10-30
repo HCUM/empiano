@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-
-###########################################################################
-# Python code generated with wxFormBuilder (version 3.9.0 Jul 27 2020)
-# http://www.wxformbuilder.org/
-###########################################################################
-
 import wx
 import os
 import time
@@ -14,11 +7,13 @@ import platform
 import threading
 from pubsub import pub
 from wx.lib.intctrl import IntCtrl
-from wx.media import MediaCtrl, EVT_MEDIA_STOP, EVT_MEDIA_LOADED
 import storage.Constants as Constants
+from wx.adv import Animation, AnimationCtrl
+from wx.media import MediaCtrl, EVT_MEDIA_STOP
 
 frameSize = wx.Size(1000, 600)
 backgroundColorWindows = wx.Colour(0xE6, 0xE6, 0xE6)
+green = wx.Colour(17, 133, 48)
 Continue = 0
 Go_to_settings = 1
 Back_to_streams = 2
@@ -34,13 +29,22 @@ class MyFrame(wx.Frame):
             self.SetBackgroundColour(backgroundColorWindows)
         self.backToConnectPage = False
 
+        self.statusThread = None
+
+        self.bar = wx.StatusBar(self, 1)
+        self.bar.SetFieldsCount(2)
+        #self.bar.SetStatusWidths([200, -1, -2])
+        self.SetStatusBar(self.bar)
+        #self.bar.Hide()
+
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.AddStretchSpacer(prop=1)
 
         self.panels = {}
         for panel in (StartPanel, SettingsPanel, LiveSystemPanel,
                       CustomCalibrationPanel, StreamOverviewPanel,
-                      ChooseCalibrationPanel, InbuiltCalibrationPanel):
+                      ChooseCalibrationPanel, InbuiltCalibrationPanel,
+                      CalibrationInformationPanel):
             newPanel = panel(self, self.controller)
             self.panels[panel] = newPanel
             newPanel.Hide()
@@ -81,7 +85,7 @@ class StartPanel(wx.Panel):
         self.empianoLabel.Wrap(-1)
         self.empianoLabel.SetFont(wx.Font(60, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                                           wx.FONTWEIGHT_BOLD, False, "Arial Black"))
-        self.empianoLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        self.empianoLabel.SetForegroundColour(green)
 
         verticalBoxes.Add(self.empianoLabel, 0, wx.ALL | wx.EXPAND, 5)
         verticalBoxes.Add((0, 70), 0, wx.EXPAND, 5)
@@ -134,7 +138,7 @@ class SettingsPanel(wx.Panel):
         self.dataAcquisitionLabel.Wrap(-1)
         self.dataAcquisitionLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Lucida Grande"))
-        self.dataAcquisitionLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        self.dataAcquisitionLabel.SetForegroundColour(green)
         verticalBoxes.Add(self.dataAcquisitionLabel, 0, wx.EXPAND | wx.ALL, 5)
 
         flexGridDataAcquisition = wx.FlexGridSizer(0, 2, 0, 57)
@@ -160,7 +164,7 @@ class SettingsPanel(wx.Panel):
 
         self.preprocessingLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Lucida Grande"))
-        self.preprocessingLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        self.preprocessingLabel.SetForegroundColour(green)
 
         verticalBoxes.Add(self.preprocessingLabel, 0, wx.ALL, 5)
 
@@ -219,7 +223,7 @@ class SettingsPanel(wx.Panel):
 
         self.svmSettingsLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Lucida Grande"))
-        self.svmSettingsLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        self.svmSettingsLabel.SetForegroundColour(green)
 
         verticalBoxes.Add(self.svmSettingsLabel, 0, wx.ALL, 5)
 
@@ -263,7 +267,7 @@ class SettingsPanel(wx.Panel):
         self.midiSettingsLabel.Wrap(-1)
         self.midiSettingsLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Lucida Grande"))
-        self.midiSettingsLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        self.midiSettingsLabel.SetForegroundColour(green)
         verticalBoxes.Add(self.midiSettingsLabel, 0, wx.ALL, 5)
 
         flexGridMidiSettings = wx.FlexGridSizer(0, 2, 0, 50)
@@ -291,7 +295,6 @@ class SettingsPanel(wx.Panel):
         self.createMidiCableLabel = wx.StaticText(self, wx.ID_ANY, u"Create virtual MIDI cable (using mido library):",
                                                   wx.DefaultPosition, wx.DefaultSize, 0)
         self.createMidiCableLabel.Wrap(-1)
-
         flexGridCreateCable.Add(self.createMidiCableLabel, 0, wx.ALL | wx.EXPAND, 5)
 
         self.createMidiCableCheckbox = wx.CheckBox(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
@@ -340,11 +343,17 @@ class SettingsPanel(wx.Panel):
 ###########################################################################
 # Class LiveSystemPanel
 ###########################################################################
+livesystemRunningStr = "Live-System is running..."
+latencyStr = "latency of stream: "
+livesystemPauseStr = "Live-System is paused..."
+
+
 class LiveSystemPanel(wx.Panel):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
         wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
 
+        self.parent = parent
         self.controller = controller
         if parent.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
@@ -359,7 +368,7 @@ class LiveSystemPanel(wx.Panel):
         self.livesystemLabel.Wrap(-1)
         self.livesystemLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
-        self.livesystemLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        self.livesystemLabel.SetForegroundColour(green)
         self.verticalBoxes.Add(self.livesystemLabel, 0, wx.EXPAND | wx.ALL, 5)
 
         self.infoLabel = wx.StaticText(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
@@ -374,14 +383,30 @@ class LiveSystemPanel(wx.Panel):
         self.backButton = wx.Button(self, wx.ID_ANY, u"Back", wx.DefaultPosition, wx.DefaultSize, 0)
         self.verticalBoxes.Add(self.backButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
+        self.homeButton = wx.Button(self, wx.ID_ANY, u"Home", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.verticalBoxes.Add(self.homeButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+
         self.verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.startLiveSystemButton.Bind(wx.EVT_BUTTON, self.startButtonPressed)
         self.backButton.Bind(wx.EVT_BUTTON, self.backButtonPressed)
+        self.homeButton.Bind(wx.EVT_BUTTON, self.onHomeButton)
 
         self.SetSizerAndFit(self.verticalBoxes)
         self.Centre()
         self.Layout()
+
+        self.parent.bar.SetStatusText(livesystemPauseStr, 0)
+        self.parent.bar.SetStatusText("", 1)
+
+    def showStatusBar(self):
+        #self.parent.bar.Show()
+        pass
+
+    def hideStatusBar(self):
+        self.parent.bar.SetStatusText(livesystemPauseStr, 0)
+        self.parent.bar.SetStatusText("", 1)
+        self.parent.bar.Hide()
 
     def setInfoLable(self, string):
         self.infoLabel.SetLabel(string)
@@ -398,19 +423,6 @@ class LiveSystemPanel(wx.Panel):
             wx.CallAfter(self.setInfoLable, stringToShow)
         else:
             wx.CallAfter(self.setInfoLable, "Something went wrong!")
-    #
-    # def updatePredictionInfo(self):
-    #     midiEffect = self.controller.programMaster.midiEffectOn
-    #     while self.controller.getLiveSysFromMaster():
-    #         current = self.controller.programMaster.midiEffectOn
-    #         if midiEffect != current:
-    #             stringToShow = "Currently Modulating:\n" + str(current)
-    #             self.infoLabel.SetLabel(stringToShow)
-    #             self.SetSizerAndFit(self.verticalBoxes)
-    #             self.Centre()
-    #             self.Layout()
-    #             midiEffect = current
-    #         time.sleep(1 / (Constants.samplingRate / 2))
 
     def startButtonPressed(self, event):
         event.Skip()
@@ -418,23 +430,33 @@ class LiveSystemPanel(wx.Panel):
             self.controller.startLiveSystem()
             self.startLiveSystemButton.SetLabel("Stop")
             self.backButton.Enable(False)
+            self.homeButton.Enable(False)
             self.setInfoLable("Currently Modulating:\nno augmentation")
+            self.parent.bar.SetStatusText(livesystemRunningStr, 0)
+            self.parent.bar.SetStatusText(latencyStr, 1)
         else:
             self.stopLiveSystem()
             self.startLiveSystemButton.SetLabel("Start")
             self.backButton.Enable(True)
+            self.homeButton.Enable(True)
+            self.parent.bar.SetStatusText(livesystemPauseStr, 0)
+            self.parent.SetStatusText("", 1)
 
     def backButtonPressed(self, event):
         event.Skip()
         self.controller.resetCalibration()
         self.controller.showPanel(self, ChooseCalibrationPanel)
+        #self.hideStatusBar()
 
     def stopLiveSystem(self):
         self.controller.stopLiveSystem()
 
-    def quitButtonPressed(self, event):
+    def onHomeButton(self, event):
         event.Skip()
-        self.controller.quit()
+        self.controller.resetCalibration()
+        self.controller.resetStream()
+        self.controller.showPanel(self, StartPanel)
+        #self.hideStatusBar()
 
 
 ###########################################################################
@@ -457,7 +479,7 @@ class ChooseCalibrationPanel(wx.Panel):
         self.calibrationLabel.Wrap(-1)
         self.calibrationLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
-        self.calibrationLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        self.calibrationLabel.SetForegroundColour(green)
         verticalBoxes.Add(self.calibrationLabel, 0, wx.EXPAND | wx.ALL, 5)
 
         verticalBoxes.Add((0, 70), 0, wx.EXPAND, 5)
@@ -468,10 +490,14 @@ class ChooseCalibrationPanel(wx.Panel):
         self.customCalibrationButton = wx.Button(self, wx.ID_ANY, u"Custom", wx.DefaultPosition, wx.DefaultSize, 0)
         verticalBoxes.Add(self.customCalibrationButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
+        self.homeButton = wx.Button(self, wx.ID_ANY, u"Home", wx.DefaultPosition, wx.DefaultSize, 0)
+        verticalBoxes.Add(self.homeButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+
         verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.customCalibrationButton.Bind(wx.EVT_BUTTON, self.customCaliPressed)
         self.inbuiltCalibrationButton.Bind(wx.EVT_BUTTON, self.inbuiltCaliPressed)
+        self.homeButton.Bind(wx.EVT_BUTTON, self.onHomeButton)
 
         self.SetSizerAndFit(verticalBoxes)
         self.Centre()
@@ -484,6 +510,11 @@ class ChooseCalibrationPanel(wx.Panel):
     def inbuiltCaliPressed(self, event):
         event.Skip()
         self.controller.showPanel(self, InbuiltCalibrationPanel, True)
+
+    def onHomeButton(self, event):
+        event.Skip()
+        self.controller.resetStream()
+        self.controller.showPanel(self, StartPanel)
 
 
 ###########################################################################
@@ -506,7 +537,7 @@ class CustomCalibrationPanel(wx.Panel):
         self.calibrationLabel.Wrap(-1)
         self.calibrationLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
-        self.calibrationLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        self.calibrationLabel.SetForegroundColour(green)
         verticalBoxes.Add(self.calibrationLabel, 0, wx.EXPAND | wx.ALL, 5)
 
         verticalBoxes.Add((0, 70), 0, wx.EXPAND, 5)
@@ -598,7 +629,7 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.calibrationLabel.Wrap(-1)
         self.calibrationLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
-        self.calibrationLabel.SetForegroundColour(wx.Colour(17, 133, 49))
+        self.calibrationLabel.SetForegroundColour(green)
         verticalBoxes.Add(self.calibrationLabel, 0, wx.EXPAND | wx.ALL, 5)
 
         self.preview = wx.StaticBitmap(self, size=(800, 500))
@@ -818,7 +849,11 @@ class StreamOverviewPanel(wx.Panel):
     # Pub-message sent in StreamManager.connectStreams
     def checkIfSuccessful(self, msg, settingsChannels, streamChannels):
         if msg == "CHANNELS_OKAY":
-            self.controller.showPanel(self, ChooseCalibrationPanel)
+            wx.CallAfter(self.controller.showPanel, self, CalibrationInformationPanel)
+            #self.controller.showPanel(self, CalibrationInformationPanel)
+            self.parent.statusThread = threading.Thread(target=checkStreamLatency,
+                                                        args=(self.controller, self.parent.bar))
+            self.parent.statusThread.start()
         elif msg == "CHANNELS_TOO_MANY":
             string = "The amount of channels found in the settings  (" + str(settingsChannels) \
                      + ")\n are higher than the channels found in the stream (" \
@@ -866,4 +901,103 @@ class StreamOverviewPanel(wx.Panel):
 
     def onContinue(self):
         self.controller.setProgramPaused()
+        self.controller.showPanel(self, CalibrationInformationPanel)
+        self.parent.statusThread = threading.Thread(target=checkStreamLatency,
+                                                    args=(self.controller, self.parent.bar))
+        self.parent.statusThread.start()
+
+
+class CalibrationInformationPanel(wx.Panel):
+    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
+                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
+        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
+
+        self.controller = controller
+        if parent.isWindows:
+            self.SetBackgroundColour(backgroundColorWindows)
+        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
+
+        self.calibrationLabel = wx.StaticText(self, wx.ID_ANY, u"Calibration", wx.DefaultPosition, wx.DefaultSize,
+                                              wx.ALIGN_CENTER_HORIZONTAL)
+        self.calibrationLabel.Wrap(-1)
+        self.calibrationLabel.SetFont(
+            wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial"))
+        self.calibrationLabel.SetForegroundColour(green)
+        verticalBoxes.Add(self.calibrationLabel, 0, wx.EXPAND | wx.ALL, 10)
+
+        gifFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/wiggle_motion.gif'))
+        self.animationCtrl = AnimationCtrl(self, -1, Animation(gifFile), size=(500, 250))
+        self.animationCtrl.Play()
+        verticalBoxes.Add(self.animationCtrl, 0, wx.EXPAND, 5)
+
+        flexGrid = wx.FlexGridSizer(0, 2, 0, 0)
+        flexGrid.SetFlexibleDirection(wx.BOTH)
+        flexGrid.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
+        #flexGrid.SetMinSize(size=(500, 100))
+
+        self.videoCaliLabel = wx.StaticText(self, wx.ID_ANY, u"Video-Calibration", wx.DefaultPosition, wx.DefaultSize,
+                                              wx.ALIGN_CENTER_HORIZONTAL)
+        self.videoCaliLabel.SetMinSize((250, 15))
+        flexGrid.Add(self.videoCaliLabel, 0, wx.EXPAND)
+
+        self.customCaliLabel = wx.StaticText(self, wx.ID_ANY, u"Custom Calibration", wx.DefaultPosition, wx.DefaultSize,
+                                              wx.ALIGN_CENTER_HORIZONTAL)
+        self.customCaliLabel.SetMinSize((250, 15))
+        flexGrid.Add(self.customCaliLabel, 0, wx.EXPAND)
+
+        self.videoInfoLabel = wx.TextCtrl(self, wx.ID_ANY, u"You are expected to play the displayed song in the speed of the moving blue marker. Whenever this marker hits a note marked in red, you are expected to perform the back-and-forth wiggle motion, using the thumb, for as long as this red note is playing.",
+                                                  wx.DefaultPosition, wx.DefaultSize, style = wx.TE_MULTILINE|wx.TE_READONLY)
+        flexGrid.Add(self.videoInfoLabel, 0, wx.ALL | wx.EXPAND, 5)
+
+        self.customInfoLabel = wx.TextCtrl(self, wx.ID_ANY, u"You are free to calibrate yourself, by playing whatever and tracking your performance of the back-and-forth wiggle motion by the thumb using the \"Mod:on\" and \"Mod:off\" button. With starting the wiggle motion press \"Mod:on\" and with ending it press \"Mod:off\" (it is the same button that changes the label after being pressed).",
+                                                  wx.DefaultPosition, wx.DefaultSize, style = wx.TE_MULTILINE| wx.TE_READONLY)
+        flexGrid.Add(self.customInfoLabel, 0, wx.ALL | wx.EXPAND, 5)
+
+        self.bestPracticeLabel = wx.StaticText(self, wx.ID_ANY, u"Best Practice:", wx.DefaultPosition, wx.DefaultSize,
+                                              wx.ALIGN_CENTER_HORIZONTAL)
+        flexGrid.Add(self.bestPracticeLabel, 0, wx.EXPAND)
+
+        self.customInfoLabel = wx.TextCtrl(self, wx.ID_ANY, u"- The finger motion that works best for our system is a back-and-forth wiggle motion performed by the thumb (cf. gif)\n"
+                                                            u"- Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well\n"
+                                                            u"- Works best when using 10 electrodes around the upper forearm",
+                                                  wx.DefaultPosition, wx.DefaultSize, style = wx.TE_MULTILINE| wx.TE_READONLY)
+        flexGrid.Add(self.customInfoLabel, 0, wx.ALL | wx.EXPAND, 5)
+
+        verticalBoxes.Add(flexGrid, 0, wx.EXPAND | wx.ALL, 5)
+
+        hButtonsBox = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.backButton = wx.Button(self, wx.ID_ANY, "Back", wx.DefaultPosition, wx.DefaultSize, 0)
+        hButtonsBox.Add(self.backButton, 0, wx.ALL, 5)
+
+        self.continueButton = wx.Button(self, wx.ID_ANY, u"Understood", wx.DefaultPosition, wx.DefaultSize, 0)
+        hButtonsBox.Add(self.continueButton, 0, wx.ALL, 5)
+
+        verticalBoxes.Add(hButtonsBox, 0, wx.EXPAND)
+
+        self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
+        self.continueButton.Bind(wx.EVT_BUTTON, self.onContinue)
+
+        self.SetSizerAndFit(verticalBoxes)
+        self.Centre()
+        self.Layout()
+
+    def onBack(self, event):
+        event.Skip()
+        self.controller.showPanel(self, StreamOverviewPanel)
+
+    def onContinue(self, event):
+        event.Skip()
         self.controller.showPanel(self, ChooseCalibrationPanel)
+
+
+def checkStreamLatency(controller, statusBar):
+    while controller.getStreamInlet():
+        oldSample, newSample = controller.getLatencyInfo()
+        if oldSample and newSample:
+            latency = newSample - oldSample
+            if latency > 5:
+                wx.CallAfter(statusBar.SetStatusText, "WARNING! High latency: " + str(latency), 1)
+            else:
+                wx.CallAfter(statusBar.SetStatusText, latencyStr + str(latency), 1)
+        time.sleep(1)
