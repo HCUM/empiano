@@ -42,7 +42,7 @@ class MyFrame(wx.Frame):
         for panel in (StartPanel, SettingsPanel, LiveSystemPanel,
                       CustomCalibrationPanel, StreamOverviewPanel,
                       ChooseCalibrationPanel, InbuiltCalibrationPanel,
-                      CalibrationInformationPanel):
+                      CalibrationInformationPanel, AboutPanel):
             newPanel = panel(self, self.controller)
             self.panels[panel] = newPanel
             newPanel.Hide()
@@ -93,14 +93,19 @@ class StartPanel(wx.Panel):
         verticalBoxes.Add((0, 20), 0, wx.EXPAND, 5)
 
         self.settingsButton = wx.Button(self, wx.ID_ANY, u"Settings", wx.DefaultPosition, wx.DefaultSize, 0)
-
         verticalBoxes.Add(self.settingsButton, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
+        verticalBoxes.Add((0, 20), 0, wx.EXPAND, 5)
+
+        self.aboutButton = wx.Button(self, wx.ID_ANY, u"About", wx.DefaultPosition, wx.DefaultSize, 0)
+        verticalBoxes.Add(self.aboutButton, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
         self.startButton.Bind(wx.EVT_BUTTON, self.showLSLPanel)
         self.settingsButton.Bind(wx.EVT_BUTTON, self.showSettingsPanel)
+        self.aboutButton.Bind(wx.EVT_BUTTON, self.showAboutPanel)
 
-        self.SetSizer(verticalBoxes)
+        self.SetSizerAndFit(verticalBoxes)
         self.Layout()
+        self.Center()
 
     def showLSLPanel(self, event):
         event.Skip()
@@ -110,9 +115,14 @@ class StartPanel(wx.Panel):
         event.Skip()
         self.controller.showPanel(self, SettingsPanel)
 
+    def showAboutPanel(self, event):
+        event.Skip()
+        self.controller.showPanel(self, AboutPanel)
+
     def quitButtonPressed(self, event):
         event.Skip()
         self.controller.quit()
+
 
 ###########################################################################
 # Class SettingsPanel
@@ -269,7 +279,7 @@ class SettingsPanel(wx.Panel):
         self.midiCableNameInput = None
         self.createMidiCableCheckbox = None
         self.midiCableNameChanged = False
-        self.warningLabel  = None
+        self.warningLabel = None
         self.flexGridMidiSettings = None
         self.midiCableName = None
         self.flexGridCreateCable = None
@@ -325,8 +335,9 @@ class SettingsPanel(wx.Panel):
             self.flexGridMidiSettings.SetFlexibleDirection(wx.BOTH)
             self.flexGridMidiSettings.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
 
-            self.midiCableName = wx.StaticText(self, wx.ID_ANY, u"By default using mido to create a virtual MIDI cable.\n"
-                                                                u"Only configure, if you know what you are doing!",
+            self.midiCableName = wx.StaticText(self, wx.ID_ANY,
+                                               u"By default using mido to create a virtual MIDI cable.\n"
+                                               u"Only configure, if you know what you are doing!",
                                                wx.DefaultPosition, wx.DefaultSize, 0)
             self.flexGridMidiSettings.Add(self.midiCableName, 0, wx.ALL, 5)
 
@@ -386,7 +397,8 @@ class SettingsPanel(wx.Panel):
                 if not self.createMidiCableCheckbox.GetValue():
                     success, name = self.controller.checkIfMidiCableCanBeFound(name)
                     if not success:
-                        dial = wx.MessageDialog(None, 'Could not find a virtual midi-cable with the name \"'+ name + '\".',
+                        dial = wx.MessageDialog(None,
+                                                'Could not find a virtual midi-cable with the name \"' + name + '\".',
                                                 'Error', wx.OK | wx.ICON_ERROR)
                         dial.ShowModal()
                         return
@@ -984,6 +996,9 @@ class StreamOverviewPanel(wx.Panel):
         self.parent.statusThread.start()
 
 
+###########################################################################
+# Class CalibrationInformationPanel
+###########################################################################
 class CalibrationInformationPanel(wx.Panel):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
@@ -1022,7 +1037,10 @@ class CalibrationInformationPanel(wx.Panel):
         flexGrid.Add(self.customCaliLabel, 0, wx.EXPAND)
 
         self.videoInfoLabel = wx.TextCtrl(self, wx.ID_ANY,
-                                          u"You are expected to play the displayed song in the speed of the moving blue marker. Whenever this marker hits a note marked in red, you are expected to perform the back-and-forth wiggle motion, using the thumb, for as long as this red note is playing.",
+                                          u"You are expected to play the displayed song in the speed of the moving "
+                                          u"blue marker. Whenever this marker hits a note marked in red, "
+                                          u"you are expected to perform the back-and-forth wiggle motion, "
+                                          u"using the thumb, for as long as this red note is playing.",
                                           wx.DefaultPosition, wx.DefaultSize, style=wx.TE_MULTILINE | wx.TE_READONLY)
         flexGrid.Add(self.videoInfoLabel, 0, wx.ALL | wx.EXPAND, 5)
 
@@ -1068,6 +1086,68 @@ class CalibrationInformationPanel(wx.Panel):
     def onContinue(self, event):
         event.Skip()
         self.controller.showPanel(self, ChooseCalibrationPanel)
+
+
+###########################################################################
+# Class AboutPanel
+###########################################################################
+embody_text = "Hit the Thumb Jack! Using Electromyography to Augment the Piano Keyboard"
+aboutText = "Authors: Jakob Karolus, Annika Kilian, Thomas Kosch, Albrecht Schmidt and Pawe\u0142 W. Wo\u017Aniak.\n" \
+            "Version 1.0 (Nov 2020).\n" \
+            "Copyright (c) 2020 LMU Munich. MIT License.\n"
+
+
+class AboutPanel(wx.Panel):
+    def __init__(self, parent, controller):
+        wx.Panel.__init__(self, parent)
+        self.controller = controller
+
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        teaserFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/figures_teaser.png'))
+        image = wx.Image(teaserFile, wx.BITMAP_TYPE_ANY)
+        image.Rescale(400, 250, wx.IMAGE_QUALITY_HIGH)
+        png_embody = image.ConvertToBitmap()
+        bitmap_embody = wx.StaticBitmap(self, -1, png_embody, (0, 0), (png_embody.GetWidth(), png_embody.GetHeight()))
+        st_embody = wx.StaticText(self, -1, "Hit the Thumb Jack!")
+        font = wx.Font(60, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.BOLD)
+        st_embody.SetFont(font)
+        st_embody.Wrap(300)
+        hbox.Add(st_embody, flag=wx.ALIGN_CENTER_VERTICAL)
+        hbox.Add(bitmap_embody, flag=wx.LEFT, border=60)
+        self.sizer.Add(hbox, flag=wx.LEFT | wx.TOP, border=20)
+
+        st_embody_info = wx.StaticText(self, -1, embody_text)
+        font = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD)
+        st_embody_info.SetFont(font)
+        self.sizer.Add(st_embody_info, flag=wx.LEFT | wx.TOP, border=20)
+
+        st_info = wx.StaticText(self, -1, aboutText)
+        font = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.FONTWEIGHT_NORMAL)
+        st_info.SetFont(font)
+        self.sizer.Add(st_info, flag=wx.LEFT | wx.TOP, border=20, proportion=1)
+
+        hbox2 = wx.BoxSizer(wx.HORIZONTAL)
+        lmuFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/lmu.png'))
+        png_lmu = wx.Image(lmuFile, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        bitmap_lmu = wx.StaticBitmap(self, -1, png_lmu, (0, 0), (png_lmu.GetWidth(), png_lmu.GetHeight()))
+        # png_amplify = wx.Image("./res/amplify.png", wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        # bitmap_amplify = wx.StaticBitmap(self, -1, png_amplify, (0, 0), (png_amplify.GetWidth(), png_amplify.GetHeight()))
+        hbox2.Add(bitmap_lmu)
+        # hbox2.Add(bitmap_amplify, flag=wx.LEFT, border=50)
+        self.sizer.Add(hbox2, flag=wx.LEFT | wx.TOP | wx.BOTTOM, border=20)
+
+        self.backButton = wx.Button(self, wx.ID_ANY, "Back", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.sizer.Add(self.backButton, 0, wx.ALL | wx.CENTER, 5)
+        self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
+
+        self.SetSizerAndFit(self.sizer)
+        self.Centre()
+        self.Layout()
+
+    def onBack(self, event):
+        event.Skip()
+        self.controller.showPanel(self, StartPanel)
 
 
 def checkStreamLatency(controller, statusBar):

@@ -5,7 +5,7 @@ This repository contains a system that, in combination with the correct hard- an
 In short: the system is trained to recognize a performed finger gesture (wiggle motion of the thumb) and adds a pitch vibrato to the sound output.
 
 <p align="center">
-    <img src="./pics/figures_teaser_new.png" alt="system_teaser" width="600"/>
+    <img src="./pics/figures_teaser.png" alt="system_teaser" width="600"/>
 </p>
 
 ##  Requirements
