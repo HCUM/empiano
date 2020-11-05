@@ -28,6 +28,14 @@ def updateSettings(amtChannels, midiCableName, shouldCreateMidiCable):
     if not noChanges:
         writeConfigFile()
 
+def updateChannelSettings(amtChannels):
+    noChanges = Constants.numberOfChannels == amtChannels
+    Constants.numberOfChannels = amtChannels
+
+    if not noChanges:
+        writeConfigFile()
+
+
 
 def readConfigFile():
     config = configparser.ConfigParser()

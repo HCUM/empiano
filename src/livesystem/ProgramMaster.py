@@ -12,7 +12,6 @@ import helpers.SettingsManager as SettingsManager
 import livesystem.CalibrationManager as Calibration
 import livesystem.gui.GuiController as GuiController
 
-
 ###########################################################################
 # Class ProgramMaster
 # -> everything goes through here, manages all the sub-classes
@@ -113,11 +112,6 @@ class ProgramMaster:
         self.tmstmpLastTwoSamples.popleft()
         self.tmstmpLastTwoSamples.append(tmstmp)
         self.tmsmtpSem.release()
-
-    # Updates the values changed in the settings
-    @staticmethod
-    def updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable):
-        SettingsManager.updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable)
 
     # Starts the midiManager for sending the midi sound effect, in a thread
     def startMidiEffect(self):

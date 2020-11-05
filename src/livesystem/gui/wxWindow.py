@@ -33,9 +33,7 @@ class MyFrame(wx.Frame):
 
         self.bar = wx.StatusBar(self, 1)
         self.bar.SetFieldsCount(2)
-        #self.bar.SetStatusWidths([200, -1, -2])
         self.SetStatusBar(self.bar)
-        #self.bar.Hide()
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.AddStretchSpacer(prop=1)
@@ -116,10 +114,12 @@ class StartPanel(wx.Panel):
         event.Skip()
         self.controller.quit()
 
-
 ###########################################################################
 # Class SettingsPanel
 ###########################################################################
+inputSize = wx.Size(135, -1)
+
+
 class SettingsPanel(wx.Panel):
     def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize,
                  style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
@@ -129,9 +129,9 @@ class SettingsPanel(wx.Panel):
         if self.parent.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
 
-        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
+        self.verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
-        verticalBoxes.Add((0, 0), 1, wx.EXPAND, 5)
+        self.verticalBoxes.Add((0, 0), 1, wx.EXPAND, 5)
 
         self.dataAcquisitionLabel = wx.StaticText(self, wx.ID_ANY, u"EMG - Data Acquisition", wx.DefaultPosition,
                                                   wx.DefaultSize, 0)
@@ -139,7 +139,7 @@ class SettingsPanel(wx.Panel):
         self.dataAcquisitionLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Lucida Grande"))
         self.dataAcquisitionLabel.SetForegroundColour(green)
-        verticalBoxes.Add(self.dataAcquisitionLabel, 0, wx.EXPAND | wx.ALL, 5)
+        self.verticalBoxes.Add(self.dataAcquisitionLabel, 0, wx.EXPAND | wx.ALL, 5)
 
         flexGridDataAcquisition = wx.FlexGridSizer(0, 2, 0, 57)
         flexGridDataAcquisition.AddGrowableCol(0)
@@ -152,11 +152,11 @@ class SettingsPanel(wx.Panel):
         flexGridDataAcquisition.Add(self.amtChannelsLabel, 0, wx.ALL | wx.EXPAND, 5)
 
         self.amtElectrodesInput = IntCtrl(self, wx.ID_ANY, Constants.numberOfChannels, wx.DefaultPosition,
-                                          wx.DefaultSize, wx.TE_RIGHT, min=1, allow_none=False)
+                                          inputSize, wx.TE_RIGHT, min=1, allow_none=False)
         flexGridDataAcquisition.Add(self.amtElectrodesInput, 0, wx.ALL, 5)
         self.amtElectrodesInput.SetFocus()
 
-        verticalBoxes.Add(flexGridDataAcquisition, 0, wx.ALL | wx.EXPAND, 5)
+        self.verticalBoxes.Add(flexGridDataAcquisition, 0, wx.ALL | wx.EXPAND, 5)
 
         self.preprocessingLabel = wx.StaticText(self, wx.ID_ANY, u"Preprocessing - Filters", wx.DefaultPosition,
                                                 wx.DefaultSize, 0)
@@ -166,7 +166,7 @@ class SettingsPanel(wx.Panel):
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Lucida Grande"))
         self.preprocessingLabel.SetForegroundColour(green)
 
-        verticalBoxes.Add(self.preprocessingLabel, 0, wx.ALL, 5)
+        self.verticalBoxes.Add(self.preprocessingLabel, 0, wx.ALL, 5)
 
         flexGridPreprocessing = wx.FlexGridSizer(0, 2, 0, 0)
         flexGridPreprocessing.AddGrowableCol(0)
@@ -180,7 +180,7 @@ class SettingsPanel(wx.Panel):
         flexGridPreprocessing.Add(self.lowCutoffBandpassLabel, 0, wx.ALL | wx.EXPAND, 5)
 
         self.lowBandpassInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.lowerBoundCutOutFreq), wx.DefaultPosition,
-                                            wx.DefaultSize, wx.TE_READONLY | wx.TE_RIGHT)
+                                            inputSize, wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.lowBandpassInput, 0, wx.ALL | wx.LEFT, 5)
 
         self.highCutoffBandpassLabel = wx.StaticText(self, wx.ID_ANY,
@@ -191,7 +191,7 @@ class SettingsPanel(wx.Panel):
         flexGridPreprocessing.Add(self.highCutoffBandpassLabel, 0, wx.ALL | wx.EXPAND, 5)
 
         self.highBandpassInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.upperBoundCutOutFreq), wx.DefaultPosition,
-                                             wx.DefaultSize, wx.TE_READONLY | wx.TE_RIGHT)
+                                             inputSize, wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.highBandpassInput, 0, wx.ALL, 5)
 
         self.lowCutoffBandstopLabel = wx.StaticText(self, wx.ID_ANY, u"Low Cutoff Frequency for Bandstop Filter:",
@@ -201,8 +201,7 @@ class SettingsPanel(wx.Panel):
         flexGridPreprocessing.Add(self.lowCutoffBandstopLabel, 0, wx.ALL | wx.EXPAND, 5)
 
         self.lowBandstopInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.lowBandStopFreq), wx.DefaultPosition,
-                                            wx.DefaultSize,
-                                            wx.TE_READONLY | wx.TE_RIGHT)
+                                            inputSize, wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.lowBandstopInput, 0, wx.ALL, 5)
 
         self.highCutoffBandstopLabel = wx.StaticText(self, wx.ID_ANY, u"High Cutoff Frequency for Bandstop Filter:",
@@ -212,11 +211,10 @@ class SettingsPanel(wx.Panel):
         flexGridPreprocessing.Add(self.highCutoffBandstopLabel, 0, wx.ALL | wx.EXPAND, 5)
 
         self.high_bandstop_input = wx.TextCtrl(self, wx.ID_ANY, str(Constants.highBandStopFreq), wx.DefaultPosition,
-                                               wx.DefaultSize,
-                                               wx.TE_READONLY | wx.TE_RIGHT)
+                                               inputSize, wx.TE_READONLY | wx.TE_RIGHT)
         flexGridPreprocessing.Add(self.high_bandstop_input, 0, wx.ALL, 5)
 
-        verticalBoxes.Add(flexGridPreprocessing, 0, wx.ALL | wx.EXPAND, 5)
+        self.verticalBoxes.Add(flexGridPreprocessing, 0, wx.ALL | wx.EXPAND, 5)
 
         self.svmSettingsLabel = wx.StaticText(self, wx.ID_ANY, u"SVM - Settings", wx.DefaultPosition, wx.DefaultSize, 0)
         self.svmSettingsLabel.Wrap(-1)
@@ -225,7 +223,7 @@ class SettingsPanel(wx.Panel):
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Lucida Grande"))
         self.svmSettingsLabel.SetForegroundColour(green)
 
-        verticalBoxes.Add(self.svmSettingsLabel, 0, wx.ALL, 5)
+        self.verticalBoxes.Add(self.svmSettingsLabel, 0, wx.ALL, 5)
 
         flexGridSVMSettings = wx.FlexGridSizer(2, 2, 0, 0)
         flexGridSVMSettings.AddGrowableCol(0)
@@ -249,17 +247,15 @@ class SettingsPanel(wx.Panel):
         verticalBoxSizerSVMRight = wx.BoxSizer(wx.VERTICAL)
 
         self.windowSizeInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.windowSize), wx.DefaultPosition,
-                                           wx.DefaultSize,
-                                           wx.TE_READONLY | wx.TE_RIGHT)
+                                           inputSize, wx.TE_READONLY | wx.TE_RIGHT)
         verticalBoxSizerSVMRight.Add(self.windowSizeInput, 0, wx.ALL, 5)
 
         self.dataValCorrectionInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.dataSampleCorrection),
-                                                  wx.DefaultPosition,
-                                                  wx.DefaultSize, wx.TE_READONLY | wx.TE_RIGHT)
+                                                  wx.DefaultPosition, inputSize, wx.TE_READONLY | wx.TE_RIGHT)
         verticalBoxSizerSVMRight.Add(self.dataValCorrectionInput, 0, wx.ALL, 5)
         flexGridSVMSettings.Add(verticalBoxSizerSVMRight, 1, wx.EXPAND, 5)
 
-        verticalBoxes.Add(flexGridSVMSettings, 0, wx.ALL | wx.EXPAND, 5)
+        self.verticalBoxes.Add(flexGridSVMSettings, 0, wx.ALL | wx.EXPAND, 5)
 
         # MIDI Settings
         self.midiSettingsLabel = wx.StaticText(self, wx.ID_ANY, u"MIDI - Settings", wx.DefaultPosition, wx.DefaultSize,
@@ -268,76 +264,168 @@ class SettingsPanel(wx.Panel):
         self.midiSettingsLabel.SetFont(
             wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Lucida Grande"))
         self.midiSettingsLabel.SetForegroundColour(green)
-        verticalBoxes.Add(self.midiSettingsLabel, 0, wx.ALL, 5)
+        self.verticalBoxes.Add(self.midiSettingsLabel, 0, wx.ALL, 5)
 
-        flexGridMidiSettings = wx.FlexGridSizer(0, 2, 0, 50)
-        flexGridMidiSettings.AddGrowableCol(0)
-        flexGridMidiSettings.SetFlexibleDirection(wx.BOTH)
-        flexGridMidiSettings.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
+        self.midiCableNameInput = None
+        self.createMidiCableCheckbox = None
+        self.midiCableNameChanged = False
+        self.warningLabel  = None
+        self.flexGridMidiSettings = None
+        self.midiCableName = None
+        self.flexGridCreateCable = None
+        self.createMidiCableLabel = None
 
-        self.midiCableName = wx.StaticText(self, wx.ID_ANY, u"Name of the virtual MIDI cable:", wx.DefaultPosition,
-                                           wx.DefaultSize, 0)
-        self.midiCableName.Wrap(-1)
-        flexGridMidiSettings.Add(self.midiCableName, 0, wx.ALL, 5)
+        if self.parent.isWindows:
+            self.midiCableNameChanged = True
 
-        self.midiCableNameInput = wx.TextCtrl(self, wx.ID_ANY, Constants.virtualMIDICable, wx.DefaultPosition,
-                                              wx.Size(136, -1),
-                                              wx.TE_RIGHT)
-        flexGridMidiSettings.Add(self.midiCableNameInput, 0, wx.ALL, 5)
-        verticalBoxes.Add(flexGridMidiSettings, 0, wx.EXPAND | wx.ALL, 5)
+            self.flexGridMidiSettings = wx.FlexGridSizer(0, 2, 0, 50)
+            self.flexGridMidiSettings.AddGrowableCol(0)
+            self.flexGridMidiSettings.SetFlexibleDirection(wx.BOTH)
+            self.flexGridMidiSettings.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
 
-        flexGridCreateCable = wx.FlexGridSizer(0, 2, 0, 0)
-        flexGridCreateCable.AddGrowableCol(0)
-        flexGridCreateCable.AddGrowableCol(1)
-        flexGridCreateCable.SetFlexibleDirection(wx.BOTH)
-        flexGridCreateCable.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
+            self.midiCableName = wx.StaticText(self, wx.ID_ANY, u"Name of the virtual MIDI cable:", wx.DefaultPosition,
+                                               wx.DefaultSize, 0)
+            self.midiCableName.Wrap(-1)
+            self.flexGridMidiSettings.Add(self.midiCableName, 0, wx.ALL, 5)
 
-        self.createMidiCableLabel = wx.StaticText(self, wx.ID_ANY, u"Create virtual MIDI cable (using mido library):",
-                                                  wx.DefaultPosition, wx.DefaultSize, 0)
-        self.createMidiCableLabel.Wrap(-1)
-        flexGridCreateCable.Add(self.createMidiCableLabel, 0, wx.ALL | wx.EXPAND, 5)
+            self.midiCableNameInput = wx.TextCtrl(self, wx.ID_ANY, Constants.virtualMIDICable, wx.DefaultPosition,
+                                                  inputSize, wx.TE_RIGHT)
+            self.flexGridMidiSettings.Add(self.midiCableNameInput, 0, wx.ALL, 5)
 
-        self.createMidiCableCheckbox = wx.CheckBox(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
-                                                   0)
-        self.createMidiCableCheckbox.SetValue(Constants.createMIDICable)
-        flexGridCreateCable.Add(self.createMidiCableCheckbox, 0, wx.ALL, 5)
+            self.verticalBoxes.Add(self.flexGridMidiSettings, 0, wx.EXPAND | wx.ALL, 5)
 
-        verticalBoxes.Add(flexGridCreateCable, 0, wx.EXPAND | wx.ALL, 5)
+            self.flexGridCreateCable = wx.FlexGridSizer(0, 2, 0, 0)
+            self.flexGridCreateCable.AddGrowableCol(0)
+            self.flexGridCreateCable.AddGrowableCol(1)
+            self.flexGridCreateCable.SetFlexibleDirection(wx.BOTH)
+            self.flexGridCreateCable.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
+
+            self.createMidiCableLabel = wx.StaticText(self, wx.ID_ANY,
+                                                      u"Create virtual MIDI cable (using mido library):",
+                                                      wx.DefaultPosition, wx.DefaultSize, 0)
+            self.createMidiCableLabel.Wrap(-1)
+            self.flexGridCreateCable.Add(self.createMidiCableLabel, 0, wx.ALL | wx.EXPAND, 5)
+
+            self.createMidiCableCheckbox = wx.CheckBox(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition,
+                                                       wx.DefaultSize, 0)
+            self.createMidiCableCheckbox.SetValue(False)
+            self.flexGridCreateCable.Add(self.createMidiCableCheckbox, 0, wx.ALL, 5)
+            self.createMidiCableCheckbox.Bind(wx.EVT_CHECKBOX, self.onCheckbox)
+
+            self.verticalBoxes.Add(self.flexGridCreateCable, 0, wx.EXPAND | wx.ALL, 5)
+
+            self.warningLabel = wx.StaticText(self, wx.ID_ANY,
+                                              u"WARNING: this will not work together with the Windows MultiMedia API!",
+                                              wx.DefaultPosition, wx.DefaultSize, 0)
+            self.warningLabel.Wrap(-1)
+            self.warningLabel.SetForegroundColour(wx.RED)
+        else:
+            self.flexGridMidiSettings = wx.FlexGridSizer(1, 2, 0, 50)
+            self.flexGridMidiSettings.AddGrowableCol(0)
+            self.flexGridMidiSettings.SetFlexibleDirection(wx.BOTH)
+            self.flexGridMidiSettings.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
+
+            self.midiCableName = wx.StaticText(self, wx.ID_ANY, u"By default using mido to create a virtual MIDI cable.\n"
+                                                                u"Only configure, if you know what you are doing!",
+                                               wx.DefaultPosition, wx.DefaultSize, 0)
+            self.flexGridMidiSettings.Add(self.midiCableName, 0, wx.ALL, 5)
+
+            configureButton = wx.Button(self, wx.ID_ANY, u"Configure", wx.DefaultPosition, wx.DefaultSize, 0)
+            self.flexGridMidiSettings.Add(configureButton, 0, wx.ALL, 5)
+            configureButton.Bind(wx.EVT_BUTTON, self.configureMidi)
+
+            self.verticalBoxes.Add(self.flexGridMidiSettings, 0, wx.EXPAND | wx.ALL, 5)
+
+            self.flexGridCreateCable = wx.FlexGridSizer(0, 2, 0, 0)
+            self.flexGridCreateCable.AddGrowableCol(0)
+            self.flexGridCreateCable.AddGrowableCol(1)
+            self.flexGridCreateCable.SetFlexibleDirection(wx.BOTH)
+            self.flexGridCreateCable.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
+
+            self.createMidiCableLabel = wx.StaticText(self, wx.ID_ANY,
+                                                      u"Create virtual MIDI cable (using mido library):",
+                                                      wx.DefaultPosition, wx.DefaultSize, 0)
+            self.createMidiCableLabel.Wrap(-1)
+            self.flexGridCreateCable.Add(self.createMidiCableLabel, 0, wx.ALL | wx.EXPAND, 5)
+
+            self.createMidiCableCheckbox = wx.CheckBox(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition,
+                                                       wx.DefaultSize, 0)
+            self.createMidiCableCheckbox.SetValue(True)
+            self.flexGridCreateCable.Add(self.createMidiCableCheckbox, 0, wx.ALL, 5)
+
+            self.verticalBoxes.Add(self.flexGridCreateCable, 0, wx.EXPAND | wx.ALL, 5)
 
         self.setSettingsButton = wx.Button(self, wx.ID_ANY, u"Done", wx.DefaultPosition, wx.DefaultSize, 0)
-        verticalBoxes.Add(self.setSettingsButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+        self.verticalBoxes.Add(self.setSettingsButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+        if self.parent.isWindows:
+            self.verticalBoxes.Add(self.warningLabel, 0, wx.ALL, 15)
 
-        self.SetSizerAndFit(verticalBoxes)
+        self.SetSizerAndFit(self.verticalBoxes)
         self.Centre()
         self.Layout()
+
+        if self.parent.isWindows:
+            self.warningLabel.Hide()
+        else:
+            self.createMidiCableLabel.Hide()
+            self.createMidiCableCheckbox.Hide()
 
         # Connect Events
         self.setSettingsButton.Bind(wx.EVT_BUTTON, self.updateSettings)
 
     def updateSettings(self, event):
         event.Skip()
-        name = self.midiCableNameInput.GetValue()
-        if name == "":
-            dial = wx.MessageDialog(None, 'Please enter the name of the desired virtual midi-cable!',
-                                    'Error', wx.OK | wx.ICON_ERROR)
-            dial.ShowModal()
+        if self.midiCableNameChanged:
+            name = self.midiCableNameInput.GetValue()
+            if name == "":
+                dial = wx.MessageDialog(None, 'Please enter the name of the desired virtual midi-cable!',
+                                        'Error', wx.OK | wx.ICON_ERROR)
+                dial.ShowModal()
 
-        else:
-            if not self.createMidiCableCheckbox.GetValue():
-                success, name = self.controller.checkIfMidiCableCanBeFound(name)
-                if not success:
-                    dial = wx.MessageDialog(None, 'The entered name of the virtual midi-cable does not exist!',
-                                            'Error', wx.OK | wx.ICON_ERROR)
-                    dial.ShowModal()
-                    return
+            else:
+                if not self.createMidiCableCheckbox.GetValue():
+                    success, name = self.controller.checkIfMidiCableCanBeFound(name)
+                    if not success:
+                        dial = wx.MessageDialog(None, 'Could not find a virtual midi-cable with the name \"'+ name + '\".',
+                                                'Error', wx.OK | wx.ICON_ERROR)
+                        dial.ShowModal()
+                        return
             self.controller.updateSettings(self.amtElectrodesInput.GetValue(),
                                            name,
                                            self.createMidiCableCheckbox.GetValue())
-            if not self.parent.backToConnectPage:
-                self.controller.showPanel(self, StartPanel)
-            else:
-                self.controller.showPanel(self, StreamOverviewPanel)
-                self.parent.backToConnectPage = False
+        else:
+            self.controller.updateChannelSettings(self.amtElectrodesInput.GetValue())
+        if not self.parent.backToConnectPage:
+            self.controller.showPanel(self, StartPanel)
+        else:
+            self.controller.showPanel(self, StreamOverviewPanel)
+            self.parent.backToConnectPage = False
+
+    def onCheckbox(self, event):
+        checkbox = event.GetEventObject()
+        if checkbox.GetValue():
+            self.warningLabel.Show()
+        else:
+            self.warningLabel.Hide()
+
+    def configureMidi(self, event):
+        button = event.GetEventObject()
+        event.Skip()
+        self.midiCableNameChanged = True
+        self.midiCableName.SetLabel(u"Name of the virtual MIDI cable:")
+        button.Enable(False)
+        button.Hide()
+        self.flexGridMidiSettings.Detach(button)
+
+        self.midiCableNameInput = wx.TextCtrl(self, wx.ID_ANY, Constants.virtualMIDICable, wx.DefaultPosition,
+                                              inputSize, wx.TE_RIGHT)
+        self.flexGridMidiSettings.Add(self.midiCableNameInput, 0, wx.ALL, 5)
+
+        self.createMidiCableLabel.Show()
+        self.createMidiCableCheckbox.Show()
+
+        self.flexGridMidiSettings.Layout()
+        self.flexGridCreateCable.Layout()
 
 
 ###########################################################################
@@ -399,15 +487,6 @@ class LiveSystemPanel(wx.Panel):
         self.parent.bar.SetStatusText(livesystemPauseStr, 0)
         self.parent.bar.SetStatusText("", 1)
 
-    def showStatusBar(self):
-        #self.parent.bar.Show()
-        pass
-
-    def hideStatusBar(self):
-        self.parent.bar.SetStatusText(livesystemPauseStr, 0)
-        self.parent.bar.SetStatusText("", 1)
-        self.parent.bar.Hide()
-
     def setInfoLable(self, string):
         self.infoLabel.SetLabel(string)
         self.SetSizerAndFit(self.verticalBoxes)
@@ -446,7 +525,6 @@ class LiveSystemPanel(wx.Panel):
         event.Skip()
         self.controller.resetCalibration()
         self.controller.showPanel(self, ChooseCalibrationPanel)
-        #self.hideStatusBar()
 
     def stopLiveSystem(self):
         self.controller.stopLiveSystem()
@@ -456,7 +534,6 @@ class LiveSystemPanel(wx.Panel):
         self.controller.resetCalibration()
         self.controller.resetStream()
         self.controller.showPanel(self, StartPanel)
-        #self.hideStatusBar()
 
 
 ###########################################################################
@@ -736,7 +813,7 @@ class InbuiltCalibrationPanel(wx.Panel):
     def finishButtonPressed(self, event):
         event.Skip()
         self.caliThread.join()
-        result = self.controller.endCalibration(lengthMods=(len(self.modTimes)/2))
+        result = self.controller.endCalibration(lengthMods=(len(self.modTimes) / 2))
         if not result:
             self.controller.showPanel(self, LiveSystemPanel, True)
             self.resetPanel()
@@ -759,7 +836,8 @@ class InbuiltCalibrationPanel(wx.Panel):
 # Class StreamOverviewPanel
 ###########################################################################
 headers = ["Stream", "Type", "#Channels", "SampleRate", "Format", "hosted on", "source id"]
-formatStrings = ["Undefined", "Float 32Bit", "Double 64Bit", "String", "Int 32Bit", "Int 16Bit", "Int 8Bit", "Int 64Bit"]
+formatStrings = ["Undefined", "Float 32Bit", "Double 64Bit", "String", "Int 32Bit", "Int 16Bit", "Int 8Bit",
+                 "Int 64Bit"]
 
 
 class StreamOverviewPanel(wx.Panel):
@@ -828,7 +906,7 @@ class StreamOverviewPanel(wx.Panel):
             self.grid.SetCellValue(0, 1, streamInfo.type())
             self.grid.SetCellValue(0, 2, str(streamInfo.channel_count()))
             self.grid.SetCellValue(0, 3, str(streamInfo.nominal_srate()))
-            self.grid.SetCellValue(0, 4, formatStrings[streamInfo.channel_format()] )
+            self.grid.SetCellValue(0, 4, formatStrings[streamInfo.channel_format()])
             self.grid.SetCellValue(0, 5, streamInfo.hostname())
             self.grid.SetCellValue(0, 6, streamInfo.uid())
         self.grid.AutoSize()
@@ -850,10 +928,9 @@ class StreamOverviewPanel(wx.Panel):
     def checkIfSuccessful(self, msg, settingsChannels, streamChannels):
         if msg == "CHANNELS_OKAY":
             wx.CallAfter(self.controller.showPanel, self, CalibrationInformationPanel)
-            #self.controller.showPanel(self, CalibrationInformationPanel)
-            self.parent.statusThread = threading.Thread(target=checkStreamLatency,
-                                                        args=(self.controller, self.parent.bar))
-            self.parent.statusThread.start()
+            self.parent.checkLatencyThread = threading.Thread(target=checkStreamLatency,
+                                                              args=(self.controller, self.parent.bar))
+            self.parent.checkLatencyThread.start()
         elif msg == "CHANNELS_TOO_MANY":
             string = "The amount of channels found in the settings  (" + str(settingsChannels) \
                      + ")\n are higher than the channels found in the stream (" \
@@ -933,34 +1010,36 @@ class CalibrationInformationPanel(wx.Panel):
         flexGrid = wx.FlexGridSizer(0, 2, 0, 0)
         flexGrid.SetFlexibleDirection(wx.BOTH)
         flexGrid.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
-        #flexGrid.SetMinSize(size=(500, 100))
 
         self.videoCaliLabel = wx.StaticText(self, wx.ID_ANY, u"Video-Calibration", wx.DefaultPosition, wx.DefaultSize,
-                                              wx.ALIGN_CENTER_HORIZONTAL)
+                                            wx.ALIGN_CENTER_HORIZONTAL)
         self.videoCaliLabel.SetMinSize((250, 15))
         flexGrid.Add(self.videoCaliLabel, 0, wx.EXPAND)
 
         self.customCaliLabel = wx.StaticText(self, wx.ID_ANY, u"Custom Calibration", wx.DefaultPosition, wx.DefaultSize,
-                                              wx.ALIGN_CENTER_HORIZONTAL)
+                                             wx.ALIGN_CENTER_HORIZONTAL)
         self.customCaliLabel.SetMinSize((250, 15))
         flexGrid.Add(self.customCaliLabel, 0, wx.EXPAND)
 
-        self.videoInfoLabel = wx.TextCtrl(self, wx.ID_ANY, u"You are expected to play the displayed song in the speed of the moving blue marker. Whenever this marker hits a note marked in red, you are expected to perform the back-and-forth wiggle motion, using the thumb, for as long as this red note is playing.",
-                                                  wx.DefaultPosition, wx.DefaultSize, style = wx.TE_MULTILINE|wx.TE_READONLY)
+        self.videoInfoLabel = wx.TextCtrl(self, wx.ID_ANY,
+                                          u"You are expected to play the displayed song in the speed of the moving blue marker. Whenever this marker hits a note marked in red, you are expected to perform the back-and-forth wiggle motion, using the thumb, for as long as this red note is playing.",
+                                          wx.DefaultPosition, wx.DefaultSize, style=wx.TE_MULTILINE | wx.TE_READONLY)
         flexGrid.Add(self.videoInfoLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.customInfoLabel = wx.TextCtrl(self, wx.ID_ANY, u"You are free to calibrate yourself, by playing whatever and tracking your performance of the back-and-forth wiggle motion by the thumb using the \"Mod:on\" and \"Mod:off\" button. With starting the wiggle motion press \"Mod:on\" and with ending it press \"Mod:off\" (it is the same button that changes the label after being pressed).",
-                                                  wx.DefaultPosition, wx.DefaultSize, style = wx.TE_MULTILINE| wx.TE_READONLY)
+        self.customInfoLabel = wx.TextCtrl(self, wx.ID_ANY,
+                                           u"You are free to calibrate yourself, by playing whatever and tracking your performance of the back-and-forth wiggle motion by the thumb using the \"Mod:on\" and \"Mod:off\" button. With starting the wiggle motion press \"Mod:on\" and with ending it press \"Mod:off\" (it is the same button that changes the label after being pressed).",
+                                           wx.DefaultPosition, wx.DefaultSize, style=wx.TE_MULTILINE | wx.TE_READONLY)
         flexGrid.Add(self.customInfoLabel, 0, wx.ALL | wx.EXPAND, 5)
 
         self.bestPracticeLabel = wx.StaticText(self, wx.ID_ANY, u"Best Practice:", wx.DefaultPosition, wx.DefaultSize,
-                                              wx.ALIGN_CENTER_HORIZONTAL)
+                                               wx.ALIGN_CENTER_HORIZONTAL)
         flexGrid.Add(self.bestPracticeLabel, 0, wx.EXPAND)
 
-        self.customInfoLabel = wx.TextCtrl(self, wx.ID_ANY, u"- The finger motion that works best for our system is a back-and-forth wiggle motion performed by the thumb (cf. gif)\n"
-                                                            u"- Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well\n"
-                                                            u"- Works best when using 10 electrodes around the upper forearm",
-                                                  wx.DefaultPosition, wx.DefaultSize, style = wx.TE_MULTILINE| wx.TE_READONLY)
+        self.customInfoLabel = wx.TextCtrl(self, wx.ID_ANY,
+                                           u"- The finger motion that works best for our system is a back-and-forth wiggle motion performed by the thumb (cf. gif)\n"
+                                           u"- Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well\n"
+                                           u"- Works best when using 10 electrodes around the upper forearm",
+                                           wx.DefaultPosition, wx.DefaultSize, style=wx.TE_MULTILINE | wx.TE_READONLY)
         flexGrid.Add(self.customInfoLabel, 0, wx.ALL | wx.EXPAND, 5)
 
         verticalBoxes.Add(flexGrid, 0, wx.EXPAND | wx.ALL, 5)
@@ -1001,3 +1080,4 @@ def checkStreamLatency(controller, statusBar):
             else:
                 wx.CallAfter(statusBar.SetStatusText, latencyStr + str(latency), 1)
         time.sleep(1)
+    wx.CallAfter(statusBar.SetStatusText, "Not connected to a stream!")

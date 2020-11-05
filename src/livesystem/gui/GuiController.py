@@ -1,5 +1,6 @@
-import livesystem.gui.wxWindow as wxwindow
 import wx
+import livesystem.gui.wxWindow as wxwindow
+import helpers.SettingsManager as SettingsManager
 
 
 class guiController:
@@ -23,7 +24,10 @@ class guiController:
 
     # Updates the values changed in the settings
     def updateSettings(self, amtElectrodes, midiCableName, shouldCreateMidiCable):
-        self.programMaster.updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable)
+        SettingsManager.updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable)
+
+    def updateChannelSettings(self, amtChannels):
+        SettingsManager.updateChannelSettings(amtChannels)
 
     # Calls the method for connecting to the LSL-stream, given the list of streams chosen in the UI
     def connectToLSLStream(self, streams):
@@ -35,6 +39,7 @@ class guiController:
     # Calls the method resetting the LSL-stream
     def resetStream(self):
         self.programMaster.resetStream()
+        self.mainFrame.checkLatencyThread.join()
 
     # Calls the method starting the calibration
     def startCalibration(self):
@@ -100,5 +105,3 @@ class guiController:
         if refresh:
             self.mainFrame.Refresh()
             panel.Update()
-        if isinstance(panel, wxwindow.LiveSystemPanel):
-            panel.showStatusBar()

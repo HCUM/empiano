@@ -13,8 +13,7 @@ class MidiManager:
         self.output = None
         self.pitchValues = [0, 250, 500, 1000, 500, 250,  0, -250, -500, -1000, -500, -250]
 
-
-    #Creates either a virtual MIDI cable or builds a connection to an existing virtual MIDI cable
+    # Creates either a virtual MIDI cable or builds a connection to an existing virtual MIDI cable
     def createMIDIOutport(self):
         if constants.createMIDICable:
             self.output = mido.open_output(constants.virtualMIDICable, virtual=True)

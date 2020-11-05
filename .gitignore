@@ -129,8 +129,5 @@ dmypy.json
 .pyre/
 
 #custom
-*.log
-log*
-currentProject/log/*
-currentProject/csv/*
 .idea/
+*.ini
