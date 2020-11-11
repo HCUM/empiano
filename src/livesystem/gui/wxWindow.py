@@ -64,8 +64,6 @@ class MyFrame(wx.Frame):
 ###########################################################################
 # Class StartPanel
 ###########################################################################
-
-
 class StartPanel(wx.Panel):
 
     def __init__(self, parent, controller):
@@ -1167,7 +1165,7 @@ class AboutPanel(wx.Panel):
         font = wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         st_info.SetFont(font)
         verticalBoxes.Add(st_info, flag=wx.LEFT | wx.TOP, border=20, proportion=1)
-        verticalBoxes.Add((0, 10), 0, wx.EXPAND, 5)
+        #verticalBoxes.Add((0, 10), 0, wx.EXPAND, 5)
 
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
         lmuFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/lmu.png'))

@@ -40,7 +40,8 @@ class guiController:
     # Calls the method resetting the LSL-stream
     def resetStream(self):
         self.programMaster.resetStream()
-        self.mainFrame.checkLatencyThread.join()
+        if self.mainFrame.checkLatencyThread:
+            self.mainFrame.checkLatencyThread.join()
 
     # Calls the method starting the calibration
     def startCalibration(self):
