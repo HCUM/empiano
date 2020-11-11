@@ -870,15 +870,21 @@ class StreamOverviewPanel(wx.Panel):
         hButtonsBox = wx.BoxSizer(wx.HORIZONTAL)
 
         self.backButton = wx.Button(self, wx.ID_ANY, "Back", wx.DefaultPosition, wx.DefaultSize, 0)
-        hButtonsBox.Add(self.backButton, 0, wx.ALL, 5)
 
         self.checkStreamsButton = wx.Button(self, wx.ID_ANY, u"Find Streams", wx.DefaultPosition, wx.DefaultSize, 0)
-        hButtonsBox.Add(self.checkStreamsButton, 0, wx.ALL, 5)
 
         self.connectButton = wx.Button(self, wx.ID_ANY, u"Connect", wx.DefaultPosition, wx.DefaultSize, 0)
-        hButtonsBox.Add(self.connectButton, 0, wx.ALL, 5)
 
-        self.vbox.Add(hButtonsBox, 0, wx.EXPAND)
+        # center buttons
+        buttonWidths, _ = self.backButton.Size + self.checkStreamsButton.Size + self.connectButton.Size
+        gridWidth, _ = self.grid.Size
+        hButtonsBox.Add(((gridWidth - buttonWidths)/2, 0), 0, wx.ALL, 5)
+        hButtonsBox.Add(self.backButton, 0, wx.ALL, 10)
+        hButtonsBox.Add(self.checkStreamsButton, 0, wx.ALL, 10)
+        hButtonsBox.Add(self.connectButton, 0, wx.ALL, 10)
+        hButtonsBox.Add(((gridWidth - buttonWidths)/2, 0), 0, wx.ALL, 5)
+
+        self.vbox.Add(hButtonsBox, 0, wx.EXPAND | wx.ALL, 5)
         self.SetSizerAndFit(self.vbox)
 
         self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
@@ -1019,7 +1025,7 @@ class CalibrationInformationPanel(wx.Panel):
 
         self.notebook.AddPage(self.videoTab, "Video Calibration")
         self.notebook.AddPage(self.customTab, "Custom Calibration")
-        verticalBoxes.Add(self.notebook, 0, wx.EXPAND)
+        verticalBoxes.Add(self.notebook, 0, wx.ALL, 5)
 
         # gif: finger motion
         gifFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/wiggle_motion.gif'))
@@ -1067,7 +1073,7 @@ class CalibrationInformationPanel(wx.Panel):
         self.continueButton = wx.Button(self, wx.ID_ANY, u"Understood", wx.DefaultPosition, wx.DefaultSize, 0)
         hButtonsBox.Add(self.continueButton, 0, wx.ALL, 5)
 
-        verticalBoxes.Add(hButtonsBox, 0, wx.EXPAND | wx.CENTER)
+        verticalBoxes.Add(hButtonsBox, 0, wx.EXPAND | wx.CENTER | wx.ALL, 5)
 
         self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
         self.continueButton.Bind(wx.EVT_BUTTON, self.onContinue)
