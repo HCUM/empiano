@@ -5,7 +5,6 @@ import pylsl
 
 
 class StreamManager:
-
     def __init__(self, programMaster):
         self.programMaster = programMaster
         self.resolver = ContinuousResolver()

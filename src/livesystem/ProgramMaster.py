@@ -11,6 +11,7 @@ import helpers.SettingsManager as SettingsManager
 import livesystem.CalibrationManager as Calibration
 import livesystem.gui.GuiController as GuiController
 
+
 ###########################################################################
 # Class ProgramMaster
 # -> everything goes through here, manages all the sub-classes
@@ -34,7 +35,7 @@ class ProgramMaster:
         self.firstLiveRoundDone = False
 
         self.midiManager = MidiManager.MidiManager(self)
-        self.guiController = GuiController.guiController(self)
+        self.guiController = GuiController.GuiController(self)
         self.calibrationManager = None
         self.liveSystemManager = None
 

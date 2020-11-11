@@ -3,9 +3,11 @@ import time
 from storage import Constants as constants
 
 ###########################################################################
-## Class CalibrationManager
-## -> manages all the midi-related things
+# Class CalibrationManager
+# -> manages all the midi-related things
 ###########################################################################
+
+
 class MidiManager:
 
     def __init__(self, programMaster):
@@ -26,7 +28,8 @@ class MidiManager:
     # Looks for the virtual midi-cable with the given name
     # This is needed, because sometimes the index of the virtual cable is added to the name,
     # which cannot be known by the user
-    def findMidiCable(self, midiCableName):
+    @staticmethod
+    def findMidiCable(midiCableName):
         names = mido.get_output_names()
         for name in names:
             if name.startswith(midiCableName):
@@ -44,7 +47,7 @@ class MidiManager:
             index += 1
             time.sleep(1/8/len(self.pitchValues))
 
-        #resets the pitchwheel value
+        # resets the pitchwheel value
         self.sendMidiMsg(mido.Message('pitchwheel', channel=0, pitch=0))
 
     # Sends the reset pitchwheel midi-message

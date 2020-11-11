@@ -3,8 +3,7 @@ import livesystem.gui.wxWindow as wxwindow
 import helpers.SettingsManager as SettingsManager
 
 
-class guiController:
-
+class GuiController:
     def __init__(self, programMaster):
         self.programMaster = programMaster
         self.app = None
@@ -17,21 +16,22 @@ class guiController:
         self.mainFrame.Show()
         self.app.MainLoop()
 
-    # Methods triggered by buttons etc
-
     # Calls the method which checks whether the (in the settings) specified MIDI cable can be found
     def checkIfMidiCableCanBeFound(self, midiCableName):
         return self.programMaster.checkIfMidiCableCanBeFound(midiCableName)
 
     # Updates the values changed in the settings
-    def updateSettings(self, amtElectrodes, midiCableName, shouldCreateMidiCable):
+    @staticmethod
+    def updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable):
         SettingsManager.updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable)
 
-    def updateChannelSettings(self, amtChannels):
+    @staticmethod
+    def updateChannelSettings(amtChannels):
         SettingsManager.updateChannelSettings(amtChannels)
 
     # Calls the method for connecting to the LSL-stream, given the list of streams chosen in the UI
     def connectToLSLStream(self, streams):
+        self.programMaster.resetStream()
         self.programMaster.connectToLSLStream(streams)
 
     def getStreamInlet(self):
@@ -59,7 +59,6 @@ class guiController:
     def resetCalibration(self):
         self.programMaster.resetCalibration()
 
-    # Gets the current prediction
     def getPredictionFromMaster(self):
         return self.programMaster.getCurrentPrediction()
 

@@ -11,7 +11,7 @@ import storage.Constants as Constants
 from wx.adv import Animation, AnimationCtrl
 from wx.media import MediaCtrl, EVT_MEDIA_STOP
 
-frameSize = wx.Size(1000, 600)
+frameSize = wx.Size(1000, 625)
 backgroundColorWindows = wx.Colour(0xE6, 0xE6, 0xE6)
 green = wx.Colour(17, 133, 48)
 Continue = 0
@@ -27,6 +27,9 @@ class MyFrame(wx.Frame):
         self.isWindows = self.platform.startswith("Windows")
         if self.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
+
+        self.checkLatencyThread = None
+
         self.backToConnectPage = False
 
         self.statusThread = None
@@ -439,9 +442,9 @@ class SettingsPanel(wx.Panel):
 ###########################################################################
 # Class LiveSystemPanel
 ###########################################################################
-livesystemRunningStr = "Live-System is running..."
+livesystemRunningStr = "Running..."
 latencyStr = "latency of stream: "
-livesystemPauseStr = "Live-System is paused..."
+livesystemPauseStr = "Paused..."
 
 
 class LiveSystemPanel(wx.Panel):
@@ -490,9 +493,6 @@ class LiveSystemPanel(wx.Panel):
         self.SetSizerAndFit(self.verticalBoxes)
         self.Centre()
         self.Layout()
-
-        self.parent.bar.SetStatusText(livesystemPauseStr, 0)
-        self.parent.bar.SetStatusText("", 1)
 
     def setInfoLable(self, string):
         self.infoLabel.SetLabel(string)
@@ -573,14 +573,14 @@ class ChooseCalibrationPanel(wx.Panel):
         self.customCalibrationButton = wx.Button(self, wx.ID_ANY, u"Custom", wx.DefaultPosition, wx.DefaultSize, 0)
         verticalBoxes.Add(self.customCalibrationButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
-        self.homeButton = wx.Button(self, wx.ID_ANY, u"Home", wx.DefaultPosition, wx.DefaultSize, 0)
-        verticalBoxes.Add(self.homeButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+        self.backButton = wx.Button(self, wx.ID_ANY, u"Back", wx.DefaultPosition, wx.DefaultSize, 0)
+        verticalBoxes.Add(self.backButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
         verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.customCalibrationButton.Bind(wx.EVT_BUTTON, self.customCaliPressed)
         self.inbuiltCalibrationButton.Bind(wx.EVT_BUTTON, self.inbuiltCaliPressed)
-        self.homeButton.Bind(wx.EVT_BUTTON, self.onHomeButton)
+        self.backButton.Bind(wx.EVT_BUTTON, self.onBackButton)
 
         self.SetSizerAndFit(verticalBoxes)
         self.Centre()
@@ -594,10 +594,10 @@ class ChooseCalibrationPanel(wx.Panel):
         event.Skip()
         self.controller.showPanel(self, InbuiltCalibrationPanel, True)
 
-    def onHomeButton(self, event):
+    def onBackButton(self, event):
         event.Skip()
-        self.controller.resetStream()
-        self.controller.showPanel(self, StartPanel)
+        #self.controller.resetStream()
+        self.controller.showPanel(self, CalibrationInformationPanel)
 
 
 ###########################################################################
@@ -917,21 +917,21 @@ class StreamOverviewPanel(wx.Panel):
 
     # Gets all the information of the selected rows and calls the connect method
     def connectToStreams(self, event):
-         event.Skip()
-         streams = []
-         for i in self.grid.GetSelectedRows():
+        event.Skip()
+        streams = []
+        for i in self.grid.GetSelectedRows():
             streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3)),
                             int(self.grid.GetCellValue(i, 2))))
-         if streams:
+        if streams:
             threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
             self.controller.connectToLSLStream(streams)
-        #self.controller.showPanel(self, CalibrationInformationPanel)
 
     # Waits for the pub-message to see if the connection was successful
     # Pub-message sent in StreamManager.connectStreams
     def checkIfSuccessful(self, msg, settingsChannels, streamChannels):
         if msg == "CHANNELS_OKAY":
             wx.CallAfter(self.controller.showPanel, self, CalibrationInformationPanel)
+            self.parent.bar.SetStatusText("Connected to stream.", 0)
             self.parent.checkLatencyThread = threading.Thread(target=checkStreamLatency,
                                                               args=(self.controller, self.parent.bar))
             self.parent.checkLatencyThread.start()
@@ -973,6 +973,7 @@ class StreamOverviewPanel(wx.Panel):
 
     def onBack(self, event):
         event.Skip()
+        self.controller.resetStream()
         self.controller.showPanel(self, StartPanel)
 
     def onBackPopUp(self):
@@ -1096,7 +1097,7 @@ class VideoCalibrationTab(wx.Panel):
                                             u"you are expected to perform the back-and-forth wiggle motion, "
                                             u"using the thumb, for as long as this red note is playing.",
                                             wx.DefaultPosition,
-                                            wx.DefaultSize)  # TextCtrl before, style=wx.TE_MULTILINE | wx.TE_READONLY)
+                                            wx.DefaultSize)
         self.videoInfoLabel.Wrap(500)
         verticalBoxes.Add(self.videoInfoLabel, 0, wx.ALL, 5)
 
@@ -1118,7 +1119,7 @@ class CustomCalibrationTab(wx.Panel):
                                              u"press \"Mod:on\" and with ending it press \"Mod:off\" (it is the same "
                                              u"button that changes the label after being pressed).",
                                              wx.DefaultPosition,
-                                             wx.DefaultSize)  # , style=wx.TE_MULTILINE | wx.TE_READONLY)
+                                             wx.DefaultSize)
         self.customInfoLabel.Wrap(500)
         verticalBoxes.Add(self.customInfoLabel, 0, wx.ALL, 5)
 
@@ -1154,18 +1155,17 @@ class AboutPanel(wx.Panel):
         st_embody.Wrap(300)
         hbox.Add(st_embody, flag=wx.ALIGN_CENTER_VERTICAL)
         hbox.Add(bitmap_embody, flag=wx.LEFT, border=60)
-        verticalBoxes.Add(hbox, flag=wx.TOP, border=20)#wx.LEFT | wx.TOP, border=20)
+        verticalBoxes.Add(hbox, flag=wx.TOP, border=20)
 
         st_embody_info = wx.StaticText(self, -1, embody_text)
         font = wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         st_embody_info.SetFont(font)
-        verticalBoxes.Add(st_embody_info, flag=wx.TOP, border=20)#wx.LEFT | wx.TOP, border=20)
+        verticalBoxes.Add(st_embody_info, flag=wx.TOP, border=20)
 
         st_info = wx.StaticText(self, -1, aboutText)
         font = wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         st_info.SetFont(font)
-        verticalBoxes.Add(st_info, flag=wx.TOP, border=20, proportion=1)#wx.LEFT | wx.TOP, border=20, proportion=1)
-        #verticalBoxes.Add((0, 10), 0, wx.EXPAND, 5)
+        verticalBoxes.Add(st_info, flag=wx.TOP, border=20, proportion=1)
 
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
         lmuFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/lmu.png'))
@@ -1176,7 +1176,7 @@ class AboutPanel(wx.Panel):
         #                                  png_amplify.GetHeight()))
         hbox2.Add(bitmap_lmu)
         # hbox2.Add(bitmap_amplify, flag=wx.LEFT, border=50)
-        verticalBoxes.Add(hbox2, flag=wx.TOP, border=20)#wx.LEFT | wx.TOP | wx.BOTTOM, border=20)
+        verticalBoxes.Add(hbox2, flag=wx.TOP, border=20)
 
         self.backButton = wx.Button(self, wx.ID_ANY, "Back", wx.DefaultPosition, wx.DefaultSize, 0)
         verticalBoxes.Add(self.backButton, 0, wx.ALL | wx.CENTER, 5)
@@ -1201,4 +1201,5 @@ def checkStreamLatency(controller, statusBar):
             else:
                 wx.CallAfter(statusBar.SetStatusText, latencyStr + str(latency), 1)
         time.sleep(1)
-    wx.CallAfter(statusBar.SetStatusText, "Not connected to a stream!")
+    wx.CallAfter(statusBar.SetStatusText, "Not connected to a stream!", 0)
+    wx.CallAfter(statusBar.SetStatusText, "", 1)

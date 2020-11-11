@@ -3,6 +3,7 @@ import configparser
 import os
 
 
+# Writes the settings of the user into a file
 def writeConfigFile():
     config = configparser.ConfigParser()
     config['STREAM'] = {'amtChannels': str(Constants.numberOfChannels)}
@@ -13,7 +14,7 @@ def writeConfigFile():
         config.write(configfile)
 
 
-# Updates the values changed in the settings
+# Updates the fields in Constants.py, like the user changed them in the settings
 def updateSettings(amtChannels, midiCableName, shouldCreateMidiCable):
 
     noChanges = Constants.numberOfChannels == amtChannels
@@ -28,6 +29,8 @@ def updateSettings(amtChannels, midiCableName, shouldCreateMidiCable):
     if not noChanges:
         writeConfigFile()
 
+
+# Updates the changed numberOfChannels field in Constants.py
 def updateChannelSettings(amtChannels):
     noChanges = Constants.numberOfChannels == amtChannels
     Constants.numberOfChannels = amtChannels
@@ -36,7 +39,7 @@ def updateChannelSettings(amtChannels):
         writeConfigFile()
 
 
-
+# reads the config file and saves the values to the corresponding fields in Constants.py
 def readConfigFile():
     config = configparser.ConfigParser()
     path = os.path.normpath(os.path.join(os.getcwd(), 'storage/settings.ini'))
