@@ -12,6 +12,7 @@ class guiController:
 
     def launchWindow(self):
         self.app = wx.App(False)
+        self.app.locale = wx.Locale(wx.LANGUAGE_ENGLISH)
         self.mainFrame = wxwindow.MyFrame(self)
         self.mainFrame.Show()
         self.app.MainLoop()

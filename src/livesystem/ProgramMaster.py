@@ -4,7 +4,6 @@ import pylsl
 import threading
 from pubsub import pub
 from collections import deque
-import storage.Constants as Constants
 import livesystem.LiveSystemManager as Live
 import livesystem.MidiManager as MidiManager
 import livesystem.StreamManager as StreamManager
@@ -91,10 +90,10 @@ class ProgramMaster:
     # param: augmentationOn = current prediction of the SVM whether an augmentation was performed or not;
     # Starts or ends the sound effect, when needed; updates the lastTwoPredictions field
     def setCurrentPrediction(self, augmentationOn):
-        if augmentationOn and not self.midiEffectThread.isAlive():
+        if augmentationOn and not self.midiEffectThread.is_alive():
             self.startMidiEffect()
 
-        elif not augmentationOn and self.midiEffectThread.isAlive():
+        elif not augmentationOn and self.midiEffectThread.is_alive():
             self.endMidiEffect()
 
         self.predictionSem.acquire()

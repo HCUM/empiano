@@ -68,9 +68,8 @@ class MyFrame(wx.Frame):
 
 class StartPanel(wx.Panel):
 
-    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
-        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
+    def __init__(self, parent, controller):
+        wx.Panel.__init__(self, parent)
 
         self.controller = controller
         if parent.isWindows:
@@ -131,9 +130,8 @@ inputSize = wx.Size(135, -1)
 
 
 class SettingsPanel(wx.Panel):
-    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize,
-                 style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
-        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
+    def __init__(self, parent, controller):
+        wx.Panel.__init__(self, parent)
         self.parent = parent
         self.controller = controller
         if self.parent.isWindows:
@@ -449,9 +447,8 @@ livesystemPauseStr = "Live-System is paused..."
 
 
 class LiveSystemPanel(wx.Panel):
-    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
-        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
+    def __init__(self, parent, controller):
+        wx.Panel.__init__(self, parent)
 
         self.parent = parent
         self.controller = controller
@@ -552,9 +549,8 @@ class LiveSystemPanel(wx.Panel):
 # Class ChooseCalibrationPanel
 ###########################################################################
 class ChooseCalibrationPanel(wx.Panel):
-    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
-        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
+    def __init__(self, parent, controller):
+        wx.Panel.__init__(self, parent)
 
         self.controller = controller
         if parent.isWindows:
@@ -610,9 +606,8 @@ class ChooseCalibrationPanel(wx.Panel):
 # Class CustomCalibrationPanel
 ###########################################################################
 class CustomCalibrationPanel(wx.Panel):
-    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
-        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
+    def __init__(self, parent, controller):
+        wx.Panel.__init__(self, parent)
 
         self.controller = controller
         if parent.isWindows:
@@ -698,9 +693,8 @@ class CustomCalibrationPanel(wx.Panel):
 # Class InbuiltCalibrationPanel
 ###########################################################################
 class InbuiltCalibrationPanel(wx.Panel):
-    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
-        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
+    def __init__(self, parent, controller):
+        wx.Panel.__init__(self, parent)
 
         self.controller = controller
         if parent.isWindows:
@@ -853,9 +847,8 @@ formatStrings = ["Undefined", "Float 32Bit", "Double 64Bit", "String", "Int 32Bi
 
 
 class StreamOverviewPanel(wx.Panel):
-    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
-        super(StreamOverviewPanel, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
+    def __init__(self, parent, controller):
+        super(StreamOverviewPanel, self).__init__(parent)
 
         self.parent = parent
 
@@ -926,14 +919,15 @@ class StreamOverviewPanel(wx.Panel):
 
     # Gets all the information of the selected rows and calls the connect method
     def connectToStreams(self, event):
-        event.Skip()
-        streams = []
-        for i in self.grid.GetSelectedRows():
+         event.Skip()
+         streams = []
+         for i in self.grid.GetSelectedRows():
             streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3)),
                             int(self.grid.GetCellValue(i, 2))))
-        if streams:
+         if streams:
             threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
             self.controller.connectToLSLStream(streams)
+        #self.controller.showPanel(self, CalibrationInformationPanel)
 
     # Waits for the pub-message to see if the connection was successful
     # Pub-message sent in StreamManager.connectStreams
@@ -1000,13 +994,13 @@ class StreamOverviewPanel(wx.Panel):
 # Class CalibrationInformationPanel
 ###########################################################################
 class CalibrationInformationPanel(wx.Panel):
-    def __init__(self, parent, controller, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                 size=wx.DefaultSize, style=wx.TAB_TRAVERSAL, name=wx.EmptyString):
-        wx.Panel.__init__(self, parent, id=id, pos=pos, size=size, style=style, name=name)
+    def __init__(self, parent, controller):
+        wx.Panel.__init__(self, parent)
 
         self.controller = controller
         if parent.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
+
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
         self.calibrationLabel = wx.StaticText(self, wx.ID_ANY, u"Calibration", wx.DefaultPosition, wx.DefaultSize,
@@ -1017,50 +1011,54 @@ class CalibrationInformationPanel(wx.Panel):
         self.calibrationLabel.SetForegroundColour(green)
         verticalBoxes.Add(self.calibrationLabel, 0, wx.EXPAND | wx.ALL, 10)
 
+        # notebook
+        self.notebook = wx.Notebook(self)
+        self.notebook.SetMaxSize((800, 500))
+
+        self.videoTab = VideoCalibrationTab(self.notebook)
+        self.customTab = CustomCalibrationTab(self.notebook)
+
+        self.notebook.AddPage(self.videoTab, "Video Calibration")
+        self.notebook.AddPage(self.customTab, "Custom Calibration")
+        verticalBoxes.Add(self.notebook, 0, wx.EXPAND)
+
+        # gif: finger motion
         gifFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/wiggle_motion.gif'))
         self.animationCtrl = AnimationCtrl(self, -1, Animation(gifFile), size=(500, 250))
         self.animationCtrl.Play()
         verticalBoxes.Add(self.animationCtrl, 0, wx.EXPAND, 5)
 
-        flexGrid = wx.FlexGridSizer(0, 2, 0, 0)
-        flexGrid.SetFlexibleDirection(wx.BOTH)
-        flexGrid.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
-
-        self.videoCaliLabel = wx.StaticText(self, wx.ID_ANY, u"Video-Calibration", wx.DefaultPosition, wx.DefaultSize,
-                                            wx.ALIGN_CENTER_HORIZONTAL)
-        self.videoCaliLabel.SetMinSize((250, 15))
-        flexGrid.Add(self.videoCaliLabel, 0, wx.EXPAND)
-
-        self.customCaliLabel = wx.StaticText(self, wx.ID_ANY, u"Custom Calibration", wx.DefaultPosition, wx.DefaultSize,
-                                             wx.ALIGN_CENTER_HORIZONTAL)
-        self.customCaliLabel.SetMinSize((250, 15))
-        flexGrid.Add(self.customCaliLabel, 0, wx.EXPAND)
-
-        self.videoInfoLabel = wx.TextCtrl(self, wx.ID_ANY,
-                                          u"You are expected to play the displayed song in the speed of the moving "
-                                          u"blue marker. Whenever this marker hits a note marked in red, "
-                                          u"you are expected to perform the back-and-forth wiggle motion, "
-                                          u"using the thumb, for as long as this red note is playing.",
-                                          wx.DefaultPosition, wx.DefaultSize, style=wx.TE_MULTILINE | wx.TE_READONLY)
-        flexGrid.Add(self.videoInfoLabel, 0, wx.ALL | wx.EXPAND, 5)
-
-        self.customInfoLabel = wx.TextCtrl(self, wx.ID_ANY,
-                                           u"You are free to calibrate yourself, by playing whatever and tracking your performance of the back-and-forth wiggle motion by the thumb using the \"Mod:on\" and \"Mod:off\" button. With starting the wiggle motion press \"Mod:on\" and with ending it press \"Mod:off\" (it is the same button that changes the label after being pressed).",
-                                           wx.DefaultPosition, wx.DefaultSize, style=wx.TE_MULTILINE | wx.TE_READONLY)
-        flexGrid.Add(self.customInfoLabel, 0, wx.ALL | wx.EXPAND, 5)
-
+        # best practice information
         self.bestPracticeLabel = wx.StaticText(self, wx.ID_ANY, u"Best Practice:", wx.DefaultPosition, wx.DefaultSize,
                                                wx.ALIGN_CENTER_HORIZONTAL)
-        flexGrid.Add(self.bestPracticeLabel, 0, wx.EXPAND)
+        self.bestPracticeLabel.SetFont(wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD,
+                                               wx.FONTENCODING_DEFAULT))
+        verticalBoxes.Add(self.bestPracticeLabel, 0, wx.EXPAND | wx.TOP | wx.LEFT | wx.RIGHT, 5)
 
-        self.customInfoLabel = wx.TextCtrl(self, wx.ID_ANY,
-                                           u"- The finger motion that works best for our system is a back-and-forth wiggle motion performed by the thumb (cf. gif)\n"
-                                           u"- Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well\n"
-                                           u"- Works best when using 10 electrodes around the upper forearm",
-                                           wx.DefaultPosition, wx.DefaultSize, style=wx.TE_MULTILINE | wx.TE_READONLY)
-        flexGrid.Add(self.customInfoLabel, 0, wx.ALL | wx.EXPAND, 5)
-
-        verticalBoxes.Add(flexGrid, 0, wx.EXPAND | wx.ALL, 5)
+        bulletPointsGridSizer = wx.FlexGridSizer(3, 2, 0, 0)
+        bulletPoint = wx.StaticText(self, wx.ID_ANY, u"•", wx.DefaultPosition, wx.DefaultSize)
+        bulletPointsGridSizer.Add(bulletPoint, 0, wx.LEFT, 5)
+        bulletPointsGridSizer.Add(wx.StaticText(self, wx.ID_ANY,
+                                                u"Back-and-forth wiggle motion performed by the thumb (cf. gif)",
+                                                wx.DefaultPosition,
+                                                wx.DefaultSize), 0, wx.ALL)
+        bulletPointsGridSizer.Add(wx.StaticText(self, wx.ID_ANY, u"•", wx.DefaultPosition, wx.DefaultSize),
+                                  0, wx.LEFT, 5)
+        secondPoint = wx.StaticText(self, wx.ID_ANY,
+                                    u"Feel free to try a sideways motion or other fingers, but know that these"
+                                    u" might not work as well",
+                                    wx.DefaultPosition,
+                                    wx.DefaultSize)
+        secondPoint.Wrap(470)
+        bulletPointsGridSizer.Add(secondPoint, 0, wx.ALL)
+        bulletPointsGridSizer.Add(wx.StaticText(self, wx.ID_ANY, u"•", wx.DefaultPosition, wx.DefaultSize),
+                                  0, wx.LEFT, 5)
+        bulletPointsGridSizer.Add(wx.StaticText(self, wx.ID_ANY,
+                                                u"10 electrodes around the upper forearm",
+                                                wx.DefaultPosition,
+                                                wx.DefaultSize), 0, wx.ALL)
+        bulletPointsGridSizer.Layout()
+        verticalBoxes.Add(bulletPointsGridSizer, 0, wx.ALL, 5)
 
         hButtonsBox = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -1070,7 +1068,7 @@ class CalibrationInformationPanel(wx.Panel):
         self.continueButton = wx.Button(self, wx.ID_ANY, u"Understood", wx.DefaultPosition, wx.DefaultSize, 0)
         hButtonsBox.Add(self.continueButton, 0, wx.ALL, 5)
 
-        verticalBoxes.Add(hButtonsBox, 0, wx.EXPAND)
+        verticalBoxes.Add(hButtonsBox, 0, wx.EXPAND | wx.CENTER)
 
         self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
         self.continueButton.Bind(wx.EVT_BUTTON, self.onContinue)
@@ -1088,6 +1086,49 @@ class CalibrationInformationPanel(wx.Panel):
         self.controller.showPanel(self, ChooseCalibrationPanel)
 
 
+class VideoCalibrationTab(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+
+        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
+
+        self.videoInfoLabel = wx.StaticText(self, wx.ID_ANY,
+                                            u"You are expected to play the displayed song in the speed of the moving "
+                                            u"blue marker. Whenever this marker hits a note marked in red, "
+                                            u"you are expected to perform the back-and-forth wiggle motion, "
+                                            u"using the thumb, for as long as this red note is playing.",
+                                            wx.DefaultPosition,
+                                            wx.DefaultSize)  # TextCtrl before, style=wx.TE_MULTILINE | wx.TE_READONLY)
+        self.videoInfoLabel.Wrap(500)
+        verticalBoxes.Add(self.videoInfoLabel, 0, wx.ALL, 5)
+
+        self.SetSizerAndFit(verticalBoxes)
+        self.Centre()
+        self.Layout()
+
+
+class CustomCalibrationTab(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+
+        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
+
+        self.customInfoLabel = wx.StaticText(self, wx.ID_ANY,
+                                             u"You are free to calibrate yourself, by playing whatever and tracking "
+                                             u"your performance of the back-and-forth wiggle motion by the thumb using "
+                                             u"the \"Mod:on\" and \"Mod:off\" button. With starting the wiggle motion "
+                                             u"press \"Mod:on\" and with ending it press \"Mod:off\" (it is the same "
+                                             u"button that changes the label after being pressed).",
+                                             wx.DefaultPosition,
+                                             wx.DefaultSize)  # , style=wx.TE_MULTILINE | wx.TE_READONLY)
+        self.customInfoLabel.Wrap(500)
+        verticalBoxes.Add(self.customInfoLabel, 0, wx.ALL, 5)
+
+        self.SetSizerAndFit(verticalBoxes)
+        self.Centre()
+        self.Layout()
+
+
 ###########################################################################
 # Class AboutPanel
 ###########################################################################
@@ -1102,7 +1143,7 @@ class AboutPanel(wx.Panel):
         wx.Panel.__init__(self, parent)
         self.controller = controller
 
-        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        verticalBoxes = wx.BoxSizer(wx.VERTICAL)
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         teaserFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/figures_teaser.png'))
         image = wx.Image(teaserFile, wx.BITMAP_TYPE_ANY)
@@ -1110,38 +1151,40 @@ class AboutPanel(wx.Panel):
         png_embody = image.ConvertToBitmap()
         bitmap_embody = wx.StaticBitmap(self, -1, png_embody, (0, 0), (png_embody.GetWidth(), png_embody.GetHeight()))
         st_embody = wx.StaticText(self, -1, "Hit the Thumb Jack!")
-        font = wx.Font(60, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.BOLD)
+        font = wx.Font(50, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         st_embody.SetFont(font)
         st_embody.Wrap(300)
         hbox.Add(st_embody, flag=wx.ALIGN_CENTER_VERTICAL)
         hbox.Add(bitmap_embody, flag=wx.LEFT, border=60)
-        self.sizer.Add(hbox, flag=wx.LEFT | wx.TOP, border=20)
+        verticalBoxes.Add(hbox, flag=wx.LEFT | wx.TOP, border=20)
 
         st_embody_info = wx.StaticText(self, -1, embody_text)
-        font = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD)
+        font = wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         st_embody_info.SetFont(font)
-        self.sizer.Add(st_embody_info, flag=wx.LEFT | wx.TOP, border=20)
+        verticalBoxes.Add(st_embody_info, flag=wx.LEFT | wx.TOP, border=20)
 
         st_info = wx.StaticText(self, -1, aboutText)
-        font = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.FONTWEIGHT_NORMAL)
+        font = wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         st_info.SetFont(font)
-        self.sizer.Add(st_info, flag=wx.LEFT | wx.TOP, border=20, proportion=1)
+        verticalBoxes.Add(st_info, flag=wx.LEFT | wx.TOP, border=20, proportion=1)
+        verticalBoxes.Add((0, 10), 0, wx.EXPAND, 5)
 
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
         lmuFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/lmu.png'))
         png_lmu = wx.Image(lmuFile, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
         bitmap_lmu = wx.StaticBitmap(self, -1, png_lmu, (0, 0), (png_lmu.GetWidth(), png_lmu.GetHeight()))
         # png_amplify = wx.Image("./res/amplify.png", wx.BITMAP_TYPE_ANY).ConvertToBitmap()
-        # bitmap_amplify = wx.StaticBitmap(self, -1, png_amplify, (0, 0), (png_amplify.GetWidth(), png_amplify.GetHeight()))
+        # bitmap_amplify = wx.StaticBitmap(self, -1, png_amplify, (0, 0), (png_amplify.GetWidth(),
+        #                                  png_amplify.GetHeight()))
         hbox2.Add(bitmap_lmu)
         # hbox2.Add(bitmap_amplify, flag=wx.LEFT, border=50)
-        self.sizer.Add(hbox2, flag=wx.LEFT | wx.TOP | wx.BOTTOM, border=20)
+        verticalBoxes.Add(hbox2, flag=wx.LEFT | wx.TOP | wx.BOTTOM, border=20)
 
         self.backButton = wx.Button(self, wx.ID_ANY, "Back", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.sizer.Add(self.backButton, 0, wx.ALL | wx.CENTER, 5)
+        verticalBoxes.Add(self.backButton, 0, wx.ALL | wx.CENTER, 5)
         self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
 
-        self.SetSizerAndFit(self.sizer)
+        self.SetSizerAndFit(verticalBoxes)
         self.Centre()
         self.Layout()
 
