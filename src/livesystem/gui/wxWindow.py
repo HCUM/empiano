@@ -1154,17 +1154,17 @@ class AboutPanel(wx.Panel):
         st_embody.Wrap(300)
         hbox.Add(st_embody, flag=wx.ALIGN_CENTER_VERTICAL)
         hbox.Add(bitmap_embody, flag=wx.LEFT, border=60)
-        verticalBoxes.Add(hbox, flag=wx.LEFT | wx.TOP, border=20)
+        verticalBoxes.Add(hbox, flag=wx.TOP, border=20)#wx.LEFT | wx.TOP, border=20)
 
         st_embody_info = wx.StaticText(self, -1, embody_text)
         font = wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         st_embody_info.SetFont(font)
-        verticalBoxes.Add(st_embody_info, flag=wx.LEFT | wx.TOP, border=20)
+        verticalBoxes.Add(st_embody_info, flag=wx.TOP, border=20)#wx.LEFT | wx.TOP, border=20)
 
         st_info = wx.StaticText(self, -1, aboutText)
         font = wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         st_info.SetFont(font)
-        verticalBoxes.Add(st_info, flag=wx.LEFT | wx.TOP, border=20, proportion=1)
+        verticalBoxes.Add(st_info, flag=wx.TOP, border=20, proportion=1)#wx.LEFT | wx.TOP, border=20, proportion=1)
         #verticalBoxes.Add((0, 10), 0, wx.EXPAND, 5)
 
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
@@ -1176,7 +1176,7 @@ class AboutPanel(wx.Panel):
         #                                  png_amplify.GetHeight()))
         hbox2.Add(bitmap_lmu)
         # hbox2.Add(bitmap_amplify, flag=wx.LEFT, border=50)
-        verticalBoxes.Add(hbox2, flag=wx.LEFT | wx.TOP | wx.BOTTOM, border=20)
+        verticalBoxes.Add(hbox2, flag=wx.TOP, border=20)#wx.LEFT | wx.TOP | wx.BOTTOM, border=20)
 
         self.backButton = wx.Button(self, wx.ID_ANY, "Back", wx.DefaultPosition, wx.DefaultSize, 0)
         verticalBoxes.Add(self.backButton, 0, wx.ALL | wx.CENTER, 5)
