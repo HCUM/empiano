@@ -1,8 +1,10 @@
 # EMPiano: A System to Enable Expressive Pitch Control on the Piano Keyboard.
 
-This repository contains a system that, in combination with the correct hard- and software, offers sound modulation via muscular activity, captured by an electromyography device.
+This repository contains a system that, in combination with the correct hard- and software, offers sound modulation via 
+muscular activity, captured by an electromyography device.
 
-In short: the system is trained to recognize a performed finger gesture (wiggle motion of the thumb) and adds a pitch vibrato to the sound output.
+In short: the system is trained to recognize a performed finger gesture (wiggle motion of the thumb) and adds a pitch 
+vibrato to the sound output.
 
 [![System teaser|70%](./pics/figures_teaser_video.png)](http://www.jakob-karolus.de/publications/disfp6537-karolus20.mp4)
 
@@ -56,11 +58,11 @@ When using the EMBody toolkit, we attached the reference electrode close to the 
 
 
 ## Steps to Running the System
-1. Attach the electrodes to the piano player
+1. Attach the [electrodes](#Electrode Setup) to the piano player
 2. Start the [LSL-Stream](#LSL-Stream)
 3. Start this python program
 4. This program will find all available LSL-streams, from these you can choose one to connect to.
-5. Prepare music software
+5. Prepare [music software](#Waveform)
 6. Perform the calibration
 7. Ready to go!
 
@@ -78,7 +80,7 @@ Here it is also possible to reset and restart the custom calibration, in case of
 </p>
 
 ## Best Practices
-- 10 electrodes (including Ref und Gnd) around the upper forearm
+- 10 electrodes (including Ref und Gnd) around the [upper forearm](#Electrode Setup)
 - Best when using a medical EMG-/EEG-device
 - The **finger motion** that works best for our system is a back-and-forth wiggle motion of the **thumb** (cf. gif). Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well.
 - Use a sampling rate of at least 250Hz
@@ -99,16 +101,15 @@ The required LSL-Stream should hold the following information:
 - data-samples: ([channel 1, channel 2, ...], timestamp)
 
 ### MIDI
-- For sending the sound-modulation MIDI messages to the music software, a virtual MIDI cable is required:
-    - On **Windows**: Sometimes an inbuilt **virtual MIDI cable** is available,  
-    otherwise: use **loopMIDI** to create one yourself (http://www.tobias-erichsen.de/software/loopmidi.html).
-    - On **MacOS**: Usually there is an inbuilt virtual MIDI cable available: IAC driver
-    - Most of the times the library mido itself can be used to create a virtual MIDI cable, but it does not work when using Windows MultiMedia API.  
-    To open an output check the corresponding box in the Settings. 
-    - The name of your virtual MIDI cable can be changed in the Settings
+For sending MIDI messages from the program to the music software, a virtual MIDI cable is needed.  
+In general the mido-library is used to create one during the execution of the program.  
+However, this does **not** work together with the Windows MultiMedia API.
 
+If you are on Windows (with the Windows MultiMedia API), you can either use an inbuilt **virtual MIDI cable** (if that exists),
+otherwise use **loopMIDI** to create one yourself (http://www.tobias-erichsen.de/software/loopmidi.html).  
+Please adjust the name of the virtual MIDI cable to use the settings (gui).
 
-
+### Waveform
 
 ## Citing "Hit the Thumb Jack!"
 
