@@ -1,7 +1,7 @@
-from pylsl import ContinuousResolver, StreamInlet, resolve_byprop
-import storage.Constants as Constants
-from pubsub import pub
 import pylsl
+from pubsub import pub
+import storage.Constants as Constants
+from pylsl import ContinuousResolver, StreamInlet, resolve_byprop
 
 
 class StreamManager:

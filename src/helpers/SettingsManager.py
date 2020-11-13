@@ -1,6 +1,6 @@
-import storage.Constants as Constants
-import configparser
 import os
+import configparser
+import storage.Constants as Constants
 
 
 # Writes the settings of the user into a file

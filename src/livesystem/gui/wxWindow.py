@@ -596,7 +596,7 @@ class ChooseCalibrationPanel(wx.Panel):
 
     def onBackButton(self, event):
         event.Skip()
-        #self.controller.resetStream()
+        # self.controller.resetStream()
         self.controller.showPanel(self, CalibrationInformationPanel)
 
 
@@ -878,11 +878,11 @@ class StreamOverviewPanel(wx.Panel):
         # center buttons
         buttonWidths, _ = self.backButton.Size + self.checkStreamsButton.Size + self.connectButton.Size
         gridWidth, _ = self.grid.Size
-        hButtonsBox.Add(((gridWidth - buttonWidths)/2, 0), 0, wx.ALL, 5)
+        hButtonsBox.Add(((gridWidth - buttonWidths) / 2, 0), 0, wx.ALL, 5)
         hButtonsBox.Add(self.backButton, 0, wx.ALL, 10)
         hButtonsBox.Add(self.checkStreamsButton, 0, wx.ALL, 10)
         hButtonsBox.Add(self.connectButton, 0, wx.ALL, 10)
-        hButtonsBox.Add(((gridWidth - buttonWidths)/2, 0), 0, wx.ALL, 5)
+        hButtonsBox.Add(((gridWidth - buttonWidths) / 2, 0), 0, wx.ALL, 5)
 
         self.vbox.Add(hButtonsBox, 0, wx.EXPAND | wx.ALL, 5)
         self.SetSizerAndFit(self.vbox)
@@ -923,14 +923,15 @@ class StreamOverviewPanel(wx.Panel):
 
     # Gets all the information of the selected rows and calls the connect method
     def connectToStreams(self, event):
-        event.Skip()
-        streams = []
-        for i in self.grid.GetSelectedRows():
-            streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3)),
-                            int(self.grid.GetCellValue(i, 2))))
-        if streams:
-            threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
-            self.controller.connectToLSLStream(streams)
+        # event.Skip()
+        # streams = []
+        # for i in self.grid.GetSelectedRows():
+        #    streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3)),
+        #                    int(self.grid.GetCellValue(i, 2))))
+        # if streams:
+        #    threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
+        #    self.controller.connectToLSLStream(streams)
+        self.controller.showPanel(self, CalibrationInformationPanel)
 
     # Waits for the pub-message to see if the connection was successful
     # Pub-message sent in StreamManager.connectStreams
@@ -1156,12 +1157,12 @@ class AboutPanel(wx.Panel):
         png_embody = image.ConvertToBitmap()
         bitmap_embody = wx.StaticBitmap(self, -1, png_embody, (0, 0), (png_embody.GetWidth(), png_embody.GetHeight()))
         st_embody = wx.StaticText(self, -1, "Hit the Thumb Jack!")
-        font = wx.Font(50, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+        font = wx.Font(60, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         st_embody.SetFont(font)
         st_embody.Wrap(300)
         hbox.Add(st_embody, flag=wx.ALIGN_CENTER_VERTICAL)
-        hbox.Add(bitmap_embody, flag=wx.LEFT, border=60)
-        verticalBoxes.Add(hbox, flag=wx.TOP, border=20)
+        hbox.Add(bitmap_embody, flag=wx.LEFT, border=100)
+        verticalBoxes.Add(hbox, flag=wx.TOP, border=40)
 
         st_embody_info = wx.StaticText(self, -1, embody_text)
         font = wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
@@ -1175,17 +1176,29 @@ class AboutPanel(wx.Panel):
 
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
         lmuFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/lmu.png'))
-        png_lmu = wx.Image(lmuFile, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        image = wx.Image(lmuFile, wx.BITMAP_TYPE_ANY)
+        image.Rescale(150, 70, wx.IMAGE_QUALITY_HIGH)
+        png_lmu = image.ConvertToBitmap()
         bitmap_lmu = wx.StaticBitmap(self, -1, png_lmu, (0, 0), (png_lmu.GetWidth(), png_lmu.GetHeight()))
-        # png_amplify = wx.Image("./res/amplify.png", wx.BITMAP_TYPE_ANY).ConvertToBitmap()
-        # bitmap_amplify = wx.StaticBitmap(self, -1, png_amplify, (0, 0), (png_amplify.GetWidth(),
-        #                                  png_amplify.GetHeight()))
+        utrechtFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/utrecht.png'))
+        image = wx.Image(utrechtFile, wx.BITMAP_TYPE_ANY)
+        image.Rescale(250, 70, wx.IMAGE_QUALITY_HIGH)
+        png_utrecht = image.ConvertToBitmap()
+        bitmap_utrecht = wx.StaticBitmap(self, -1, png_utrecht, (0, 0), (png_lmu.GetWidth(), png_lmu.GetHeight()))#(png_utrecht.GetWidth(),
+                                                                         #png_utrecht.GetHeight()))
+        amplifyFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/amplify.png'))
+        image = wx.Image(amplifyFile, wx.BITMAP_TYPE_ANY)
+        image.Rescale(330, 70, wx.IMAGE_QUALITY_HIGH)
+        png_amplify = image.ConvertToBitmap()
+        bitmap_amplify = wx.StaticBitmap(self, -1, png_amplify, (0, 0), (png_amplify.GetWidth(),
+                                                                         png_amplify.GetHeight()))
         hbox2.Add(bitmap_lmu)
-        # hbox2.Add(bitmap_amplify, flag=wx.LEFT, border=50)
-        verticalBoxes.Add(hbox2, flag=wx.TOP, border=20)
+        hbox2.Add(bitmap_utrecht, flag=wx.LEFT, border=10)
+        hbox2.Add(bitmap_amplify, flag=wx.LEFT, border=10)
+        verticalBoxes.Add(hbox2, flag=wx.TOP, border=40)
 
         self.backButton = wx.Button(self, wx.ID_ANY, "Back", wx.DefaultPosition, wx.DefaultSize, 0)
-        verticalBoxes.Add(self.backButton, 0, wx.ALL | wx.CENTER, 5)
+        verticalBoxes.Add(self.backButton, 0, wx.ALL | wx.CENTER, 30)
         self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
 
         self.SetSizerAndFit(verticalBoxes)

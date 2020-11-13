@@ -24,8 +24,25 @@ For example Waveform 11 (https://www.tracktion.com/products/waveform-free), toge
 
 ## Installation
 
-All required packages can be found and installed using the Pipfile.  
-The source code itself can be found in the folder "src".
+The easiest way to run this project, is to install pipenv on your computer, for example by executing '''pip3 install pipenv'''. 
+Now clone this project and open it in your terminal. With the command '''pipenv install''' all the requirements stated in the Pipfile are installed.
+And ready to go!
+
+In case you do not want to use the pipenv, you will need to install the following libraries:
+   - numpy
+   - matplotlib
+   - mne
+   - scikit-learn
+   - pylsl
+   - scipy
+   - datetime
+   - pygame (version: 2.0.0.dev10)
+   - pandas
+   - mido
+   - python-rtmidi
+   - wxpython
+   - pypubsub
+
 
 ## Setup
 
@@ -46,9 +63,9 @@ When using the EMBody toolkit, we attached the reference electrode close to the 
 
 ## Steps to Running the System
 1. Attach the electrodes to the piano player
-2. Start the LSL-stream
+2. Start the [heading](#LSL-Stream)
 3. Start this python program
-4. This program will find all available LSL-streams, from which you can choose one to connect to.
+4. This program will find all available LSL-streams, from these you can choose one to connect to.
 5. Prepare music software
 6. Perform the calibration
 7. Ready to go!
@@ -67,6 +84,7 @@ Here it is also possible to reset and restart the custom calibration, in case of
 </p>
 
 ## Additional Information
+###LSL-Stream
 - Our system requires the data-samples, sent through the LSL-stream, to be formatted as followed:  
 ([channel 1, channel 2, ...], timestamp)
 - For sending the sound-modulation MIDI messages to the music software, a virtual MIDI cable is required:
