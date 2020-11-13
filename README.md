@@ -63,7 +63,7 @@ When using the EMBody toolkit, we attached the reference electrode close to the 
 
 ## Steps to Running the System
 1. Attach the electrodes to the piano player
-2. Start the [heading](#LSL-Stream)
+2. Start the [LSL-Stream](#LSL-Stream)
 3. Start this python program
 4. This program will find all available LSL-streams, from these you can choose one to connect to.
 5. Prepare music software
