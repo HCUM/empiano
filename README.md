@@ -11,11 +11,12 @@ In short: the system is trained to recognize a performed finger gesture (wiggle 
 - **Electrodes** plus **Amplifier** to capture the muscle activity.  
 We used the LiveAmp EEG recorder from "Brain Products" (https://www.brainproducts.com/productdetails.php?id=63), to which eight plus one ground and one reference active surface electrodes were connected.  
 The recording software is only available on Windows for us.  
-Another electrode set we tested was the **EMBody toolkit** (https://github.com/HCUM/embody). We used it with two channels.
+Another set of electrodes we tested was the **EMBody toolkit** (https://github.com/HCUM/embody). We used it with two channels.
 - **Lab Streaming Layer (LSL) framework** (https://github.com/sccn/labstreaminglayer)  
 The RDA Connector can be used to tap the BrainVision data. 
 - **Music software**, which is able to receive and play back MIDI.  
 For example Waveform 11 (https://www.tracktion.com/products/waveform-free), together with the Piano-One instrument (https://neovst.com/piano-one/)
+- [**Virtual MIDI cable**](#MIDI), to send messages from the program to the music software.
 - **Electric-Piano** 
  We used a MIDI-to-USB cable to play the sound through the music software.
 - We additionally used **Speakers**, for the purpose of providing a better sound
@@ -82,11 +83,20 @@ Here it is also possible to reset and restart the custom calibration, in case of
 - The **finger motion** that works best for our system is a back-and-forth wiggle motion of the **thumb** (cf. gif). Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well.
 - Use a sampling rate of at least 250Hz
 
+Not using these practices does not mean the program won't work, it just might not work as smooth or as accurate.
+
 
 ## Additional Information
 ### LSL-Stream
-- Our system requires the data-samples, sent through the LSL-stream, to be formatted as followed:  
-([channel 1, channel 2, ...], timestamp)
+The required LSL-Stream should hold the following information:
+- its ID
+- name of the stream
+- type (can be either EMG or EEG)
+- amount of channels (2-8)
+- the sampling rate
+- format of the data (should be Float32)
+- name of the computer the stream is hosted on
+- data-samples: ([channel 1, channel 2, ...], timestamp)
 
 ### MIDI
 - For sending the sound-modulation MIDI messages to the music software, a virtual MIDI cable is required:
