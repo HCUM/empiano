@@ -84,7 +84,7 @@ Here it is also possible to reset and restart the custom calibration, in case of
 </p>
 
 ## Additional Information
-###LSL-Stream
+### LSL-Stream
 - Our system requires the data-samples, sent through the LSL-stream, to be formatted as followed:  
 ([channel 1, channel 2, ...], timestamp)
 - For sending the sound-modulation MIDI messages to the music software, a virtual MIDI cable is required:
