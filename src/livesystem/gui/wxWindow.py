@@ -923,15 +923,15 @@ class StreamOverviewPanel(wx.Panel):
 
     # Gets all the information of the selected rows and calls the connect method
     def connectToStreams(self, event):
-        # event.Skip()
-        # streams = []
-        # for i in self.grid.GetSelectedRows():
-        #    streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3)),
-        #                    int(self.grid.GetCellValue(i, 2))))
-        # if streams:
-        #    threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
-        #    self.controller.connectToLSLStream(streams)
-        self.controller.showPanel(self, CalibrationInformationPanel)
+        event.Skip()
+        streams = []
+        for i in self.grid.GetSelectedRows():
+           streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3)),
+                           int(self.grid.GetCellValue(i, 2))))
+        if streams:
+           threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
+           self.controller.connectToLSLStream(streams)
+        #self.controller.showPanel(self, CalibrationInformationPanel)
 
     # Waits for the pub-message to see if the connection was successful
     # Pub-message sent in StreamManager.connectStreams
@@ -1184,8 +1184,7 @@ class AboutPanel(wx.Panel):
         image = wx.Image(utrechtFile, wx.BITMAP_TYPE_ANY)
         image.Rescale(250, 70, wx.IMAGE_QUALITY_HIGH)
         png_utrecht = image.ConvertToBitmap()
-        bitmap_utrecht = wx.StaticBitmap(self, -1, png_utrecht, (0, 0), (png_lmu.GetWidth(), png_lmu.GetHeight()))#(png_utrecht.GetWidth(),
-                                                                         #png_utrecht.GetHeight()))
+        bitmap_utrecht = wx.StaticBitmap(self, -1, png_utrecht, (0, 0), (png_lmu.GetWidth(), png_lmu.GetHeight()))
         amplifyFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/amplify.png'))
         image = wx.Image(amplifyFile, wx.BITMAP_TYPE_ANY)
         image.Rescale(330, 70, wx.IMAGE_QUALITY_HIGH)

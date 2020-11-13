@@ -31,15 +31,10 @@ And ready to go!
 In case you do not want to use the pipenv, you will need to install the following libraries:
    - numpy
    - matplotlib
-   - mne
    - scikit-learn
    - pylsl
    - scipy
-   - datetime
-   - pygame (version: 2.0.0.dev10)
-   - pandas
    - mido
-   - python-rtmidi
    - wxpython
    - pypubsub
 
@@ -83,10 +78,19 @@ Here it is also possible to reset and restart the custom calibration, in case of
     <img src="./pics/wiggle_motion.gif" width="600" /> 
 </p>
 
+## Best Practices
+- 10 electrodes (including Ref und Gnd) around the upper forearm
+- Best when using a medical EMG-/EEG-device
+- The **finger motion** that works best for our system is a back-and-forth wiggle motion of the **thumb** (cf. gif). Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well.
+- Use a sampling rate of at least 250Hz
+
+
 ## Additional Information
 ### LSL-Stream
 - Our system requires the data-samples, sent through the LSL-stream, to be formatted as followed:  
 ([channel 1, channel 2, ...], timestamp)
+
+### MIDI
 - For sending the sound-modulation MIDI messages to the music software, a virtual MIDI cable is required:
     - On **Windows**: Sometimes an inbuilt **virtual MIDI cable** is available,  
     otherwise: use **loopMIDI** to create one yourself (http://www.tobias-erichsen.de/software/loopmidi.html).
@@ -94,7 +98,7 @@ Here it is also possible to reset and restart the custom calibration, in case of
     - Most of the times the library mido itself can be used to create a virtual MIDI cable, but it does not work when using Windows MultiMedia API.  
     To open an output check the corresponding box in the Settings. 
     - The name of your virtual MIDI cable can be changed in the Settings
-- The **finger motion** that works best for our system is a back-and-forth wiggle motion of the thumb (cf. gif). Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well.
+
 
 
 
