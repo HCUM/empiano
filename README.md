@@ -4,9 +4,8 @@ This repository contains a system that, in combination with the correct hard- an
 
 In short: the system is trained to recognize a performed finger gesture (wiggle motion of the thumb) and adds a pitch vibrato to the sound output.
 
-[![System teaser](./pics/figures_teaser_video.png)](http://www.jakob-karolus.de/publications/disfp6537-karolus20.mp4)
 <p align="center">
-    <img src="./pics/figures_teaser.png" alt="system_teaser" width="600"/>
+    [![System teaser](./pics/figures_teaser_video.png)](http://www.jakob-karolus.de/publications/disfp6537-karolus20.mp4)
 </p>
 
 ##  Requirements
