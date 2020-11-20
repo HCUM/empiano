@@ -25,8 +25,11 @@ The RDA Connector can be used to tap the BrainVision data.
 
 ## Installation
 
-The easiest way to run this project, is to install pipenv on your computer, for example by executing '''pip3 install pipenv'''. 
-Now clone this project and open it in your terminal. With the command '''pipenv install''' all the requirements stated in the Pipfile are installed.
+The easiest way to run this project, is to install [pipenv](https://pypi.org/project/pipenv/) on your computer, 
+for example by executing ``pip install pipenv``.
+Make sure, that you use Python 3. 
+Now clone this project and open it in your terminal. With the command ``pipenv install`` all the requirements stated 
+in the Pipfile are installed.
 And ready to go!
 
 In case you do not want to use the pipenv, you will need to install the following libraries:
@@ -80,7 +83,7 @@ Here it is also possible to reset and restart the custom calibration, in case of
 </p>
 
 ## Best Practices
-- 10 electrodes (including Ref und Gnd) around the upper forearm (cf. [Electrode Setup](#Electrode Setup))
+- 10 electrodes (including Ref und Gnd) around the upper forearm (cf. [Electrode Setup](#Setup))
 - Best when using a medical EMG-/EEG-device
 - The **finger motion** that works best for our system is a back-and-forth wiggle motion of the **thumb** 
 (cf. gif). Feel free to try a sideways wiggle motion or other fingers as well, 
