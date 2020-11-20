@@ -1221,12 +1221,12 @@ class AboutPanel(wx.Panel):
         png_embody = image.ConvertToBitmap()
         bitmap_embody = wx.StaticBitmap(self, -1, png_embody, (0, 0), (png_embody.GetWidth(), png_embody.GetHeight()))
         st_embody = wx.StaticText(self, -1, "Hit the Thumb Jack!")
-        font = wx.Font(60, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+        font = wx.Font(50, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         st_embody.SetFont(font)
         st_embody.Wrap(300)
         hbox.Add(st_embody, flag=wx.ALIGN_CENTER_VERTICAL)
         hbox.Add(bitmap_embody, flag=wx.LEFT, border=100)
-        verticalBoxes.Add(hbox, flag=wx.TOP, border=40)
+        verticalBoxes.Add(hbox, flag=wx.TOP, border=20)
 
         st_embody_info = wx.StaticText(self, -1, embody_text)
         font = wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
@@ -1248,7 +1248,8 @@ class AboutPanel(wx.Panel):
         image = wx.Image(utrechtFile, wx.BITMAP_TYPE_ANY)
         image.Rescale(250, 70, wx.IMAGE_QUALITY_HIGH)
         png_utrecht = image.ConvertToBitmap()
-        bitmap_utrecht = wx.StaticBitmap(self, -1, png_utrecht, (0, 0), (png_lmu.GetWidth(), png_lmu.GetHeight()))
+        bitmap_utrecht = wx.StaticBitmap(self, -1, png_utrecht, (0, 0),
+                                         (png_utrecht.GetWidth(), png_utrecht.GetHeight()))
         amplifyFile = os.path.normpath(os.path.join(os.getcwd(), '..', 'pics/amplify.png'))
         image = wx.Image(amplifyFile, wx.BITMAP_TYPE_ANY)
         image.Rescale(330, 70, wx.IMAGE_QUALITY_HIGH)
@@ -1258,10 +1259,10 @@ class AboutPanel(wx.Panel):
         hbox2.Add(bitmap_lmu)
         hbox2.Add(bitmap_utrecht, flag=wx.LEFT, border=10)
         hbox2.Add(bitmap_amplify, flag=wx.LEFT, border=10)
-        verticalBoxes.Add(hbox2, flag=wx.TOP, border=40)
+        verticalBoxes.Add(hbox2, flag=wx.TOP, border=30)
 
         self.backButton = wx.Button(self, wx.ID_ANY, "Back", wx.DefaultPosition, wx.DefaultSize, 0)
-        verticalBoxes.Add(self.backButton, 0, wx.ALL | wx.CENTER, 30)
+        verticalBoxes.Add(self.backButton, 0, wx.TOP | wx.CENTER, 40)
         self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
 
         self.SetSizerAndFit(verticalBoxes)
