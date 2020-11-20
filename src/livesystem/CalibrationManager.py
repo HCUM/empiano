@@ -73,10 +73,7 @@ class CalibrationManager:
 
         augData, nonAugData = mlDataManager.splitRecordedSample(preprocessedStreamData, self.mods)
         X_train, y_train = mlDataManager.createMLData(augData, nonAugData)
-        result = self.trainSVM(X_train, y_train)
-        if result:
-            return result
-        return None
+        return self.trainSVM(X_train, y_train)
 
     # Performs a 10-fold cross validation and trains the SVM
     def trainSVM(self, X_train, y_train):

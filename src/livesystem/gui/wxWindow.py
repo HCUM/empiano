@@ -773,11 +773,15 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.finishButton.Enable(False)
         hButtonsBox.Add(self.finishButton, 0, wx.ALL, 5)
 
+        self.backButton = wx.Button(self, wx.ID_ANY, u"Back", wx.DefaultPosition, wx.DefaultSize, 0)
+        hButtonsBox.Add(self.backButton, 0, wx.ALL, 5)
+
         verticalBoxes.Add(hButtonsBox, 0, wx.EXPAND)
 
         self.startButton.Bind(wx.EVT_BUTTON, self.startButtonPressed)
         self.resetButton.Bind(wx.EVT_BUTTON, self.resetButtonPressed)
         self.finishButton.Bind(wx.EVT_BUTTON, self.finishButtonPressed)
+        self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
 
         self.SetSizerAndFit(verticalBoxes)
         self.Centre()
@@ -799,6 +803,7 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.showVideo()
         self.startButton.Enable(False)
         self.resetButton.Enable(True)
+        self.backButton.Enable(False)
         self.controller.startCalibration()
         self.startVideo()
         self.caliThread = threading.Thread(target=self.trackCalibration)
@@ -836,21 +841,27 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.startButton.Enable(True)
         self.finishButton.Enable(False)
         self.resetButton.Enable(False)
+        self.backButton.Enable(True)
         self.showVideoPreview()
 
     def finishButtonPressed(self, event):
         event.Skip()
         self.caliThread.join()
-        result = self.controller.endCalibration(lengthMods=(len(self.modTimes) / 2))
-        if not result:
+        error = self.controller.endCalibration(lengthMods=(len(self.modTimes) / 2))
+        if not error:
             self.controller.showPanel(self, LiveSystemPanel, True)
             self.resetPanel()
         else:
-            dial = wx.MessageDialog(self, str(result),
+            dial = wx.MessageDialog(self, str(error),
                                     "Error", wx.OK | wx.STAY_ON_TOP | wx.CENTRE)
             dial.ShowModal()
             self.resetPanel()
             self.controller.showPanel(self, ChooseCalibrationPanel)
+
+    def onBack(self, event):
+        event.Skip()
+        self.resetPanel()
+        self.controller.showPanel(self, ChooseCalibrationPanel)
 
     def resetPanel(self):
         self.video.Stop()

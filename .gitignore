@@ -132,3 +132,4 @@ dmypy.json
 .idea/
 *.ini
 .ini
+src/storage/settings.ini
