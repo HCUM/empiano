@@ -25,7 +25,8 @@ The RDA Connector can be used to tap the BrainVision data.
 
 ## Installation
 
-The easiest way to run this project, is to install [pipenv](https://pypi.org/project/pipenv/) on your computer, 
+The easiest way to run this project, is to install <a href="https://pypi.org/project/pipenv/" target="_blank">pipenv</a> 
+ on your computer, 
 for example by executing ``pip install pipenv``.
 Make sure, that you use Python 3. 
 Now clone this project and open it in your terminal. With the command ``pipenv install`` all the requirements stated 
