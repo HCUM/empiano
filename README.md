@@ -41,7 +41,7 @@ In case you do not want to use the pipenv, you will need to install the followin
    - scipy
    - mido
    - wxpython
-   - pypubsub
+   - pubsub
 
 
 ## Setup
@@ -90,6 +90,7 @@ Here it is also possible to reset and restart the custom calibration, in case of
 (cf. gif). Feel free to try a sideways wiggle motion or other fingers as well, 
 but know that these might not work as well.
 - Use a sampling rate of at least 250Hz
+- Use a window size of 0.15s for less latency, or for better classification try to use a window size of 0.25s
 
 Not using these practices does not mean the program won't work, it just might not work as smooth or as accurate.
 
@@ -117,7 +118,19 @@ otherwise use [**loopMIDI**](http://www.tobias-erichsen.de/software/loopmidi.htm
 Please adjust the name of the virtual MIDI cable to use the settings (gui).
 
 ### EMBody
-https://github.com/HCUM/embody
+EMBody is a data-centric toolkit for rapid prototyping and 
+experimentation of EMG-based interfaces.  
+
+The toolkit consists of a hardware prototype that can record electrical potentials (e.g. via surface electrodes), 
+convert these in a digital representation, and stream them over an available WiFi connection. 
+This is complemented by an accompanying software application, that receives the signal and 
+provides an interpretation of the data.  
+
+[This repository](https://github.com/HCUM/embody) contains all the necessary resources to build the system from scratch.
+
+<p align="center">
+    <img src="./pics/embody_total.png" alt="embody" width="500"/>
+</p>
 
 ### Waveform
 We used [Waveform 11](https://www.tracktion.com/products/waveform-free), together with the 
