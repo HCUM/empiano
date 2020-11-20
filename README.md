@@ -15,11 +15,9 @@ We used the [LiveAmp EEG recorder](https://www.brainproducts.com/productdetails.
 which eight plus one ground and one reference active surface electrodes were connected.  
 The recording software is only available on Windows for us.  
 Another set of electrodes we tested was the [**EMBody toolkit**](#EMBody). We used it with two channels.
-- [**Lab Streaming Layer (LSL) framework**](https://github.com/sccn/labstreaminglayer)  
+- [**Lab Streaming Layer (LSL) framework**](#LSL-Stream)  
 The RDA Connector can be used to tap the BrainVision data. 
-- **Music software**, which is able to receive and play back MIDI.  
-For example [Waveform 11](https://www.tracktion.com/products/waveform-free), together with the 
-[Piano-One](https://neovst.com/piano-one/) instrument.
+- **Music software**, which is able to receive and play back MIDI, for example [Waveform](#Waveform)
 - [**Virtual MIDI cable**](#MIDI), to send messages from the program to the music software.
 - **Electric-Piano** 
  We used a MIDI-to-USB cable to play the sound through the music software.
@@ -60,7 +58,7 @@ When using the EMBody toolkit, we attached the reference electrode close to the 
 
 
 ## Steps to Running the System
-1. Attach the [electrodes](#Electrode Setup) to the piano player
+1. Attach the [electrodes](#Setup) to the piano player
 2. Start the [LSL-Stream](#LSL-Stream)
 3. Start this python program
 4. This program will find all available LSL-streams, from these you can choose one to connect to.
@@ -85,7 +83,7 @@ Here it is also possible to reset and restart the custom calibration, in case of
 - 10 electrodes (including Ref und Gnd) around the upper forearm (cf. [Electrode Setup](#Electrode Setup))
 - Best when using a medical EMG-/EEG-device
 - The **finger motion** that works best for our system is a back-and-forth wiggle motion of the **thumb** 
-(cf. [gif](#System teaser)). Feel free to try a sideways wiggle motion or other fingers as well, 
+(cf. gif). Feel free to try a sideways wiggle motion or other fingers as well, 
 but know that these might not work as well.
 - Use a sampling rate of at least 250Hz
 
@@ -94,6 +92,7 @@ Not using these practices does not mean the program won't work, it just might no
 
 ## Additional Information
 ### LSL-Stream
+You can find the library [here](https://github.com/sccn/labstreaminglayer).  
 The required LSL-Stream should hold the following information:
 - its ID
 - name of the stream
@@ -117,6 +116,8 @@ Please adjust the name of the virtual MIDI cable to use the settings (gui).
 https://github.com/HCUM/embody
 
 ### Waveform
+We used [Waveform 11](https://www.tracktion.com/products/waveform-free), together with the 
+[Piano-One](https://neovst.com/piano-one/) instrument.
 
 ## Citing "Hit the Thumb Jack!"
 
