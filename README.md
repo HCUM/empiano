@@ -11,13 +11,15 @@ vibrato to the sound output.
 ##  Requirements
 
 - **Electrodes** plus **Amplifier** to capture the muscle activity.  
-We used the LiveAmp EEG recorder from "Brain Products" (https://www.brainproducts.com/productdetails.php?id=63), to which eight plus one ground and one reference active surface electrodes were connected.  
+We used the [LiveAmp EEG recorder](https://www.brainproducts.com/productdetails.php?id=63) from "Brain Products", to 
+which eight plus one ground and one reference active surface electrodes were connected.  
 The recording software is only available on Windows for us.  
-Another set of electrodes we tested was the **EMBody toolkit** (https://github.com/HCUM/embody). We used it with two channels.
-- **Lab Streaming Layer (LSL) framework** (https://github.com/sccn/labstreaminglayer)  
+Another set of electrodes we tested was the [**EMBody toolkit**](#EMBody). We used it with two channels.
+- [**Lab Streaming Layer (LSL) framework**](https://github.com/sccn/labstreaminglayer)  
 The RDA Connector can be used to tap the BrainVision data. 
 - **Music software**, which is able to receive and play back MIDI.  
-For example Waveform 11 (https://www.tracktion.com/products/waveform-free), together with the Piano-One instrument (https://neovst.com/piano-one/)
+For example [Waveform 11](https://www.tracktion.com/products/waveform-free), together with the 
+[Piano-One](https://neovst.com/piano-one/) instrument.
 - [**Virtual MIDI cable**](#MIDI), to send messages from the program to the music software.
 - **Electric-Piano** 
  We used a MIDI-to-USB cable to play the sound through the music software.
@@ -80,9 +82,11 @@ Here it is also possible to reset and restart the custom calibration, in case of
 </p>
 
 ## Best Practices
-- 10 electrodes (including Ref und Gnd) around the [upper forearm](#Electrode Setup)
+- 10 electrodes (including Ref und Gnd) around the upper forearm (cf. [Electrode Setup](#Electrode Setup))
 - Best when using a medical EMG-/EEG-device
-- The **finger motion** that works best for our system is a back-and-forth wiggle motion of the **thumb** (cf. gif). Feel free to try a sideways wiggle motion or other fingers as well, but know that these might not work as well.
+- The **finger motion** that works best for our system is a back-and-forth wiggle motion of the **thumb** 
+(cf. [gif](#System teaser)). Feel free to try a sideways wiggle motion or other fingers as well, 
+but know that these might not work as well.
 - Use a sampling rate of at least 250Hz
 
 Not using these practices does not mean the program won't work, it just might not work as smooth or as accurate.
@@ -106,8 +110,11 @@ In general the mido-library is used to create one during the execution of the pr
 However, this does **not** work together with the Windows MultiMedia API.
 
 If you are on Windows (with the Windows MultiMedia API), you can either use an inbuilt **virtual MIDI cable** (if that exists),
-otherwise use **loopMIDI** to create one yourself (http://www.tobias-erichsen.de/software/loopmidi.html).  
+otherwise use [**loopMIDI**](http://www.tobias-erichsen.de/software/loopmidi.html) to create one yourself.  
 Please adjust the name of the virtual MIDI cable to use the settings (gui).
+
+### EMBody
+https://github.com/HCUM/embody
 
 ### Waveform
 
