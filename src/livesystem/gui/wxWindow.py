@@ -620,8 +620,10 @@ class CustomCalibrationPanel(wx.Panel):
     def __init__(self, parent, controller):
         wx.Panel.__init__(self, parent)
 
+        self.parent = parent
+
         self.controller = controller
-        if parent.isWindows:
+        if self.parent.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
 
         verticalBoxes = wx.BoxSizer(wx.VERTICAL)
@@ -672,11 +674,13 @@ class CustomCalibrationPanel(wx.Panel):
             self.modTrackButton.SetLabel("Mod:On")
             self.modon = False
             self.calibrationButton.Enable(True)
+            self.parent.bar.SetStatusText("Calibrating...", 0)
         else:
             self.controller.startModulation()
             self.modTrackButton.SetLabel("Mod:Off")
             self.modon = True
             self.calibrationButton.Enable(False)
+            self.parent.bar.SetStatusText("Tracking modulation...", 0)
 
     def calibrationButtonPressed(self, event):
         event.Skip()
@@ -687,13 +691,26 @@ class CustomCalibrationPanel(wx.Panel):
             self.resetButton.Enable(True)
             self.backButton.Enable(False)
             self.modTrackButton.Enable(True)
+            self.parent.bar.SetStatusText("Calibrating...", 0)
         else:
-            self.controller.endCalibration()
-            self.controller.showPanel(self, LiveSystemPanel, True)
-            self.calibrationButton.SetLabel("Start")
-            self.calibrationButton.Enable(True)
-            self.resetButton.Enable(False)
-            self.modTrackButton.Enable(False)
+            error = self.controller.endCalibration()
+            if not error:
+                self.controller.showPanel(self, LiveSystemPanel, True)
+                self.resetPanel()
+                self.parent.bar.SetStatusText("Calibration successful", 0)
+            else:
+                dial = wx.MessageDialog(self, str(error),
+                                        "Error", wx.OK | wx.STAY_ON_TOP | wx.CENTRE)
+                dial.ShowModal()
+                self.resetPanel()
+                self.controller.showPanel(self, ChooseCalibrationPanel)
+                self.parent.bar.SetStatusText("Calibration failed", 0)
+
+    def resetPanel(self):
+        self.calibrationButton.SetLabel("Start")
+        self.calibrationButton.Enable(True)
+        self.resetButton.Enable(False)
+        self.modTrackButton.Enable(False)
 
     def resetCalibration(self, event):
         event.Skip()
@@ -705,10 +722,12 @@ class CustomCalibrationPanel(wx.Panel):
         self.resetButton.Enable(False)
         self.backButton.Enable(True)
         self.modon = False
+        self.parent.bar.SetStatusText("Calibration reset", 0)
 
     def onBack(self, event):
         event.Skip()
         self.controller.showPanel(self, ChooseCalibrationPanel)
+        self.parent.bar.SetStatusText("Connected to stream", 0)
 
 
 ###########################################################################
@@ -718,8 +737,10 @@ class InbuiltCalibrationPanel(wx.Panel):
     def __init__(self, parent, controller):
         wx.Panel.__init__(self, parent)
 
+        self.parent = parent
+
         self.controller = controller
-        if parent.isWindows:
+        if self.parent.isWindows:
             self.SetBackgroundColour(backgroundColorWindows)
         self.modTimes = [6000, 8000, 14000, 16000, 22000, 24000, 30000, 32000,
                          38000, 40000, 46000, 48000, 54000, 56000, 62000, 64000]
@@ -808,6 +829,7 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.startVideo()
         self.caliThread = threading.Thread(target=self.trackCalibration)
         self.caliThread.start()
+        self.parent.bar.SetStatusText("Calibrating...", 0)
 
     def startVideo(self):
         self.video.Play()
@@ -821,8 +843,10 @@ class InbuiltCalibrationPanel(wx.Panel):
             if abs(currentSecond - self.modTimes[index]) <= 50:
                 if index % 2 == 0:
                     self.controller.startModulation()
+                    wx.CallAfter(self.parent.bar.SetStatusText, "Tracking modulation...", 0)
                 else:
                     self.controller.endModulation()
+                    wx.CallAfter(self.parent.bar.SetStatusText, "Calibrating...", 0)
                 index = index + 1
                 if index == len(self.modTimes):
                     break
@@ -843,6 +867,7 @@ class InbuiltCalibrationPanel(wx.Panel):
         self.resetButton.Enable(False)
         self.backButton.Enable(True)
         self.showVideoPreview()
+        self.parent.bar.SetStatusText("Calibration reset", 0)
 
     def finishButtonPressed(self, event):
         event.Skip()
@@ -851,17 +876,20 @@ class InbuiltCalibrationPanel(wx.Panel):
         if not error:
             self.controller.showPanel(self, LiveSystemPanel, True)
             self.resetPanel()
+            self.parent.bar.SetStatusText("Calibration successful", 0)
         else:
             dial = wx.MessageDialog(self, str(error),
                                     "Error", wx.OK | wx.STAY_ON_TOP | wx.CENTRE)
             dial.ShowModal()
             self.resetPanel()
             self.controller.showPanel(self, ChooseCalibrationPanel)
+            self.parent.bar.SetStatusText("Calibration failed", 0)
 
     def onBack(self, event):
         event.Skip()
         self.resetPanel()
         self.controller.showPanel(self, ChooseCalibrationPanel)
+        self.parent.bar.SetStatusText("Connected to stream, no calibration", 0)
 
     def resetPanel(self):
         self.video.Stop()
@@ -966,14 +994,13 @@ class StreamOverviewPanel(wx.Panel):
         if streams:
             threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
             self.controller.connectToLSLStream(streams)
-        # self.controller.showPanel(self, CalibrationInformationPanel)
 
     # Waits for the pub-message to see if the connection was successful
     # Pub-message sent in StreamManager.connectStreams
     def checkIfSuccessful(self, msg, settingsChannels, streamChannels):
         if msg == "CHANNELS_OKAY":
             wx.CallAfter(self.controller.showPanel, self, CalibrationInformationPanel)
-            self.parent.bar.SetStatusText("Connected to stream.", 0)
+            self.parent.bar.SetStatusText("Connected to stream", 0)
             self.parent.checkLatencyThread = threading.Thread(target=checkStreamLatency,
                                                               args=(self.controller, self.parent.bar))
             self.parent.checkLatencyThread.start()
@@ -1026,6 +1053,7 @@ class StreamOverviewPanel(wx.Panel):
     def onContinue(self):
         self.controller.setProgramPaused()
         self.controller.showPanel(self, CalibrationInformationPanel)
+        self.parent.bar.SetStatusText("Connected to stream.", 0)
         self.parent.statusThread = threading.Thread(target=checkStreamLatency,
                                                     args=(self.controller, self.parent.bar))
         self.parent.statusThread.start()
