@@ -139,6 +139,7 @@ class SettingsPanel(wx.Panel):
             self.SetBackgroundColour(backgroundColorWindows)
 
         self.verticalBoxes = wx.BoxSizer(wx.VERTICAL)
+        self.verticalBoxes.Add((0, 0), 1, wx.EXPAND | wx.ALL, 5)
 
         self.dataAcquisitionLabel = wx.StaticText(self, wx.ID_ANY, u"EMG - Data Acquisition", wx.DefaultPosition,
                                                   wx.DefaultSize, 0)
@@ -362,7 +363,7 @@ class SettingsPanel(wx.Panel):
         self.verticalBoxes.Add(self.setSettingsButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
         if self.parent.isWindows:
-            self.verticalBoxes.Add(self.warningLabel, 0, wx.ALL, 15)
+            self.verticalBoxes.Add(self.warningLabel, 0, wx.ALL, 10)
 
         self.SetSizerAndFit(self.verticalBoxes)
         self.Centre()
