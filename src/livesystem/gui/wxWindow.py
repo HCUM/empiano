@@ -140,8 +140,6 @@ class SettingsPanel(wx.Panel):
 
         self.verticalBoxes = wx.BoxSizer(wx.VERTICAL)
 
-        self.verticalBoxes.Add((0, 0), 1, wx.EXPAND, 5)
-
         self.dataAcquisitionLabel = wx.StaticText(self, wx.ID_ANY, u"EMG - Data Acquisition", wx.DefaultPosition,
                                                   wx.DefaultSize, 0)
         self.dataAcquisitionLabel.Wrap(-1)
@@ -188,8 +186,8 @@ class SettingsPanel(wx.Panel):
 
         flexGridPreprocessing.Add(self.lowCutoffBandpassLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.lowBandpassInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.lowerBoundCutOutFreq), wx.DefaultPosition,
-                                            inputSize, wx.TE_READONLY | wx.TE_RIGHT)
+        self.lowBandpassInput = IntCtrl(self, wx.ID_ANY, int(Constants.lowBandPassFreq), wx.DefaultPosition,
+                                        inputSize, wx.TE_RIGHT, min=1, allow_none=False)
         flexGridPreprocessing.Add(self.lowBandpassInput, 0, wx.ALL | wx.LEFT, 5)
 
         self.highCutoffBandpassLabel = wx.StaticText(self, wx.ID_ANY,
@@ -199,8 +197,8 @@ class SettingsPanel(wx.Panel):
 
         flexGridPreprocessing.Add(self.highCutoffBandpassLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.highBandpassInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.upperBoundCutOutFreq), wx.DefaultPosition,
-                                             inputSize, wx.TE_READONLY | wx.TE_RIGHT)
+        self.highBandpassInput = IntCtrl(self, wx.ID_ANY, int(Constants.highBandPassFreq), wx.DefaultPosition,
+                                         inputSize, wx.TE_RIGHT, min=1, allow_none=False)
         flexGridPreprocessing.Add(self.highBandpassInput, 0, wx.ALL, 5)
 
         self.lowCutoffBandstopLabel = wx.StaticText(self, wx.ID_ANY, u"Low Cutoff Frequency for Bandstop Filter:",
@@ -209,8 +207,8 @@ class SettingsPanel(wx.Panel):
 
         flexGridPreprocessing.Add(self.lowCutoffBandstopLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.lowBandstopInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.lowBandStopFreq), wx.DefaultPosition,
-                                            inputSize, wx.TE_READONLY | wx.TE_RIGHT)
+        self.lowBandstopInput = IntCtrl(self, wx.ID_ANY, int(Constants.lowBandStopFreq), wx.DefaultPosition,
+                                        inputSize, wx.TE_RIGHT, min=1, allow_none=False)
         flexGridPreprocessing.Add(self.lowBandstopInput, 0, wx.ALL, 5)
 
         self.highCutoffBandstopLabel = wx.StaticText(self, wx.ID_ANY, u"High Cutoff Frequency for Bandstop Filter:",
@@ -219,9 +217,9 @@ class SettingsPanel(wx.Panel):
 
         flexGridPreprocessing.Add(self.highCutoffBandstopLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.high_bandstop_input = wx.TextCtrl(self, wx.ID_ANY, str(Constants.highBandStopFreq), wx.DefaultPosition,
-                                               inputSize, wx.TE_READONLY | wx.TE_RIGHT)
-        flexGridPreprocessing.Add(self.high_bandstop_input, 0, wx.ALL, 5)
+        self.highBandstopInput = IntCtrl(self, wx.ID_ANY, int(Constants.highBandStopFreq), wx.DefaultPosition,
+                                         inputSize, wx.TE_RIGHT, min=1, allow_none=False)
+        flexGridPreprocessing.Add(self.highBandstopInput, 0, wx.ALL, 5)
 
         self.verticalBoxes.Add(flexGridPreprocessing, 0, wx.ALL | wx.EXPAND, 5)
 
@@ -246,22 +244,14 @@ class SettingsPanel(wx.Panel):
         self.windowSizeLabel.Wrap(-1)
         verticalBoxSizerSVMLeft.Add(self.windowSizeLabel, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.dataValCorrectionLabel = wx.StaticText(self, wx.ID_ANY, u"Value for Correcting the Data:",
-                                                    wx.DefaultPosition, wx.DefaultSize, 0)
-        self.dataValCorrectionLabel.Wrap(-1)
-        verticalBoxSizerSVMLeft.Add(self.dataValCorrectionLabel, 0, wx.ALL | wx.EXPAND, 5)
-
         flexGridSVMSettings.Add(verticalBoxSizerSVMLeft, 1, wx.EXPAND, 5)
 
         verticalBoxSizerSVMRight = wx.BoxSizer(wx.VERTICAL)
 
         self.windowSizeInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.windowSize), wx.DefaultPosition,
-                                           inputSize, wx.TE_READONLY | wx.TE_RIGHT)
+                                           inputSize, wx.TE_RIGHT)
         verticalBoxSizerSVMRight.Add(self.windowSizeInput, 0, wx.ALL, 5)
 
-        self.dataValCorrectionInput = wx.TextCtrl(self, wx.ID_ANY, str(Constants.dataSampleCorrection),
-                                                  wx.DefaultPosition, inputSize, wx.TE_READONLY | wx.TE_RIGHT)
-        verticalBoxSizerSVMRight.Add(self.dataValCorrectionInput, 0, wx.ALL, 5)
         flexGridSVMSettings.Add(verticalBoxSizerSVMRight, 1, wx.EXPAND, 5)
 
         self.verticalBoxes.Add(flexGridSVMSettings, 0, wx.ALL | wx.EXPAND, 5)
@@ -365,8 +355,12 @@ class SettingsPanel(wx.Panel):
 
             self.verticalBoxes.Add(self.flexGridCreateCable, 0, wx.EXPAND | wx.ALL, 5)
 
+        self.verticalBoxes.Add((0, 10), 1, wx.EXPAND, 5)
+        self.resetButton = wx.Button(self, wx.ID_ANY, u"Reset", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.verticalBoxes.Add(self.resetButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
         self.setSettingsButton = wx.Button(self, wx.ID_ANY, u"Done", wx.DefaultPosition, wx.DefaultSize, 0)
         self.verticalBoxes.Add(self.setSettingsButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+
         if self.parent.isWindows:
             self.verticalBoxes.Add(self.warningLabel, 0, wx.ALL, 15)
 
@@ -382,6 +376,7 @@ class SettingsPanel(wx.Panel):
 
         # Connect Events
         self.setSettingsButton.Bind(wx.EVT_BUTTON, self.updateSettings)
+        self.resetButton.Bind(wx.EVT_BUTTON, self.resetSettings)
 
     def updateSettings(self, event):
         event.Skip()
@@ -401,16 +396,34 @@ class SettingsPanel(wx.Panel):
                                                 'Error', wx.OK | wx.ICON_ERROR)
                         dial.ShowModal()
                         return
-            self.controller.updateSettings(self.amtElectrodesInput.GetValue(),
+            self.controller.updateSettings(self.amtElectrodesInput.GetValue(), self.lowBandpassInput.GetValue(),
+                                           self.highBandpassInput.GetValue(), self.lowBandstopInput.GetValue(),
+                                           self.highBandstopInput.GetValue(), float(self.windowSizeInput.GetValue()),
                                            name,
                                            self.createMidiCableCheckbox.GetValue())
         else:
-            self.controller.updateChannelSettings(self.amtElectrodesInput.GetValue())
+            self.controller.updateChannelSettings(self.amtElectrodesInput.GetValue(), self.lowBandpassInput.GetValue(),
+                                                  self.highBandpassInput.GetValue(), self.lowBandstopInput.GetValue(),
+                                                  self.highBandstopInput.GetValue(),
+                                                  float(self.windowSizeInput.GetValue()))
         if not self.parent.backToConnectPage:
             self.controller.showPanel(self, StartPanel)
         else:
             self.controller.showPanel(self, StreamOverviewPanel)
             self.parent.backToConnectPage = False
+
+    def resetSettings(self, event):
+        event.Skip()
+        self.controller.resetSettings()
+        self.amtElectrodesInput.SetValue(Constants.numberOfChannels)
+        self.lowBandpassInput.SetValue(int(Constants.lowBandPassFreq))
+        self.highBandpassInput.SetValue(int(Constants.highBandPassFreq))
+        self.lowBandstopInput.SetValue(Constants.lowBandStopFreq)
+        self.highBandstopInput.SetValue(Constants.highBandStopFreq)
+        self.windowSizeInput.SetValue(str(Constants.windowSize))
+        if self.midiCableNameInput:
+            self.midiCableNameInput.SetValue(Constants.virtualMIDICable)
+        self.createMidiCableCheckbox.SetValue(Constants.createMIDICable)
 
     def onCheckbox(self, event):
         checkbox = event.GetEventObject()
@@ -635,11 +648,16 @@ class CustomCalibrationPanel(wx.Panel):
         self.resetButton.Enable(False)
         verticalBoxes.Add(self.resetButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
+        self.backButton = wx.Button(self, wx.ID_ANY, u"Back", wx.DefaultPosition, wx.DefaultSize, 0)
+        verticalBoxes.Add(self.backButton, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+
         verticalBoxes.Add((0, 50), 1, wx.EXPAND, 5)
 
         self.calibrationButton.Bind(wx.EVT_BUTTON, self.calibrationButtonPressed)
         self.modTrackButton.Bind(wx.EVT_BUTTON, self.trackModulation)
         self.resetButton.Bind(wx.EVT_BUTTON, self.resetCalibration)
+        self.backButton.Bind(wx.EVT_BUTTON, self.onBack)
+
         self.modon = False
 
         self.SetSizerAndFit(verticalBoxes)
@@ -667,6 +685,7 @@ class CustomCalibrationPanel(wx.Panel):
             self.calibrationButton.SetLabel("Stop")
             self.calibrationButton.Enable(False)
             self.resetButton.Enable(True)
+            self.backButton.Enable(False)
             self.modTrackButton.Enable(True)
         else:
             self.controller.endCalibration()
@@ -684,7 +703,12 @@ class CustomCalibrationPanel(wx.Panel):
         self.modTrackButton.SetLabel("Mod:On")
         self.modTrackButton.Enable(False)
         self.resetButton.Enable(False)
+        self.backButton.Enable(True)
         self.modon = False
+
+    def onBack(self, event):
+        event.Skip()
+        self.controller.showPanel(self, ChooseCalibrationPanel)
 
 
 ###########################################################################
@@ -926,12 +950,12 @@ class StreamOverviewPanel(wx.Panel):
         event.Skip()
         streams = []
         for i in self.grid.GetSelectedRows():
-           streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3)),
-                           int(self.grid.GetCellValue(i, 2))))
+            streams.append((i, self.grid.GetCellValue(i, 6), float(self.grid.GetCellValue(i, 3)),
+                            int(self.grid.GetCellValue(i, 2))))
         if streams:
-           threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
-           self.controller.connectToLSLStream(streams)
-        #self.controller.showPanel(self, CalibrationInformationPanel)
+            threading.Thread(target=pub.subscribe, args=(self.checkIfSuccessful, "streamConnect")).start()
+            self.controller.connectToLSLStream(streams)
+        # self.controller.showPanel(self, CalibrationInformationPanel)
 
     # Waits for the pub-message to see if the connection was successful
     # Pub-message sent in StreamManager.connectStreams

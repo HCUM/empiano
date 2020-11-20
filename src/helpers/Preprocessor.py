@@ -19,8 +19,8 @@ def performPreprocessing(rawData):
     bandStopData = []
     for channel in rawData:
         # apply filters
-        bandChannelData = butter_bandpass_filter(channel, Constants.lowerBoundCutOutFreq,
-                                                 Constants.upperBoundCutOutFreq, Constants.samplingRate * 0.5)
+        bandChannelData = butter_bandpass_filter(channel, Constants.lowBandPassFreq,
+                                                 Constants.highBandPassFreq, Constants.samplingRate * 0.5)
 
         bandStopData.append(butter_bandstop_filter(bandChannelData, Constants.lowBandStopFreq,
                                                    Constants.highBandStopFreq, Constants.samplingRate * 0.5))

@@ -22,12 +22,20 @@ class GuiController:
 
     # Updates the values changed in the settings
     @staticmethod
-    def updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable):
-        SettingsManager.updateSettings(amtElectrodes, midiCableName, shouldCreateMidiCable)
+    def updateSettings(amtElectrodes, lowBandPassFreq, highBandPassFreq, lowBandStopFreq, highBandStopFreq, windowSize,
+                       midiCableName, shouldCreateMidiCable):
+        SettingsManager.updateAllSettings(amtElectrodes, lowBandPassFreq, highBandPassFreq, lowBandStopFreq,
+                                          highBandStopFreq, windowSize, midiCableName, shouldCreateMidiCable)
 
     @staticmethod
-    def updateChannelSettings(amtChannels):
-        SettingsManager.updateChannelSettings(amtChannels)
+    def updateChannelSettings(amtChannels, lowBandPassFreq, highBandPassFreq, lowBandStopFreq, highBandStopFreq,
+                              windowSize):
+        SettingsManager.updateChannelSettings(amtChannels, lowBandPassFreq, highBandPassFreq,
+                                              lowBandStopFreq, highBandStopFreq, windowSize)
+
+    @staticmethod
+    def resetSettings():
+        SettingsManager.resetToFactorySettings()
 
     # Calls the method for connecting to the LSL-stream, given the list of streams chosen in the UI
     def connectToLSLStream(self, streams):
