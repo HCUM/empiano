@@ -51,20 +51,14 @@ The electrodes were placed in two rings around the upper right forearm. Each of 
 When using the EMBody toolkit, we attached the reference electrode close to the elbow and the two channels on opposite sides of the upper forearm.
 
 <p float="left">
-  <img src="./pics/figures_electrode_ring.jpg" width="100" />
-  <img src="./pics/embody_electrode_setup.png" width="100" /> 
-  <img src="./pics/sleeve.jpg" width="100" />
+  <img src="./pics/figures_electrode_ring.jpg" width="250" />
+  <img src="./pics/embody_electrode_setup.png" width="250" /> 
+  <img src="./pics/sleeve.jpg" width="250" />
 </p>
-
-
-<p align="center">
-    <img src="./pics/figures_electrode_ring.jpg" alt="electrode_ring" width="500"/>
-</p>
-
 
 ### Hardware Setup
 <p align="center">
-    <img src="./pics/setup_full.pdf" alt="hardware_setup" width="500"/>
+    <img src="./pics/setup_full.jpg" alt="hardware_setup" width="500"/>
 </p>
 
 
