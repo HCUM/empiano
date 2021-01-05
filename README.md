@@ -16,7 +16,7 @@ which eight plus one ground and one reference active surface electrodes were con
 The recording software is only available on Windows for us.  
 Another set of electrodes we tested was the [**EMBody toolkit**](#EMBody). We used it with two channels.
 - [**Lab Streaming Layer (LSL) framework**](#LSL-Stream)  
-The RDA Connector can be used to tap the BrainVision data. 
+The [BrainVisionRDA](https://github.com/labstreaminglayer/App-BrainProducts/tree/8373006a351a1f84d82f598ce0abb723caac16d8/BrainVisionRDA) Connector can be used to tap the BrainVision data. 
 - **Music software**, which is able to receive and play back MIDI, for example [Waveform](#Waveform)
 - [**Virtual MIDI cable**](#MIDI), to send messages from the program to the music software.
 - **Electric-Piano** 
@@ -115,7 +115,7 @@ However, this does **not** work together with the Windows MultiMedia API.
 
 If you are on Windows (with the Windows MultiMedia API), you can either use an inbuilt **virtual MIDI cable** (if that exists),
 otherwise use [**loopMIDI**](http://www.tobias-erichsen.de/software/loopmidi.html) to create one yourself.  
-Please adjust the name of the virtual MIDI cable to use the settings (gui).
+Please adjust the name of the virtual MIDI cable to use in the settings (gui).
 
 ### EMBody
 EMBody is a data-centric toolkit for rapid prototyping and 
@@ -141,7 +141,7 @@ We used [Waveform 11](https://www.tracktion.com/products/waveform-free), togethe
 Below are the BibTex entries to cite Hit the Thumb Jack!
 
 ```
-@inproceedings{10.1145/3357236.3395500,
+@inproceedings{karolusHitThumbJack2020,
 author = {Karolus, Jakob and Kilian, Annika and Kosch, Thomas and Schmidt, Albrecht and Wo\'{z}niak, Pawe\l W.},
 title = {Hit the Thumb Jack! Using Electromyography to Augment the Piano Keyboard},
 year = {2020},
@@ -160,9 +160,9 @@ series = {DIS ’20}
 ```
 
 ```
-@misc{karolus:hitthethumb,
+@misc{karolusEmpiano,
   author = {Karolus, Jakob and Kilian, Annika and Kosch, Thomas and Schmidt, Albrecht and Wo\'{z}niak, Pawe\l W.},
-  title = {Hit the Thumb Jack!},
+  title = {EMPiano: A System to Enable Expressive Pitch Control on the Piano Keyboard},
   year = {2020},
   publisher = {GitHub},
   journal = {GitHub repository},
