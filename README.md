@@ -50,9 +50,6 @@ In case you do not want to use the pipenv, you will need to install the followin
 The electrodes were placed in two rings around the upper right forearm. Each of the rings counted five electrodes and had to include either ground or reference electrode.  
 When using the EMBody toolkit, we attached the reference electrode close to the elbow and the two channels on opposite sides of the upper forearm.
 
-BrainProducts' electrodes  |  EMBody electrodes        | Wearable Electrode-Sleeve
-<img src="./pics/figures_electrode_ring.jpg" alt="medical_graded_electrodes" title="Brainproducts' electrodes." width="250" height="160"/>  |  <img src="./pics/embody_electrode_setup.png" alt="embody_electrodes" title="EMBody toolkit." width="250" height="160"/> | <img src="./pics/sleeve.jpg" alt="electrode_sleeve" title="Wearable electrode sleeve." width="250" height="160" />
-
 <p align="middle">
   <img src="./pics/figures_electrode_ring.jpg" alt="medical_graded_electrodes" title="Brainproducts' electrodes." width="250" height="160"/>
   <img src="./pics/embody_electrode_setup.png" alt="embody_electrodes" title="EMBody toolkit." width="250" height="160"/> 
