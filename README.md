@@ -50,6 +50,13 @@ In case you do not want to use the pipenv, you will need to install the followin
 The electrodes were placed in two rings around the upper right forearm. Each of the rings counted five electrodes and had to include either ground or reference electrode.  
 When using the EMBody toolkit, we attached the reference electrode close to the elbow and the two channels on opposite sides of the upper forearm.
 
+<p float="left">
+  <img src="./pics/figures_electrode_ring.jpg" width="100" />
+  <img src="./pics/embody_electrode_setup.png" width="100" /> 
+  <img src="./pics/sleeve.jpg" width="100" />
+</p>
+
+
 <p align="center">
     <img src="./pics/figures_electrode_ring.jpg" alt="electrode_ring" width="500"/>
 </p>
@@ -57,7 +64,7 @@ When using the EMBody toolkit, we attached the reference electrode close to the 
 
 ### Hardware Setup
 <p align="center">
-    <img src="./pics/fullSetup.png" alt="electrode_ring" width="500"/>
+    <img src="./pics/setup_full.pdf" alt="hardware_setup" width="500"/>
 </p>
 
 
