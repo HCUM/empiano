@@ -44,7 +44,7 @@ class MyFrame(wx.Frame):
         self.panels = {}
         for panel in (StartPanel, SettingsPanel, LiveSystemPanel,
                       CustomCalibrationPanel, StreamOverviewPanel,
-                      ChooseCalibrationPanel, InbuiltCalibrationPanel,
+                      ChooseCalibrationPanel, VideoCalibrationPanel,
                       CalibrationInformationPanel, AboutPanel):
             newPanel = panel(self, self.controller)
             self.panels[panel] = newPanel
@@ -606,7 +606,7 @@ class ChooseCalibrationPanel(wx.Panel):
 
     def inbuiltCaliPressed(self, event):
         event.Skip()
-        self.controller.showPanel(self, InbuiltCalibrationPanel, True)
+        self.controller.showPanel(self, VideoCalibrationPanel, True)
 
     def onBackButton(self, event):
         event.Skip()
@@ -732,9 +732,9 @@ class CustomCalibrationPanel(wx.Panel):
 
 
 ###########################################################################
-# Class InbuiltCalibrationPanel
+# Class VideoCalibrationPanel
 ###########################################################################
-class InbuiltCalibrationPanel(wx.Panel):
+class VideoCalibrationPanel(wx.Panel):
     def __init__(self, parent, controller):
         wx.Panel.__init__(self, parent)
 

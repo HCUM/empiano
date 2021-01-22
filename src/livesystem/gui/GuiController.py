@@ -1,5 +1,5 @@
 import wx
-import livesystem.gui.wxWindow as wxwindow
+import livesystem.gui.EMPianoWindow as wxwindow
 import helpers.SettingsManager as SettingsManager
 
 
