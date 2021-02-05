@@ -151,7 +151,7 @@ Lastly make sure to enable 2 input modalities for your track and choose the *Pia
 that track.
 Then pick both MIDI cables as the input for that track.
 <p align="center"> 
-    <img src="./pics/waveform_track_input" width="600" /> 
+    <img src="./pics/waveform_track_input.png" width="600" /> 
 </p>
 
 
