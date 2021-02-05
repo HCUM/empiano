@@ -141,22 +141,22 @@ We used [Waveform 11](https://www.tracktion.com/products/waveform-free), togethe
 ### Changing the Sound-Modulation
 Changing the existing or implementing a different sound-modulation can be done in the 
 [MidiManager.py](https://github.com/HCUM/empiano/blob/master/src/livesystem/MidiManager.py).
-In the method sendEffect() you can define your own sound-modulation pattern to send to the music software. We are currently using
-oscillating pitch values, which are defined in the MidiManager-constructor.
+Inside of the *sendEffect()* method you can define your own sound-modulation pattern to send to the music software. We are currently using
+oscillating pitch values, which are defined in the MidiManager constructor.
 
 ### Filtering the EMG data
-We are currently filtering the EMG data using a bandpass (2.0 & 100.0) and bandstop filter (49-51). These values can be 
+We are filtering the EMG data using a bandpass (2.0 & 100.0) and bandstop filter (49-51). These values can be 
 adjusted in the GUI's settings-page or in [Constants.py](https://github.com/HCUM/empiano/blob/master/src/storage/Constants.py ).
 Other filtering methods can be tried by adding to or changing the existing ones in the 
 [Preprocessor.py](https://github.com/HCUM/empiano/blob/master/src/helpers/Preprocessor.py) file. These 
 preprocessing methods are called in the 
 [CalibrationManager.py](https://github.com/HCUM/empiano/blob/master/src/livesystem/CalibrationManager.py) 
-(startTraining()) and in the 
-[LiveSystemManager.py](https://github.com/HCUM/empiano/blob/master/src/livesystem/LiveSystemManager.py) (performPrediction()).
+(*startTraining()*) and in the 
+[LiveSystemManager.py](https://github.com/HCUM/empiano/blob/master/src/livesystem/LiveSystemManager.py) (*performPrediction()*).
 
 ### SVM-Features
-Currently we are using RMS (Root Mean Square) feature vectors to train the SVM. One feature vector consists of the last 
-three sliding window features<sup>1</sup>, where, for one window, the RMS values of each electrode channel<sup>2</sup> 
+We are using RMS (Root Mean Square) feature vectors to train the SVM. One feature vector consists of the last 
+three sliding window features<sup>1</sup>, where for one window the RMS values of each electrode channel<sup>2</sup> 
 plus their pairwise ratios are calculated. Please refer to the algorithm described in the 
 [original paper](#Citing) for further details.  
 For changes or inspection this code can be found in the 
@@ -171,12 +171,13 @@ The interaction possibilities between the GUI and the backend can easily be seen
 [GuiController.py](https://github.com/HCUM/empiano/blob/master/src/livesystem/gui/GuiController.py) file, which is the 
 interface between these two modalities.
 - In general the ground-truth of the performance of the finger gesture during the calibration is tracked by calling the 
-startModulation() and endModulation() methodsfound in 
+*startModulation()* and *endModulation()* methods found in 
 [GuiController.py](https://github.com/HCUM/empiano/blob/master/src/livesystem/gui/GuiController.py).
-- When adding a personal video for the calibration, the self.modTimes-field of the VideoCalibrationPanel-class in 
+- When adding a personal video for the calibration, the *self.modTimes* field of the *VideoCalibrationPanel* class in 
 [EMPianoWindow.py](https://github.com/HCUM/empiano/blob/master/src/livesystem/gui/EMPianoWindow.py) has to be updated.
-This field holds millisecond-values; all the even indices hold the millisecond-values at which the user starts to perform
-the finger gesture, and all the uneven indices the corresponding millisecond-value at which to end it.
+This field holds millisecond-values. All the even indices hold the millisecond-values at which the video enters the 
+red marked notes, so the moment the user should start to perform the finger gesture. All uneven indices hold the 
+millisecond-values of when the video leaves the red marked notes, so the moment the user should end the finger gesture.
 
 
 ## Citing
