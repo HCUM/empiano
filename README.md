@@ -136,6 +136,24 @@ provides an interpretation of the data.
 ### Waveform
 We used [Waveform 11](https://www.tracktion.com/products/waveform-free), together with the 
 [Piano-One](https://neovst.com/piano-one/) instrument.
+Save the plug-in (*Piano-One*) to the correct destination and load it in Waveform.
+<p align="center"> 
+    <img src="./pics/waveform_plugin.png" width="600" /> 
+</p>
+
+Further connect to your MIDI-devices, so the MIDI cable connecting the piano with your computer and the virtual MIDI cable
+which sends the pitch modulation messages from our python program.
+<p align="center"> 
+    <img src="./pics/waveform_midi_devices.png" width="600" /> 
+</p>
+
+Lastly make sure to enable 2 input modalities for your track and choose the *Piano-One* plug-in as the synthesizer for 
+that track.
+Then pick both MIDI cables as the input for that track.
+<p align="center"> 
+    <img src="./pics/waveform_track_input" width="600" /> 
+</p>
+
 
 ## Developing with EMPiano
 ### Changing the Sound-Modulation
