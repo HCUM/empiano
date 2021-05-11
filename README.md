@@ -1,12 +1,11 @@
 # EMPiano: A System to Enable Expressive Pitch Control on the Piano Keyboard.
 
-This repository contains a system that, in combination with the correct hard- and software, offers sound modulation via 
-muscular activity, captured by an electromyography device.
+This repository contains the system EMPiano and provides ressources for the associated publication [EMPiano: Electromyographic Pitch Control on the Piano Keyboard](https://doi.org/10.1145/3411763.3451556). The system offers sound modulation controlled through muscular activity, which is captured by an electromyography device. Given the respective hardware, this repository contains all needed software components. EMPiano was successfully used in the prior publication [Hit the Thumb Jack! Using Electromyography to Augment the Piano Keyboard](https://doi.org/10.1145/3357236.3395500) showcasing EMG's potential to support expressive play.
 
-In short: the system is trained to recognize a performed finger gesture (wiggle motion of the thumb) and adds a pitch 
+In short: EMPiano is trained to recognize a performed finger gesture (wiggle motion of the thumb) and adds a pitch 
 vibrato to the sound output.
 
-[![System teaser|70%](./pics/figures_teaser_video.png)](http://www.jakob-karolus.de/publications/disfp6537-karolus20.mp4)
+[![System teaser|70%](./pics/figures_teaser_video.png)](https://jakob-karolus.de/publications/kilian21empiano.mp4)
 
 ##  Requirements
 
@@ -198,10 +197,33 @@ red marked notes, so the moment the user should start to perform the finger gest
 millisecond-values of when the video leaves the red marked notes, so the moment the user should end the finger gesture.
 
 
-## Citing
+## Publications
 
-Below are the BibTex entries to cite "Hit the Thumb Jack!"
+Below are the BibTex entries to cite the respective CHI Interactivity [EMPiano](https://doi.org/10.1145/3411763.3451556) (this GitHub Repo) and the associated DIS paper [Hit the Thumb Jack!](https://doi.org/10.1145/3357236.3395500).
 
+### EMPiano: Electromyographic Pitch Control on the Piano Keyboard
+[Paper](https://jakob-karolus.de/publications/kilian21empiano.pdf), [Video](https://jakob-karolus.de/publications/kilian21empiano.mp4)
+```
+@inproceedings{kilianEMPiano2021,
+author = {Kilian, Annika and Karolus, Jakob and Kosch, Thomas and Schmidt, Albrecht and Wo\'{z}niak, Pawe\l{} W.},
+title = {EMPiano: Electromyographic Pitch Control on the Piano Keyboard},
+year = {2021},
+isbn = {9781450380959},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3411763.3451556},
+doi = {10.1145/3411763.3451556},
+booktitle = {Extended Abstracts of the 2021 CHI Conference on Human Factors in Computing Systems},
+articleno = {196},
+numpages = {4},
+keywords = {expressive piano play, seamless integration, piano interaction., Electromyography},
+location = {Yokohama, Japan},
+series = {CHI EA '21}
+}
+```
+
+### Hit the Thumb Jack! Using Electromyography to Augment the Piano Keyboard
+[Paper](https://jakob-karolus.de/publications/karolus20thumb.pdf), [Video](https://jakob-karolus.de/publications/disfp6537-karolus20.mp4), [Talk](https://www.youtube.com/watch?v=Oj5UG_EDiCI)
 ```
 @inproceedings{karolusHitThumbJack2020,
 author = {Karolus, Jakob and Kilian, Annika and Kosch, Thomas and Schmidt, Albrecht and Wo\'{z}niak, Pawe\l W.},
@@ -218,16 +240,5 @@ numpages = {12},
 keywords = {creative support tool, motor tasks, electromyography, seamless integration, expressive piano play},
 location = {Eindhoven, Netherlands},
 series = {DIS ’20}
-}
-```
-
-```
-@misc{karolusEmpiano,
-  author = {Karolus, Jakob and Kilian, Annika and Kosch, Thomas and Schmidt, Albrecht and Wo\'{z}niak, Pawe\l W.},
-  title = {EMPiano: A System to Enable Expressive Pitch Control on the Piano Keyboard},
-  year = {2020},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/HCUM/empiano}}
 }
 ```
